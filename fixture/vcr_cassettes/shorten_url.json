@@ -1,0 +1,28 @@
+[
+  {
+    "request": {
+      "body": "<xml><appid><![CDATA[wx8888888888888888]]></appid><long_url><![CDATA[weixin://wxpay/bizpayurl?sign=XXXXX&appid=XXXXX&mch_id=XXXXX&product_id=XXXXXX&time_stamp=XXXXXX&nonce_str=XXXXX]]></long_url><mch_id><![CDATA[1900000109]]></mch_id><nonce_str><![CDATA[zP_88ph2Rp0iOvLWGy2EsJYT1nfhejQ]]></nonce_str><sign><![CDATA[7E56F9FC72AB77E06F74596B5C220B2B]]></sign></xml>",
+      "headers": {
+        "Accept": "application/xml",
+        "Content-Type": "application/xml"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.mch.weixin.qq.com/sandbox/tools/shorturl"
+    },
+    "response": {
+      "body": "<xml><return_code><![CDATA[SUCCESS]]></return_code>\n<return_msg><![CDATA[OK]]></return_msg>\n<mch_id><![CDATA[1900000109]]></mch_id>\n<appid><![CDATA[wx8888888888888888]]></appid>\n<result_code><![CDATA[SUCCESS]]></result_code>\n<short_url><![CDATA[weixin://wxpay/bizpayurl?pr=I1kiguB]]></short_url>\n<nonce_str><![CDATA[FNCnURScXoxQRNwr]]></nonce_str>\n<sign><![CDATA[4F0B137092E1353C230E8EA344C0B775]]></sign>\n</xml>",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Mon, 17 Oct 2016 07:26:43 GMT",
+        "Content-Type": "text/plain",
+        "Content-Length": "412",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=8"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

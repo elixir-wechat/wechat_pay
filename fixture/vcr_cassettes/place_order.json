@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "<xml><appid>test-app-id</appid><body>foobar</body><detail><![CDATA[{}]]></detail><fee_type>CNY</fee_type><mch_id>test-mch-id</mch_id><nonce_str>6PnDT72kwNWHh3WVJXjvWbtqLViZkse</nonce_str><notify_url>http://example.com</notify_url><openid>foobar</openid><out_trade_no>xxx</out_trade_no><sign>AC78B20CFDB3E471C5613F2DF7D331A1</sign><spbill_create_ip>192.168.1.1</spbill_create_ip><total_fee>100</total_fee><trade_type>JSAPI</trade_type></xml>",
+      "headers": {
+        "Accept": "application/xml",
+        "Content-Type": "application/xml"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.mch.weixin.qq.com/sandbox/pay/unifiedorder"
+    },
+    "response": {
+      "body": "<xml><trade_type><![CDATA[JSAPI]]></trade_type><prepay_id><![CDATA[wx20161011105257935386]]></prepay_id><nonce_str><![CDATA[6PnDT72kwNWHh3WVJXjvWbtqLViZkse]]></nonce_str><err_msg><![CDATA[SUCCESS]]></err_msg><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg><sign><![CDATA[A0700CBC32B475032EC87D3A60991551]]></sign><mch_id><![CDATA[test-mch-id]]></mch_id><appid><![CDATA[test-app-id]]></appid><device_info><![CDATA[sandbox]]></device_info><code_url><![CDATA[weixin://wxpay/s/An4baqw]]></code_url><result_code><![CDATA[SUCCESS]]></result_code><err_code><![CDATA[SUCCESS]]></err_code></xml>",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Tue, 11 Oct 2016 02:52:57 GMT",
+        "Content-Type": "text/plain;charset=utf-8",
+        "Content-Length": "623",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=8",
+        "from": "sandbox"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

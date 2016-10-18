@@ -1,0 +1,2 @@
+defmodule WechatPay do
+end
