@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "<xml><appid><![CDATA[wx8888888888888888]]></appid><device_info><![CDATA[013467007045764]]></device_info><err_code><![CDATA[SYSTEMERROR]]></err_code><err_code_des><![CDATA[系统错误]]></err_code_des><execute_time_><![CDATA[1000]]></execute_time_><interface_url><![CDATA[https://api.mch.weixin.qq.com/pay/unifiedorder]]></interface_url><mch_id><![CDATA[1900000109]]></mch_id><nonce_str><![CDATA[zxp4t6iS8deSWZ6c8plUNEjJYRJNFlg]]></nonce_str><out_trade_no><![CDATA[1217752501201407033233368018]]></out_trade_no><result_code><![CDATA[SUCCESS]]></result_code><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[签名失败]]></return_msg><sign><![CDATA[18B39D9F24A94C5BD5B48861EAD1EE20]]></sign><time><![CDATA[20091227091010]]></time><user_ip><![CDATA[8.8.8.8]]></user_ip></xml>",
+      "headers": {
+        "Accept": "application/xml",
+        "Content-Type": "application/xml"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.mch.weixin.qq.com/sandbox/payitil/report"
+    },
+    "response": {
+      "body": "<xml>\n<return_code><![CDATA[SUCCESS]]></return_code>\n<return_msg><![CDATA[]]></return_msg>\n<result_code><![CDATA[SUCCESS]]></result_code>\n<err_code><![CDATA[0]]></err_code>\n<err_code_des><![CDATA[]]></err_code_des>\n</xml>",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Tue, 18 Oct 2016 07:57:47 GMT",
+        "Content-Type": "text/html; charset=gbk",
+        "Content-Length": "221",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=8",
+        "Cache-Control": "no-cache, must-revalidate"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

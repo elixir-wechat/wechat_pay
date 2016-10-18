@@ -31,7 +31,7 @@ defmodule WechatPay.API.Refund do
       WechatPay.API.Refund.RequestData
       |> struct(params)
 
-    Client.secure_post(@api_path, request_data)
+    Client.ssl_post(@api_path, request_data)
   end
 
   defmodule RequestData do

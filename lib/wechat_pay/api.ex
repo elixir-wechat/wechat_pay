@@ -27,6 +27,10 @@ defmodule WechatPay.API do
     to: WechatPay.API.DownloadBill,
     as: :request
 
+  defdelegate report(params),
+    to: WechatPay.API.Report,
+    as: :request
+
   defdelegate shorten_url(url),
     to: WechatPay.API.ShortenURL,
     as: :request

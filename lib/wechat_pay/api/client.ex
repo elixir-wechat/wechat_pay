@@ -43,7 +43,37 @@ defmodule WechatPay.API.Client do
     end
   end
 
-  def secure_post(path, data, options \\ []) do
+  def post_without_verify_sign(path, data, options \\ []) do
+    path = base_url <> path
+
+    headers = [
+      {"Accept", "application/xml"},
+      {"Content-Type", "application/xml"}
+    ]
+
+    request_data =
+      data
+      |> append_ids
+      |> generate_nonce_str
+      |> sign
+      |> XMLBuilder.to_xml
+
+    response = HTTPoison.post!(path, request_data, headers, options)
+
+    response_data =
+      response.body
+      |> XMLParser.parse()
+
+    with {:ok, data} <- process_connection_result(response_data),
+      {:ok, data} <- process_business_result(data)
+    do
+      {:ok, data}
+    else
+      err -> err
+    end
+  end
+
+  def ssl_post(path, data, options \\ []) do
     secure_options = [
       hackney: [ # :hackney options
         ssl_options: [ # :ssl options
@@ -122,13 +152,11 @@ defmodule WechatPay.API.Client do
   defp process_business_result(%{result_code: "SUCCESS"} = data) do
     {:ok, data}
   end
-  defp process_business_result(%{result_code: "FAIL", err_code: code, err_msg: desc}) do
-    wechat_error_code_page_url = "http://wxpay.weixin.qq.com/errcode/index.php?interface=&errCode=&errReason="
-    {:error, "Code: #{code}, msg: #{desc}, detail: #{wechat_error_code_page_url}"}
-  end
   defp process_business_result(%{result_code: "FAIL", err_code: code, err_code_des: desc}) do
-    wechat_error_code_page_url = "http://wxpay.weixin.qq.com/errcode/index.php?interface=&errCode=&errReason="
-    {:error, "Code: #{code}, msg: #{desc}, detail: #{wechat_error_code_page_url}"}
+    {:error, "Code: #{code}, msg: #{desc}, detail: http://wxpay.weixin.qq.com/errcode/index.php?interface=&errCode=#{code}&errReason="}
+  end
+  defp process_business_result(%{result_code: "FAIL", err_code: code, err_msg: desc}) do
+    process_business_result(%{result_code: "FAIL", err_code: code, err_code_des: desc})
   end
 
   defp verify_sign(data) do

@@ -68,6 +68,7 @@ config :wechat_pay,
 - [x] `WechatPay.API.refund(params)`
 - [x] `WechatPay.API.query_refund(params)`
 - [x] `WechatPay.API.download_bill(params)`
+- [x] `WechatPay.API.report(params)`
 - [x] `WechatPay.HTML.generate_pay_request(prepay_id)`
 
 #### Native（扫码支付）
@@ -78,6 +79,7 @@ config :wechat_pay,
 - [x] `WechatPay.API.refund(params)`
 - [x] `WechatPay.API.query_refund(params)`
 - [x] `WechatPay.API.download_bill(params)`
+- [x] `WechatPay.API.report(params)`
 - [x] `WechatPay.API.shorten_url(url)`
 
 #### APP（APP支付）
@@ -87,6 +89,7 @@ config :wechat_pay,
 - [x] `WechatPay.API.close_order(params)`
 - [x] `WechatPay.API.refund(params)`
 - [x] `WechatPay.API.query_refund(params)`
+- [x] `WechatPay.API.report(params)`
 - [x] `WechatPay.API.download_bill(params)`
 
 #### Example
