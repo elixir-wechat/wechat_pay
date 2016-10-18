@@ -12,6 +12,11 @@ defmodule WechatPay.API.Client do
   @sandbox_url "https://api.mch.weixin.qq.com/sandbox/"
   @production_url "https://api.mch.weixin.qq.com/"
 
+  @doc """
+  Post data
+  then verify the connection & business result,
+  then verify the sign.
+  """
   def post(path, data, options \\ []) do
     path = base_url <> path
 
@@ -43,6 +48,10 @@ defmodule WechatPay.API.Client do
     end
   end
 
+  @doc """
+  Post data
+  then verify the connection & business result.
+  """
   def post_without_verify_sign(path, data, options \\ []) do
     path = base_url <> path
 
@@ -73,6 +82,11 @@ defmodule WechatPay.API.Client do
     end
   end
 
+  @doc """
+  Post data with SSL certs,
+  then verify the connection & business result,
+  then verify the sign.
+  """
   def ssl_post(path, data, options \\ []) do
     secure_options = [
       hackney: [ # :hackney options
@@ -87,6 +101,9 @@ defmodule WechatPay.API.Client do
     post(path, data, Keyword.merge(secure_options, options))
   end
 
+  @doc """
+  Download text data
+  """
   def download_text(path, data, options \\ []) do
     path = base_url <> path
 

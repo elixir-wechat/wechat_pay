@@ -39,17 +39,60 @@ defmodule WechatPay.Config do
 
   @app_name :wechat_pay
 
-  # follows same naming convention with Wechat's API
-  @func_names ~w(appid apikey mch_id ssl_cacertfile ssl_certfile ssl_keyfile ssl_password)a
-  Enum.each @func_names, fn k ->
-    def unquote(k)(), do: get(unquote(k))
-  end
-
   @doc """
-  Fetch env, default is `:sandbox`
+  Fetch env from config, default is `:sandbox`, avaliable: `:sandbox` or `:production`
   """
   def env do
     get(:env, :sandbox)
+  end
+
+  @doc """
+  Fetch App ID from config
+  """
+  def appid do
+    get(:appid)
+  end
+
+  @doc """
+  Fetch API Key from config
+  """
+  def apikey do
+    get(:apikey)
+  end
+
+  @doc """
+  Fetch Merchant ID from config
+  """
+  def mch_id do
+    get(:mch_id)
+  end
+
+  @doc """
+  Fetch CA Cert file path from config
+  """
+  def ssl_cacertfile do
+    get(:ssl_cacertfile)
+  end
+
+  @doc """
+  Fetch Cert file path from config
+  """
+  def ssl_certfile do
+    get(:ssl_certfile)
+  end
+
+  @doc """
+  Fetch Key file path from config
+  """
+  def ssl_keyfile do
+    get(:ssl_keyfile)
+  end
+
+  @doc """
+  Fetch Key Password path from config
+  """
+  def ssl_password do
+    get(:ssl_password)
   end
 
   defp get(key, default \\ nil) do
