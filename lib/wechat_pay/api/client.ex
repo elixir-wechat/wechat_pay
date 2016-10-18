@@ -12,7 +12,7 @@ defmodule WechatPay.API.Client do
   @sandbox_url "https://api.mch.weixin.qq.com/sandbox/"
   @production_url "https://api.mch.weixin.qq.com/"
 
-  def post(path, data, params \\ []) do
+  def post(path, data, options \\ []) do
     path = base_url <> path
 
     headers = [
@@ -27,7 +27,7 @@ defmodule WechatPay.API.Client do
       |> sign
       |> XMLBuilder.to_xml
 
-    response = HTTPoison.post!(path, request_data, headers, params)
+    response = HTTPoison.post!(path, request_data, headers, options)
 
     response_data =
       response.body
@@ -43,7 +43,21 @@ defmodule WechatPay.API.Client do
     end
   end
 
-  def download_text(path, data, params \\ []) do
+  def secure_post(path, data, options \\ []) do
+    secure_options = [
+      hackney: [ # :hackney options
+        ssl_options: [ # :ssl options
+          cacertfile: Config.ssl_cacertfile,
+          certfile: Config.ssl_certfile,
+          keyfile: Config.ssl_keyfile,
+          password: String.to_charlist(Config.ssl_password)
+        ]
+      ]
+    ]
+    post(path, data, Keyword.merge(secure_options, options))
+  end
+
+  def download_text(path, data, options \\ []) do
     path = base_url <> path
 
     headers = [
@@ -58,7 +72,7 @@ defmodule WechatPay.API.Client do
       |> sign
       |> XMLBuilder.to_xml
 
-    response = HTTPoison.post!(path, request_data, headers, params)
+    response = HTTPoison.post!(path, request_data, headers, options)
 
     {:ok, response.body}
   end

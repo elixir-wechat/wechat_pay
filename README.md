@@ -31,19 +31,29 @@ use Mix.Config
 
 config :wechat_pay,
   env: :sandbox,
-  appid: "test-app-id",
-  mch_id: "test-mch-id",
-  apikey: "192006250b4c09247ec02edce69f6a2d"
+  appid: "wx8888888888888888",
+  mch_id: "1900000109",
+  apikey: "192006250b4c09247ec02edce69f6a2d",
+  ssl_cacertfile: "certs/ca.cert",
+  ssl_certfile: "certs/client.crt",
+  ssl_keyfile: "certs/client.key",
+  ssl_password: "test"
 ```
 
-or fetch from `ENV`
+Or in production
 
 ```elixir
+use Mix.Config
+
 config :wechat_pay,
   env: :production,
   appid: {:system, "WECHAT_PAY_APP_ID"},
   mch_id: {:system, "WECHAT_PAY_MCH_ID"},
-  apikey: {:system, "WECHAT_API_KEY"}
+  apikey: {:system, "WECHAT_PAY_API_KEY"},
+  ssl_cacertfile: {:system, "WECHAT_PAY_SSL_CA_CERTFILE"},
+  ssl_certfile: {:system, "WECHAT_PAY_SSL_CERTFILE"},
+  ssl_keyfile: {:system, "WECHAT_PAY_SSL_KEYFILE"},
+  ssl_password: {:system, "WECHAT_PAY_SSL_PASSWORD"}
 ```
 
 ### APIs
@@ -55,7 +65,7 @@ config :wechat_pay,
 - [x] `WechatPay.API.place_order(params)`
 - [x] `WechatPay.API.query_order(params)`
 - [x] `WechatPay.API.close_order(params)`
-- [ ] `WechatPay.API.issue_refund(params)`
+- [x] `WechatPay.API.refund(params)`
 - [x] `WechatPay.API.query_refund(params)`
 - [x] `WechatPay.API.download_bill(params)`
 - [x] `WechatPay.HTML.generate_pay_request(prepay_id)`
@@ -65,7 +75,7 @@ config :wechat_pay,
 - [x] `WechatPay.API.place_order(params)`
 - [x] `WechatPay.API.query_order(params)`
 - [x] `WechatPay.API.close_order(params)`
-- [ ] `WechatPay.API.issue_refund(params)`
+- [x] `WechatPay.API.refund(params)`
 - [x] `WechatPay.API.query_refund(params)`
 - [x] `WechatPay.API.download_bill(params)`
 - [x] `WechatPay.API.shorten_url(url)`
@@ -75,7 +85,7 @@ config :wechat_pay,
 - [x] `WechatPay.API.place_order(params)`
 - [x] `WechatPay.API.query_order(params)`
 - [x] `WechatPay.API.close_order(params)`
-- [ ] `WechatPay.API.issue_refund(params)`
+- [x] `WechatPay.API.refund(params)`
 - [x] `WechatPay.API.query_refund(params)`
 - [x] `WechatPay.API.download_bill(params)`
 

@@ -15,6 +15,10 @@ defmodule WechatPay.API do
     to: WechatPay.API.CloseOrder,
     as: :request
 
+  defdelegate refund(params),
+    to: WechatPay.API.Refund,
+    as: :request
+
   defdelegate query_refund(params),
     to: WechatPay.API.QueryRefund,
     as: :request

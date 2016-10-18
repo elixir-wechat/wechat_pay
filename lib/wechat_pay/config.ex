@@ -1,6 +1,38 @@
 defmodule WechatPay.Config do
   @moduledoc """
   Fetch application config
+
+  ## Examples
+
+    ```elixir
+    use Mix.Config
+
+    config :wechat_pay,
+      env: :sandbox,
+      appid: "wx8888888888888888",
+      mch_id: "1900000109",
+      apikey: "192006250b4c09247ec02edce69f6a2d",
+      ssl_cacertfile: "certs/ca.cert",
+      ssl_certfile: "certs/client.crt",
+      ssl_keyfile: "certs/client.key",
+      ssl_password: "test"
+    ```
+
+  Or in production
+
+    ```elixir
+    use Mix.Config
+
+    config :wechat_pay,
+      env: :production,
+      appid: {:system, "WECHAT_PAY_APP_ID"},
+      mch_id: {:system, "WECHAT_PAY_MCH_ID"},
+      apikey: {:system, "WECHAT_PAY_API_KEY"},
+      ssl_cacertfile: {:system, "WECHAT_PAY_SSL_CA_CERTFILE"},
+      ssl_certfile: {:system, "WECHAT_PAY_SSL_CERTFILE"},
+      ssl_keyfile: {:system, "WECHAT_PAY_SSL_KEYFILE"},
+      ssl_password: {:system, "WECHAT_PAY_SSL_PASSWORD"}
+    ```
   """
 
   alias WechatPay.Config.Helper
@@ -8,11 +40,14 @@ defmodule WechatPay.Config do
   @app_name :wechat_pay
 
   # follows same naming convention with Wechat's API
-  @func_names ~w(appid apikey mch_id)a
+  @func_names ~w(appid apikey mch_id ssl_cacertfile ssl_certfile ssl_keyfile ssl_password)a
   Enum.each @func_names, fn k ->
     def unquote(k)(), do: get(unquote(k))
   end
 
+  @doc """
+  Fetch env, default is `:sandbox`
+  """
   def env do
     get(:env, :sandbox)
   end

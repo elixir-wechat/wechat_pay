@@ -1,0 +1,28 @@
+[
+  {
+    "request": {
+      "body": "<xml><appid><![CDATA[wx8888888888888888]]></appid><device_info><![CDATA[013467007045764]]></device_info><mch_id><![CDATA[1900000109]]></mch_id><nonce_str><![CDATA[uuzXIIKoZ_KNU5_pycfpwnOrDPDEdJB]]></nonce_str><op_user_id><![CDATA[1900000109]]></op_user_id><out_refund_no><![CDATA[1217752501201407033233368018]]></out_refund_no><out_trade_no><![CDATA[1217752501201407033233368018]]></out_trade_no><refund_account><![CDATA[REFUND_SOURCE_RECHARGE_FUNDS]]></refund_account><refund_fee><![CDATA[100]]></refund_fee><refund_fee_type><![CDATA[CNY]]></refund_fee_type><sign><![CDATA[9573EC9028AFC91BE507BE79BBBD9C6C]]></sign><total_fee><![CDATA[100]]></total_fee><transaction_id><![CDATA[1217752501201407033233368018]]></transaction_id></xml>",
+      "headers": {
+        "Accept": "application/xml",
+        "Content-Type": "application/xml"
+      },
+      "method": "post",
+      "options": {
+        "ssl_options": {
+          "cacertfile": "",
+          "certfile": "",
+          "keyfile": "",
+          "password": []
+        }
+      },
+      "request_body": "",
+      "url": "https://api.mch.weixin.qq.com/sandbox/secapi/pay/refund"
+    },
+    "response": {
+      "body": "closed",
+      "headers": [],
+      "status_code": null,
+      "type": "error"
+    }
+  }
+]
