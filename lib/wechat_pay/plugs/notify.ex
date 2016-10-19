@@ -2,32 +2,66 @@ defmodule WechatPay.Plug.Notify do
   @moduledoc """
   Plug to handle callback from Wechat's payment gateway
 
-  If the callback is success and verified, the `MyHandler.handle_success/2` is called with the
-  `Plug.Conn.t` object and the result as a map.
+  If the callback is success and verified, the result value will
+  be assigned to private `:wechat_pay_result` key of the `Plug.Conn.t` object.
 
   ## Example
-      # Will call the handle_success/2 function on your handler
-      plug WechatPay.Plug.Notify, handler: MyHandler
 
-      # Will call the some_fun/2 function on your handler
-      plug WechatPay.Plug.Notify, handler: {MyHandler, :some_fun}
+      defmodule MyApp.WechatPayController do
+        use MyApp.Web, :controller
+
+        plug WechatPay.Plug.Notify
+
+        def callback(conn, _parasm) do
+          data = conn.private[:wechat_pay_result]
+
+          case data.result_code do
+            "SUCCESS" ->
+              IO.inspect data
+              # %{
+              #   appid: "wx2421b1c4370ec43b",
+              #   attach: "支付测试",
+              #   bank_type: "CFT",
+              #   fee_type: "CNY",
+              #   is_subscribe: "Y",
+              #   mch_id: "10000100",
+              #   nonce_str: "5d2b6c2a8db53831f7eda20af46e531c",
+              #   openid: "oUpF8uMEb4qRXf22hE3X68TekukE",
+              #   out_trade_no: "1409811653",
+              #   result_code: "SUCCESS",
+              #   return_code: "SUCCESS",
+              #   sign: "594B6D97F089D24B55156CE09A5FF412",
+              #   sub_mch_id: "10000100",
+              #   time_end: "20140903131540",
+              #   total_fee: "1",
+              #   trade_type: "JSAPI",
+              #   transaction_id: "1004400740201409030005092168"
+              # }
+
+              conn
+              |> WechatPay.Plug.Notify.response_with_success_info
+            _ ->
+              conn
+              |> send_resp(:unprocessable_entity, "")
+          end
+        end
+      end
   """
 
-  import Plug.Conn
+  use Plug.Builder
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
 
-  @doc false
-  def init([handler: {_mod, _fun}] = opts) do
-    opts
-  end
-  def init([handler: mod]) do
-    init([handler: {mod, :handle_success}])
-  end
+  plug :handle_wechat_pay_callback
 
-  @doc false
-  def call(conn, [handler: {mod, fun}]) do
+  @doc """
+  Process the data comes from Wechat's Payment Gateway.
+
+  If the data is success and verified, the result value will
+  be assigned to private `:wechat_pay_result` key of the `Plug.Conn.t` object.
+  """
+  def handle_wechat_pay_callback(conn, _opts) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     data = XMLParser.parse(body)
@@ -35,11 +69,8 @@ defmodule WechatPay.Plug.Notify do
     with {:ok, data} <- process_result(data),
       {:ok, data} <- verify_sign(data)
     do
-      {:ok, conn} = apply(mod, fun, [conn, data])
-
       conn
-      |> put_resp_content_type("application/xml")
-      |> send_resp(:ok, success_response_body)
+      |> put_private(:wechat_pay_result, data)
     else
       {:error, _reason} ->
         conn
@@ -47,13 +78,29 @@ defmodule WechatPay.Plug.Notify do
     end
   end
 
-  defp success_response_body do
-    ~s"""
+  @doc """
+  Tell Wechat's Payment Gateway the notification is successfully handled.
+
+  Response
+
+      <xml>
+        <return_code><![CDATA[SUCCESS]]></return_code>
+        <return_msg><![CDATA[OK]]></return_msg>
+      </xml>
+
+  to server
+  """
+  def response_with_success_info(conn) do
+    body = ~s"""
       <xml>
         <return_code><![CDATA[SUCCESS]]></return_code>
         <return_msg><![CDATA[OK]]></return_msg>
       </xml>
     """
+
+    conn
+    |> put_resp_content_type("application/xml")
+    |> send_resp(:ok, body)
   end
 
   defp process_result(%{return_code: "SUCCESS"} = data) do

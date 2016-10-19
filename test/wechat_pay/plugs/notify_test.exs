@@ -4,14 +4,6 @@ defmodule WechatPay.Plug.NotifyTest do
 
   alias WechatPay.Plug.Notify
 
-  defmodule Handler do
-    def handle_success(conn, data) do
-      "1409811653" = data.out_trade_no
-      # handle payment
-      {:ok, conn}
-    end
-  end
-
   describe "receive notification from Wechat's payment gateway" do
     test "handle success" do
       req = ~s"""
@@ -38,10 +30,13 @@ defmodule WechatPay.Plug.NotifyTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = Notify.init(handler: {WechatPay.Plug.NotifyTest.Handler, :handle_success})
+      opts = Notify.init([])
       conn = Notify.call(conn, opts)
 
-      assert conn.status == 200
+      result = conn.private[:wechat_pay_result]
+
+      assert result.appid == "wx2421b1c4370ec43b"
+      assert result.result_code == "SUCCESS"
     end
 
     test "handle error" do
@@ -54,7 +49,7 @@ defmodule WechatPay.Plug.NotifyTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = Notify.init(handler: {WechatPay.Plug.NotifyTest.Handler, :handle_success})
+      opts = Notify.init([])
       conn = Notify.call(conn, opts)
 
       assert conn.status == 422
