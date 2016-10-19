@@ -5,7 +5,7 @@ defmodule WechatPay.HTML do
 
   def generate_pay_request(prepay_id) when is_binary(prepay_id) do
     %{
-      "appid" => Config.appid,
+      "appId" => Config.appid,
       "timeStamp" => :os.system_time,
       "nonceStr" => NonceStr.generate,
       "package" => "prepay_id=#{prepay_id}",
