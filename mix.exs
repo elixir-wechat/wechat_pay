@@ -21,7 +21,7 @@ defmodule WechatPay.Mixfile do
       homepage_url: @url,
       package: package,
       docs: [
-        main: "README", # The main page in the docs
+        main: "readme", # The main page in the docs
         extras: ["README.md"]
       ]
     ]
