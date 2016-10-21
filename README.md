@@ -4,7 +4,7 @@ WechatPay API wrapper in Elixir.
 
 [![Travis](https://img.shields.io/travis/linjunpop/wechat_pay.svg)](https://travis-ci.org/linjunpop/wechat_pay)
 [![Hex.pm](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
-┃ [![Inline docs](http://inch-ci.org/github/linjunpop/wechat_pay.svg)](http://inch-ci.org/github/linjunpop/wechat_pay)
+[![Inline docs](http://inch-ci.org/github/linjunpop/wechat_pay.svg)](http://inch-ci.org/github/linjunpop/wechat_pay)
 
 ## Installation
 
