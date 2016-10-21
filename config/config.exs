@@ -38,4 +38,3 @@ config :wechat_pay,
   ssl_certfile: "",
   ssl_keyfile: "",
   ssl_password: ""
-

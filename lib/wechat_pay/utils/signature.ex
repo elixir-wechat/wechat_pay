@@ -18,7 +18,8 @@ defmodule WechatPay.Utils.Signature do
       |> List.insert_at(-1, "key=#{Config.apikey}")
       |> Enum.join("&")
 
-    :crypto.hash(:md5, sign)
+    :md5
+    |> :crypto.hash(sign)
     |> Base.encode16
   end
 

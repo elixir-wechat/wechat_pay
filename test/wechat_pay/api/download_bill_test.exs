@@ -6,7 +6,13 @@ defmodule WechatPay.API.DownloadBillTest do
 
   test "download bills" do
     use_cassette "download_bill" do
-      {:ok, data} = DownloadBill.request(device_info: "013467007045764", bill_date: "20140603", bill_type: "ALL")
+      params = %{
+        device_info: "013467007045764",
+        bill_date: "20140603",
+        bill_type: "ALL"
+      }
+
+      {:ok, data} = DownloadBill.request(params)
 
       assert data =~ ~r/公众账号ID/
     end

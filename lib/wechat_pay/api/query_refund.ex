@@ -12,7 +12,11 @@ defmodule WechatPay.API.QueryRefund do
 
   ## Examples
 
-      iex> WechatPay.API.QueryRefund.request(%{device_info: "WEB", out_trade_no: "1415757673"})
+      iex> params = %{
+      ...>   device_info: "WEB",
+      ...>   out_trade_no: "1415757673"
+      ...> }
+      iex> WechatPay.API.QueryRefund.request(params)
       {:ok, data}
   """
   def request(params \\ %{}) do

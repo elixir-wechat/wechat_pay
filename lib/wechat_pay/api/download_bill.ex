@@ -12,7 +12,12 @@ defmodule WechatPay.API.DownloadBill do
 
   ## Examples
 
-      iex> WechatPay.API.DownloadBill.request(device_info: "013467007045764", bill_date: "20140603", bill_type: "ALL")
+      iex> params = %{
+      ...>   device_info: "013467007045764",
+      ...>   bill_date: "20140603",
+      ...>   bill_type: "ALL"
+      ...> }
+      iex> WechatPay.API.DownloadBill.request(params)
       {:ok, data}
   """
   def request(params \\ %{}) do
