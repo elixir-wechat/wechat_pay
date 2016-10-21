@@ -49,8 +49,12 @@ defmodule WechatPay.Mixfile do
       {:poison, "~> 2.2 or ~> 3.0"},
       {:sweet_xml, "~> 0.6"},
       {:plug, "~> 1.2"},
-      {:ex_doc, "~> 0.14", only: :dev},
-      {:exvcr, "~> 0.7", only: :test}
+
+      {:exvcr, "~> 0.7", only: :test},
+      {:credo, "~> 0.4", only: [:dev, :test]},
+
+      {:inch_ex, "~> 0.2", only: :docs},
+      {:ex_doc, "~> 0.14", only: :docs}
     ]
   end
 
