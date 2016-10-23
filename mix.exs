@@ -53,9 +53,10 @@ defmodule WechatPay.Mixfile do
       {:exvcr, "~> 0.7", only: :test},
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:dogma, "~> 0.1", only: :dev},
+      {:dialyxir, "~> 0.3", only: :dev},
 
       {:inch_ex, "~> 0.2", only: :docs},
-      {:ex_doc, "~> 0.14", only: :docs}
+      {:ex_doc, "~> 0.14", only: [:dev, :docs]}
     ]
   end
 

@@ -1,5 +1,7 @@
 defmodule WechatPay.Utils.Signature do
-  @moduledoc false
+  @moduledoc """
+  Module to sign data
+  """
 
   alias WechatPay.Config
 
@@ -8,6 +10,7 @@ defmodule WechatPay.Utils.Signature do
 
   Returns signed data.
   """
+  @spec sign(map) :: String.t
   def sign(data) when is_map(data) do
     sign =
       data

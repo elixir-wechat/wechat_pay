@@ -15,6 +15,7 @@ defmodule WechatPay.API.QueryOrder do
       iex> WechatPay.API.QueryOrder.request(%{out_trade_no: "1415757673"})
       {:ok, data}
   """
+  @spec request(map) :: {:ok, map} | {:error, any}
   def request(params \\ %{}) do
     order =
       WechatPay.API.QueryOrder.Order

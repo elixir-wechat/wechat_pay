@@ -61,6 +61,7 @@ defmodule WechatPay.Plug.Notify do
   If the data is success and verified, the result value will
   be assigned to private `:wechat_pay_result` key of the `Plug.Conn.t` object.
   """
+  @spec handle_wechat_pay_callback(Plug.Conn.t, keyword()) :: Plug.Conn.t
   def handle_wechat_pay_callback(conn, _opts) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
@@ -90,6 +91,7 @@ defmodule WechatPay.Plug.Notify do
 
   to server
   """
+  @spec response_with_success_info(Plug.Conn.t) :: Plug.Conn.t
   def response_with_success_info(conn) do
     body = ~s"""
       <xml>

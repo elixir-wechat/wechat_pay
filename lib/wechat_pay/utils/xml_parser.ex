@@ -1,11 +1,14 @@
 defmodule WechatPay.Utils.XMLParser do
-  @moduledoc false
+  @moduledoc """
+  Module to convert a XML string to map
+  """
 
   import SweetXml
 
   @doc """
-  Convert a xml string to map
+  Convert a XML string to map
   """
+  @spec parse(String.t) :: map
   def parse(data) when is_binary(data) do
     data
     |> xpath(~x"/xml/child::*"l)

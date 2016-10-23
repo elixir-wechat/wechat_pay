@@ -1,9 +1,12 @@
 defmodule WechatPay.Utils.NonceStr do
-  @moduledoc false
+  @moduledoc """
+  Module to generate nonce string value
+  """
 
   @doc """
   Generate a nonce string
   """
+  @spec generate() :: String.t
   def generate do
     length = 31
 

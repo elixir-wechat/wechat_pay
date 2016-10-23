@@ -17,6 +17,7 @@ defmodule WechatPay.API.Client do
   then verify the connection & business result,
   then verify the sign.
   """
+  @spec post(String.t, map, keyword) :: {:ok, map} | {:error, any}
   def post(path, data, options \\ []) do
     path = base_url <> path
 
@@ -52,6 +53,7 @@ defmodule WechatPay.API.Client do
   Post data
   then verify the connection & business result.
   """
+  @spec post_without_verify_sign(String.t, map, keyword) :: {:ok, map} | {:error, any}
   def post_without_verify_sign(path, data, options \\ []) do
     path = base_url <> path
 
@@ -87,6 +89,7 @@ defmodule WechatPay.API.Client do
   then verify the connection & business result,
   then verify the sign.
   """
+  @spec ssl_post(String.t, map, keyword) :: {:ok, map} | {:error, any}
   def ssl_post(path, data, options \\ []) do
     secure_options = [
       hackney: [ # :hackney options
@@ -104,6 +107,7 @@ defmodule WechatPay.API.Client do
   @doc """
   Download text data
   """
+  @spec download_text(String.t, map, keyword) :: {:ok, String.t}
   def download_text(path, data, options \\ []) do
     path = base_url <> path
 

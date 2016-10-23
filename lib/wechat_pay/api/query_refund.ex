@@ -19,6 +19,7 @@ defmodule WechatPay.API.QueryRefund do
       iex> WechatPay.API.QueryRefund.request(params)
       {:ok, data}
   """
+  @spec request(map) :: {:ok, map} | {:error, any}
   def request(params \\ %{}) do
     request_data =
       WechatPay.API.QueryRefund.RequestData

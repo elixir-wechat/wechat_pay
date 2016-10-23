@@ -15,6 +15,7 @@ defmodule WechatPay.API.ShortenURL do
       iex> WechatPay.API.ShortenURL.request("weixin://wxpay/bizpayurl?sign=XXXXX&appid=XXXXX&mch_id=XXXXX&product_id=XXXXXX&time_stamp=XXXXXX&nonce_str=XXXXX")
       {:ok, url}
   """
+  @spec request(String.t) :: {:ok, String.t} | {:error, any}
   def request(url) do
     Client.post(@api_path, %{long_url: URI.encode(url)})
   end

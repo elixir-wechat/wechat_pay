@@ -1,9 +1,12 @@
 defmodule WechatPay.Utils.XMLBuilder do
-  @moduledoc false
+  @moduledoc """
+  Module to convert a map to XML string
+  """
 
   @doc """
-  Convert a map to xml string
+  Convert a map to XML string
   """
+  @spec to_xml(map) :: String.t
   def to_xml(data) when is_map(data) do
     data
     |> Map.to_list()

@@ -22,6 +22,7 @@ defmodule WechatPay.HTML do
         "paySign" => "70EA570631E4BB79628FBCA90534C63FF7FADD89"
        }
   """
+  @spec generate_pay_request(String.t) :: map
   def generate_pay_request(prepay_id) when is_binary(prepay_id) do
     %{
       "appId" => Config.appid,
