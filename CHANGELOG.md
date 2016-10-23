@@ -1,6 +1,7 @@
 # master
 
 * Fixes hexdocs.pm does not recognize upcase in URL.
+* Improve docs.
 
 # v0.1.0
 
