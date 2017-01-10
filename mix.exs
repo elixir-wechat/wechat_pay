@@ -19,7 +19,7 @@ defmodule WechatPay.Mixfile do
       description: "WechatPay API wrapper in Elixir",
       source_url: @url,
       homepage_url: @url,
-      package: package,
+      package: package(),
       docs: [
         main: "readme", # The main page in the docs
         extras: ["README.md"]

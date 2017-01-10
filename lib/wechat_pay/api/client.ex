@@ -19,7 +19,7 @@ defmodule WechatPay.API.Client do
   """
   @spec post(String.t, map, keyword) :: {:ok, map} | {:error, any}
   def post(path, data, options \\ []) do
-    path = base_url <> path
+    path = base_url() <> path
 
     headers = [
       {"Accept", "application/xml"},
@@ -55,7 +55,7 @@ defmodule WechatPay.API.Client do
   """
   @spec post_without_verify_sign(String.t, map, keyword) :: {:ok, map} | {:error, any}
   def post_without_verify_sign(path, data, options \\ []) do
-    path = base_url <> path
+    path = base_url() <> path
 
     headers = [
       {"Accept", "application/xml"},
@@ -109,7 +109,7 @@ defmodule WechatPay.API.Client do
   """
   @spec download_text(String.t, map, keyword) :: {:ok, String.t}
   def download_text(path, data, options \\ []) do
-    path = base_url <> path
+    path = base_url() <> path
 
     headers = [
       {"Accept", "text/plain"},
