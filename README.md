@@ -2,7 +2,7 @@
 
 WechatPay API wrapper in Elixir.
 
-:warning: still in early stage, might changes frequently.
+:warning: Be careful, some of the Wechat's [API docs](https://pay.weixin.qq.com/wiki/doc/api/index.html) are inconsistent with the real API endpoints. I only test those APIs on a Wechat MP App.
 
 [![Travis](https://img.shields.io/travis/linjunpop/wechat_pay.svg)](https://travis-ci.org/linjunpop/wechat_pay)
 [![Hex.pm](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
