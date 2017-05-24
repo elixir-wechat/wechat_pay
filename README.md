@@ -36,7 +36,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 use Mix.Config
 
 config :wechat_pay,
-  env: :sandbox,
+  env: :sandbox, # or :production
   appid: "wx8888888888888888",
   mch_id: "1900000109",
   apikey: "192006250b4c09247ec02edce69f6a2d",
@@ -52,22 +52,6 @@ config :wechat_pay,
 > then call `WechatPay.API.Client.get_sandbox_signkey()` to get the sandbox apikey,
 > then replace the `apikey` with this one.
 > It's verbose, but it's a workaround for using in the sandbox env.
-
-Or in production
-
-```elixir
-use Mix.Config
-
-config :wechat_pay,
-  env: :production,
-  appid: {:system, "WECHAT_PAY_APP_ID"},
-  mch_id: {:system, "WECHAT_PAY_MCH_ID"},
-  apikey: {:system, "WECHAT_PAY_API_KEY"},
-  ssl_cacertfile: {:system, "WECHAT_PAY_SSL_CA_CERTFILE"},
-  ssl_certfile: {:system, "WECHAT_PAY_SSL_CERTFILE"},
-  ssl_keyfile: {:system, "WECHAT_PAY_SSL_KEYFILE"},
-  ssl_password: {:system, "WECHAT_PAY_SSL_PASSWORD"}
-```
 
 ### APIs
 
