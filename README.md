@@ -107,7 +107,7 @@ params = %{
   openid: User.openid(user),
 }
 
-case WechatPay.place_order(params) do
+case WechatPay.API.place_order(params) do
   {:ok, order} ->
     order
   {:error, reason} ->
@@ -117,7 +117,7 @@ end
 
 ## Plug
 
-There's a plug `WechatPay.Plug.Callback` to handle callback fron Wechat's server
+There's a plug `WechatPay.Plug.Callback` to handle callback from Wechat's server
 
 ```elixir
 defmodule MyApp.Web.WechatPayController do
