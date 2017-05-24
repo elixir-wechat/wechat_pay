@@ -2,6 +2,8 @@ defmodule WechatPay.Plug.Callback do
   defmodule Handler do
     @callback handle_success(Plug.Conn.t, map) :: any
     @callback handle_error(Plug.Conn.t, any, map) :: any
+
+    @optional_callbacks handle_error: 3
   end
 
   @moduledoc """
@@ -82,7 +84,9 @@ defmodule WechatPay.Plug.Callback do
       |> response_with_success_info()
     else
       {:error, reason} ->
-        apply(handler_module, :handle_error, [conn, reason, data])
+        if function_exported?(handler_module, :handle_error, 3) do
+          apply(handler_module, :handle_error, [conn, reason, data])
+        end
 
         conn
         |> send_resp(:unprocessable_entity, reason)
