@@ -15,9 +15,11 @@ defmodule WechatPay.Plug.Callback do
       defmodule MyApp.Web.WechatPayController do
         use MyApp.Web, :controller
 
-        @behaviour WechatPay.Plug.Callback.Handler
+        plug WechatPay.Plug.Callback, handler: MyApp.WechatPayCallbackHandler
+      end
 
-        plug WechatPay.Plug.Callback, handler: MyApp.Web.WechatPayController
+      defmodule MyApp.WechatPayCallbackHandler do
+        @behaviour WechatPay.Plug.Callback.Handler
 
         def handle_success(conn, data) do
           IO.inspect data
@@ -83,7 +85,7 @@ defmodule WechatPay.Plug.Callback do
         apply(handler_module, :handle_error, [conn, reason, data])
 
         conn
-        |> send_resp(:unprocessable_entity, "")
+        |> send_resp(:unprocessable_entity, reason)
     end
   end
 
