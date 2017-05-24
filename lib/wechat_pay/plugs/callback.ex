@@ -1,5 +1,9 @@
 defmodule WechatPay.Plug.Callback do
   defmodule Handler do
+    @moduledoc """
+    The behaviour for callback handler.
+    """
+
     @callback handle_success(conn :: Plug.Conn.t, data :: map) :: any
     @callback handle_error(conn :: Plug.Conn.t, error :: any, data :: map) :: any
 

@@ -172,7 +172,7 @@ defmodule WechatPay.API.Client do
   end
 
   defp process_response(%HTTPoison.Response{status_code: 200} = response) do
-    data = 
+    data =
       response.body
       |> XMLParser.parse()
 
