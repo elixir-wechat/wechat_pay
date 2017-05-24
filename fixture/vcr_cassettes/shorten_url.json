@@ -9,7 +9,7 @@
       "method": "post",
       "options": [],
       "request_body": "",
-      "url": "https://api.mch.weixin.qq.com/sandbox/tools/shorturl"
+      "url": "https://api.mch.weixin.qq.com/sandboxnew/tools/shorturl"
     },
     "response": {
       "body": "<xml><return_code><![CDATA[SUCCESS]]></return_code>\n<return_msg><![CDATA[OK]]></return_msg>\n<mch_id><![CDATA[1900000109]]></mch_id>\n<appid><![CDATA[wx8888888888888888]]></appid>\n<result_code><![CDATA[SUCCESS]]></result_code>\n<short_url><![CDATA[weixin://wxpay/bizpayurl?pr=I1kiguB]]></short_url>\n<nonce_str><![CDATA[FNCnURScXoxQRNwr]]></nonce_str>\n<sign><![CDATA[4F0B137092E1353C230E8EA344C0B775]]></sign>\n</xml>",

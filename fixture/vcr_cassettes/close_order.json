@@ -9,7 +9,7 @@
       "method": "post",
       "options": [],
       "request_body": "",
-      "url": "https://api.mch.weixin.qq.com/sandbox/pay/closeorder"
+      "url": "https://api.mch.weixin.qq.com/sandboxnew/pay/closeorder"
     },
     "response": {
       "body": "<xml>\n   <return_code><![CDATA[SUCCESS]]></return_code>\n   <return_msg><![CDATA[OK]]></return_msg>\n   <appid><![CDATA[wx2421b1c4370ec43b]]></appid>\n   <mch_id><![CDATA[10000100]]></mch_id>\n   <nonce_str><![CDATA[BFK89FC6rxKCOjLX]]></nonce_str>\n   <sign><![CDATA[808C1D11E84411F8DF1DF1ADC960B491]]></sign>\n   <result_code><![CDATA[SUCCESS]]></result_code>\n   <result_msg><![CDATA[OK]]></result_msg>\n</xml>",

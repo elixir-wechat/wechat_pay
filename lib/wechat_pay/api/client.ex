@@ -9,7 +9,7 @@ defmodule WechatPay.API.Client do
   alias WechatPay.Utils.NonceStr
   alias WechatPay.Utils.Signature
 
-  @sandbox_url "https://api.mch.weixin.qq.com/sandbox/"
+  @sandbox_url "https://api.mch.weixin.qq.com/sandboxnew/"
   @production_url "https://api.mch.weixin.qq.com/"
 
   @doc """
@@ -19,30 +19,10 @@ defmodule WechatPay.API.Client do
   """
   @spec post(String.t, map, keyword) :: {:ok, map} | {:error, any}
   def post(path, data, options \\ []) do
-    path = base_url() <> path
-
-    headers = [
-      {"Accept", "application/xml"},
-      {"Content-Type", "application/xml"}
-    ]
-
-    request_data =
-      data
-      |> append_ids
-      |> generate_nonce_str
-      |> sign
-      |> XMLBuilder.to_xml
-
-    response = HTTPoison.post!(path, request_data, headers, options)
-
-    response_data =
-      response.body
-      |> XMLParser.parse()
-
-    with {:ok, data} <- process_connection_result(response_data),
-      {:ok, data} <- process_business_result(data),
+    with(
+      {:ok, data} <- post_without_verify_sign(path, data, options),
       {:ok, data} <- verify_sign(data)
-    do
+    ) do
       {:ok, data}
     else
       err -> err
@@ -71,13 +51,11 @@ defmodule WechatPay.API.Client do
 
     response = HTTPoison.post!(path, request_data, headers, options)
 
-    response_data =
-      response.body
-      |> XMLParser.parse()
-
-    with {:ok, data} <- process_connection_result(response_data),
+    with(
+      {:ok, response_data} <- process_response(response),
+      {:ok, data} <- process_connection_result(response_data),
       {:ok, data} <- process_business_result(data)
-    do
+    ) do
       {:ok, data}
     else
       err -> err
@@ -128,6 +106,36 @@ defmodule WechatPay.API.Client do
     {:ok, response.body}
   end
 
+  @doc """
+  Get the Sandbox API key
+  """
+  @spec get_sandbox_signkey :: {:ok, String.t} | {:error, any}
+  def get_sandbox_signkey do
+    path = base_url() <> "pay/getsignkey"
+
+    headers = [
+      {"Accept", "text/plain"},
+      {"Content-Type", "application/xml"}
+    ]
+
+    request_data =
+      %{mch_id: Config.mch_id}
+      |> generate_nonce_str
+      |> sign
+      |> XMLBuilder.to_xml
+
+    response = HTTPoison.post!(path, request_data, headers)
+
+    with(
+      {:ok, response_data} <- process_response(response),
+      {:ok, data} <- process_connection_result(response_data)
+    ) do
+      {:ok, data}
+    else
+      err -> err
+    end
+  end
+
   defp base_url do
     case Config.env do
       :sandbox ->
@@ -161,6 +169,17 @@ defmodule WechatPay.API.Client do
 
     data
     |> Map.merge(%{sign: sign})
+  end
+
+  defp process_response(%HTTPoison.Response{status_code: 200} = response) do
+    data = 
+      response.body
+      |> XMLParser.parse()
+
+    {:ok, data}
+  end
+  defp process_response(%HTTPoison.Response{status_code: 404}) do
+    {:error, "404 Not Found"}
   end
 
   defp process_connection_result(%{return_code: "SUCCESS"} = data) do

@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "<xml><mch_id><![CDATA[1379063802]]></mch_id><nonce_str><![CDATA[RnpLpOf__kgRDRJ5ghUp-Pk5AcCYI6-]]></nonce_str><sign><![CDATA[F3E4CBDB0AFE5FF6C6DCCF3CCC55CB28]]></sign></xml>",
+      "headers": {
+        "Accept": "text/plain",
+        "Content-Type": "application/xml"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey"
+    },
+    "response": {
+      "body": "<xml>\n  <return_code><![CDATA[SUCCESS]]></return_code>\n  <return_msg><![CDATA[ok]]></return_msg>\n  <sandbox_signkey><![CDATA[bd1c50c287f1f5d4c9bd602c4fba6f8a]]></sandbox_signkey>\n</xml>",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Wed, 24 May 2017 00:38:54 GMT",
+        "Content-Type": "text/plain;charset=utf-8",
+        "Content-Length": "185",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=8",
+        "from": "sandbox"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

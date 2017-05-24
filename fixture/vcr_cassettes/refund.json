@@ -16,7 +16,7 @@
         }
       },
       "request_body": "",
-      "url": "https://api.mch.weixin.qq.com/sandbox/secapi/pay/refund"
+      "url": "https://api.mch.weixin.qq.com/sandboxnew/secapi/pay/refund"
     },
     "response": {
       "body": "closed",

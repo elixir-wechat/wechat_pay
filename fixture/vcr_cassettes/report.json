@@ -9,7 +9,7 @@
       "method": "post",
       "options": [],
       "request_body": "",
-      "url": "https://api.mch.weixin.qq.com/sandbox/payitil/report"
+      "url": "https://api.mch.weixin.qq.com/sandboxnew/payitil/report"
     },
     "response": {
       "body": "<xml>\n<return_code><![CDATA[SUCCESS]]></return_code>\n<return_msg><![CDATA[]]></return_msg>\n<result_code><![CDATA[SUCCESS]]></result_code>\n<err_code><![CDATA[0]]></err_code>\n<err_code_des><![CDATA[]]></err_code_des>\n</xml>",
