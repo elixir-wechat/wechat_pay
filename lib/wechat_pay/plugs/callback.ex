@@ -88,6 +88,8 @@ defmodule WechatPay.Plug.Callback do
       |> response_with_success_info()
     else
       {:error, reason} ->
+        # if handler_module.handle_error/3 does not exists, skip it
+        Code.ensure_loaded(handler_module)
         if function_exported?(handler_module, :handle_error, 3) do
           apply(handler_module, :handle_error, [conn, reason, data])
         end
