@@ -1,8 +1,20 @@
-defmodule WechatPay.Plug.NotifyTest do
+defmodule WechatPay.Plug.CallbackTest do
   use ExUnit.Case, async: false
   use Plug.Test
 
-  alias WechatPay.Plug.Notify
+  alias WechatPay.Plug.Callback
+
+  @behaviour WechatPay.Plug.Callback.Handler
+
+  def handle_success(_conn, data) do
+    assert data.appid == "wx2421b1c4370ec43b"
+    assert data.result_code == "SUCCESS"
+  end
+
+  def handle_error(_conn, reason, data) do
+    assert reason == "签名失败"
+    assert data.return_code == "FAIL"
+  end
 
   describe "receive notification from Wechat's payment gateway" do
     test "handle success" do
@@ -30,13 +42,9 @@ defmodule WechatPay.Plug.NotifyTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = Notify.init([])
-      conn = Notify.call(conn, opts)
+      opts = Callback.init([handler: WechatPay.Plug.CallbackTest])
 
-      result = conn.private[:wechat_pay_result]
-
-      assert result.appid == "wx2421b1c4370ec43b"
-      assert result.result_code == "SUCCESS"
+      Callback.call(conn, opts)
     end
 
     test "handle error" do
@@ -49,10 +57,8 @@ defmodule WechatPay.Plug.NotifyTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = Notify.init([])
-      conn = Notify.call(conn, opts)
-
-      assert conn.status == 422
+      opts = Callback.init([handler: WechatPay.Plug.CallbackTest])
+      Callback.call(conn, opts)
     end
   end
 end

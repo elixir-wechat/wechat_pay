@@ -133,46 +133,42 @@ end
 
 ## Plug
 
-There's a plug `WechatPay.Plug.Notify` to handle callback fron Wechat's server
+There's a plug `WechatPay.Plug.Callback` to handle callback fron Wechat's server
 
 ```elixir
-defmodule MyApp.WechatPayController do
+defmodule MyApp.Web.WechatPayController do
   use MyApp.Web, :controller
 
-  plug WechatPay.Plug.Notify
+  @behaviour WechatPay.Plug.Callback.Handler
 
-  def callback(conn, _parasm) do
-    data = conn.private[:wechat_pay_result]
+  plug WechatPay.Plug.Callback, handler: MyApp.Web.WechatPayController
 
-    case data.result_code do
-      "SUCCESS" ->
-        IO.inspect data
-        # %{
-        #   appid: "wx2421b1c4370ec43b",
-        #   attach: "支付测试",
-        #   bank_type: "CFT",
-        #   fee_type: "CNY",
-        #   is_subscribe: "Y",
-        #   mch_id: "10000100",
-        #   nonce_str: "5d2b6c2a8db53831f7eda20af46e531c",
-        #   openid: "oUpF8uMEb4qRXf22hE3X68TekukE",
-        #   out_trade_no: "1409811653",
-        #   result_code: "SUCCESS",
-        #   return_code: "SUCCESS",
-        #   sign: "594B6D97F089D24B55156CE09A5FF412",
-        #   sub_mch_id: "10000100",
-        #   time_end: "20140903131540",
-        #   total_fee: "1",
-        #   trade_type: "JSAPI",
-        #   transaction_id: "1004400740201409030005092168"
-        # }
+  def handle_success(conn, data) do
+    IO.inspect data
+    # %{
+    #   appid: "wx2421b1c4370ec43b",
+    #   attach: "支付测试",
+    #   bank_type: "CFT",
+    #   fee_type: "CNY",
+    #   is_subscribe: "Y",
+    #   mch_id: "10000100",
+    #   nonce_str: "5d2b6c2a8db53831f7eda20af46e531c",
+    #   openid: "oUpF8uMEb4qRXf22hE3X68TekukE",
+    #   out_trade_no: "1409811653",
+    #   result_code: "SUCCESS",
+    #   return_code: "SUCCESS",
+    #   sign: "594B6D97F089D24B55156CE09A5FF412",
+    #   sub_mch_id: "10000100",
+    #   time_end: "20140903131540",
+    #   total_fee: "1",
+    #   trade_type: "JSAPI",
+    #   transaction_id: "1004400740201409030005092168"
+    # }
+  end
 
-        conn
-        |> WechatPay.Plug.Notify.response_with_success_info
-      _ ->
-        conn
-        |> send_resp(:unprocessable_entity, "")
-    end
+  def handle_error(conn, reason, data) do
+    reason == "签名失败"
+    data.return_code == "FAIL"
   end
 end
 ```
