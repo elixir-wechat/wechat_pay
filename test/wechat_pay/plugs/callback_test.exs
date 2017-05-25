@@ -7,9 +7,11 @@ defmodule WechatPay.Plug.CallbackTest do
   defmodule Handler do
     @behaviour WechatPay.Plug.Callback.Handler
 
-    def handle_success(_conn, data) do
+    def handle_data(_conn, data) do
       assert data.appid == "wx2421b1c4370ec43b"
       assert data.result_code == "SUCCESS"
+
+      :ok
     end
 
     def handle_error(_conn, reason, data) do
@@ -19,7 +21,7 @@ defmodule WechatPay.Plug.CallbackTest do
   end
 
   describe "receive notification from Wechat's payment gateway" do
-    test "handle success" do
+    test "handle data" do
       req = ~s"""
       <xml>
         <appid><![CDATA[wx2421b1c4370ec43b]]></appid>

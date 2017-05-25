@@ -4,7 +4,7 @@ defmodule WechatPay.Plug.Callback do
     The behaviour for callback handler.
     """
 
-    @callback handle_success(conn :: Plug.Conn.t, data :: map) :: any
+    @callback handle_data(conn :: Plug.Conn.t, data :: map) :: :ok | {:error, any}
     @callback handle_error(conn :: Plug.Conn.t, error :: any, data :: map) :: any
 
     @optional_callbacks handle_error: 3
@@ -27,7 +27,7 @@ defmodule WechatPay.Plug.Callback do
       defmodule MyApp.WechatPayCallbackHandler do
         @behaviour WechatPay.Plug.Callback.Handler
 
-        def handle_success(conn, data) do
+        def handle_data(conn, data) do
           IO.inspect data
           # %{
           #   appid: "wx2421b1c4370ec43b",
@@ -50,6 +50,7 @@ defmodule WechatPay.Plug.Callback do
           # }
         end
 
+        # optional
         def handle_error(conn, reason, data) do
           reason == "签名失败"
           data.return_code == "FAIL"
@@ -80,12 +81,10 @@ defmodule WechatPay.Plug.Callback do
 
     with(
       {:ok, data} <- process_result(data),
-      {:ok, data} <- verify_sign(data)
+      {:ok, data} <- verify_sign(data),
+      :ok <- apply(handler_module, :handle_data, [conn, data])
     ) do
-      apply(handler_module, :handle_success, [conn, data])
-
-      conn
-      |> response_with_success_info()
+      response_with_success_info(conn)
     else
       {:error, reason} ->
         # if handler_module.handle_error/3 does not exists, skip it

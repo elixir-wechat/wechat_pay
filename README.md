@@ -128,7 +128,7 @@ defmodule MyApp.Web.WechatPayController do
 
   plug WechatPay.Plug.Callback, handler: MyApp.Web.WechatPayController
 
-  def handle_success(conn, data) do
+  def handle_data(conn, data) do
     IO.inspect data
     # %{
     #   appid: "wx2421b1c4370ec43b",
