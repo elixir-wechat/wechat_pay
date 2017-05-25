@@ -9,9 +9,9 @@
       "method": "post",
       "options": {
         "ssl_options": {
-          "cacertfile": "",
-          "certfile": "",
-          "keyfile": "",
+          "cacertfile": "fixture/certs/all.pem",
+          "certfile": "fixture/certs/apiclient_cert.pem",
+          "keyfile": "fixture/certs/apiclient_key.pem",
           "password": []
         }
       },
@@ -19,10 +19,19 @@
       "url": "https://api.mch.weixin.qq.com/sandboxnew/secapi/pay/refund"
     },
     "response": {
-      "body": "closed",
-      "headers": [],
-      "status_code": null,
-      "type": "error"
+      "body": "<xml>\n  <openid><![CDATA[wxd930ea5d5a258f4f]]></openid>\n  <trade_type><![CDATA[JSAPI]]></trade_type>\n  <cash_fee_type><![CDATA[CNY]]></cash_fee_type>\n  <refund_id><![CDATA[1234567892017052508083864132]]></refund_id>\n  <cash_refund_fee><![CDATA[100]]></cash_refund_fee>\n  <nonce_str><![CDATA[vOPVEDe9SCYLGXfFYtMps2XMOYzDhdf]]></nonce_str>\n  <return_code><![CDATA[SUCCESS]]></return_code>\n  <refund_fee_type><![CDATA[CNY]]></refund_fee_type>\n  <mch_id><![CDATA[1900000109]]></mch_id>\n  <sign><![CDATA[D500950864B29EBF9752BC37A3227DF5]]></sign>\n  <cash_fee><![CDATA[100]]></cash_fee>\n  <refund_fee><![CDATA[100]]></refund_fee>\n  <err_msg><![CDATA[SUCCESS]]></err_msg>\n  <cash_refund_fee_type><![CDATA[CNY]]></cash_refund_fee_type>\n  <return_msg><![CDATA[OK]]></return_msg>\n  <fee_type><![CDATA[CNY]]></fee_type>\n  <bank_type><![CDATA[CMC]]></bank_type>\n  <device_info><![CDATA[013467007045764]]></device_info>\n  <out_trade_no><![CDATA[1217752501201407033233368018]]></out_trade_no>\n  <transaction_id><![CDATA[1217752501201407033233368018]]></transaction_id>\n  <total_fee><![CDATA[100]]></total_fee>\n  <appid><![CDATA[wxb5e899ab07cf3072]]></appid>\n  <out_refund_no><![CDATA[1217752501201407033233368018]]></out_refund_no>\n  <result_code><![CDATA[SUCCESS]]></result_code>\n  <err_code><![CDATA[SUCCESS]]></err_code>\n</xml>",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Tue, 11 Oct 2016 02:52:57 GMT",
+        "Content-Type": "text/plain;charset=utf-8",
+        "Content-Length": "623",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=8",
+        "from": "sandbox"
+      },
+      "status_code": 200,
+      "type": "ok"
     }
   }
 ]
+

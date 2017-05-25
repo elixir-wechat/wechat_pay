@@ -67,8 +67,8 @@ defmodule WechatPay.API.Client do
   then verify the connection & business result,
   then verify the sign.
   """
-  @spec ssl_post(String.t, map, keyword) :: {:ok, map} | {:error, any}
-  def ssl_post(path, data, options \\ []) do
+  @spec sec_post(String.t, map, keyword) :: {:ok, map} | {:error, any}
+  def sec_post(path, data, options \\ []) do
     secure_options = [
       hackney: [ # :hackney options
         ssl_options: [ # :ssl options
@@ -171,15 +171,15 @@ defmodule WechatPay.API.Client do
     |> Map.merge(%{sign: sign})
   end
 
-  defp process_response(%HTTPoison.Response{status_code: 200} = response) do
+  defp process_response(%HTTPoison.Response{status_code: 200, body: body}) do
     data =
-      response.body
+      body
       |> XMLParser.parse()
 
     {:ok, data}
   end
-  defp process_response(%HTTPoison.Response{status_code: 404}) do
-    {:error, "404 Not Found"}
+  defp process_response(%HTTPoison.Response{body: body}) do
+    {:error, body}
   end
 
   defp process_connection_result(%{return_code: "SUCCESS"} = data) do
