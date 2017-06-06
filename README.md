@@ -50,7 +50,7 @@ config :wechat_pay,
 > :warning:
 > If the env is `:sandbox`,
 > you should fill the real `appid, mch_id, apikey` here,
-> then call `WechatPay.API.Client.get_sandbox_signkey()` to get the sandbox apikey,
+> then call `WechatPay.API.get_sandbox_signkey()` to get the sandbox apikey,
 > then replace the `apikey` with this one.
 > It's verbose, but it's a workaround for using in the sandbox env.
 

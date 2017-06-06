@@ -34,4 +34,8 @@ defmodule WechatPay.API do
   defdelegate shorten_url(url),
     to: WechatPay.API.ShortenURL,
     as: :request
+
+  defdelegate get_sandbox_signkey,
+    to: WechatPay.API.Client,
+    as: :get_sandbox_signkey
 end

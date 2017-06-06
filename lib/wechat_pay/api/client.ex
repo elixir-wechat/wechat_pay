@@ -111,7 +111,7 @@ defmodule WechatPay.API.Client do
   """
   @spec get_sandbox_signkey :: {:ok, String.t} | {:error, any}
   def get_sandbox_signkey do
-    path = base_url() <> "pay/getsignkey"
+    path = @sandbox_url <> "pay/getsignkey"
 
     headers = [
       {"Accept", "text/plain"},
