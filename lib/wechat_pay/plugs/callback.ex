@@ -18,23 +18,12 @@ defmodule WechatPay.Plug.Callback do
 
   ## A Phoenix Example
       # lib/my_app/web/router.ex
-      scope "/wechat", MyApp.Web, as: :wechat do
-        post "/pay/callback/2dkj8f0axkngfxf", WechatPayController, :callback
+      scope "/wechat", as: :wechat do
+        post "/pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
       end
 
-      # lib/web/my_app/wechat_pay_controller.ex
-      defmodule MyApp.Web.WechatPayController do
-        use MyApp.Web, :controller
-
-        plug WechatPay.Plug.Callback, handler: MyApp.WechatPayCallbackHandler
-
-        def callback(conn, _params) do
-          # nothing here. handled by the plug
-          conn
-        end
-      end
-
-      defmodule MyApp.WechatPayCallbackHandler do
+      # lib/my_app/wechat_pay/callback_handler.ex
+      defmodule MyApp.WechatPay.CallbackHandler do
         @behaviour WechatPay.Plug.Callback.Handler
 
         def handle_data(conn, data) do

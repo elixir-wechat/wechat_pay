@@ -126,30 +126,15 @@ Here's an [Pheonix](http://www.phoenixframework.org) example:
 
 ```elixir
 # lib/my_app/web/router.ex
-scope "/wechat", MyApp.Web, as: :wechat do
-  post "/pay/callback/2dkj8f0axkngfxf", WechatPayController, :callback
-end
-```
-
-### Controller
-
-```elixir
-# lib/web/my_app/wechat_pay_controller.ex
-defmodule MyApp.Web.WechatPayController do
-  use MyApp.Web, :controller
-
-  plug WechatPay.Plug.Callback, handler: MyApp.WechatPayCallbackHandler
-
-  def callback(conn, _params) do
-    # nothing here. handled by the plug
-    conn
-  end
+scope "/wechat", as: :wechat do
+  post "/pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
 end
 ```
 
 ### The Callback handler
 
 ```elixir
+# lib/my_app/wechat_pay/callback_handler.ex
 defmodule MyApp.WechatPayCallbackHandler do
   @behaviour WechatPay.Plug.Callback.Handler
 
