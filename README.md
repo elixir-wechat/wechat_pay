@@ -120,13 +120,38 @@ end
 
 There's a plug `WechatPay.Plug.Callback` to handle callback from Wechat's server
 
+Here's an [Pheonix](http://www.phoenixframework.org) example:
+
+### Router
+
 ```elixir
+# lib/my_app/web/router.ex
+scope "/wechat", MyApp.Web, as: :wechat do
+  post "/pay/callback/2dkj8f0axkngfxf", WechatPayController, :callback
+end
+```
+
+### Controller
+
+```elixir
+# lib/web/my_app/wechat_pay_controller.ex
 defmodule MyApp.Web.WechatPayController do
   use MyApp.Web, :controller
 
-  @behaviour WechatPay.Plug.Callback.Handler
+  plug WechatPay.Plug.Callback, handler: MyApp.WechatPayCallbackHandler
 
-  plug WechatPay.Plug.Callback, handler: MyApp.Web.WechatPayController
+  def callback(conn, _params) do
+    # nothing here. handled by the plug
+    conn
+  end
+end
+```
+
+### The Callback handler
+
+```elixir
+defmodule MyApp.WechatPayCallbackHandler do
+  @behaviour WechatPay.Plug.Callback.Handler
 
   def handle_data(conn, data) do
     IO.inspect data
@@ -151,6 +176,7 @@ defmodule MyApp.Web.WechatPayController do
     # }
   end
 
+  # optional
   def handle_error(conn, reason, data) do
     reason == "签名失败"
     data.return_code == "FAIL"

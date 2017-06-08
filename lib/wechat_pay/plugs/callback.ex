@@ -16,12 +16,22 @@ defmodule WechatPay.Plug.Callback do
   If the callback is success and verified, the result value will
   be assigned to private `:wechat_pay_result` key of the `Plug.Conn.t` object.
 
-  ## Example
+  ## A Phoenix Example
+      # lib/my_app/web/router.ex
+      scope "/wechat", MyApp.Web, as: :wechat do
+        post "/pay/callback/2dkj8f0axkngfxf", WechatPayController, :callback
+      end
 
+      # lib/web/my_app/wechat_pay_controller.ex
       defmodule MyApp.Web.WechatPayController do
         use MyApp.Web, :controller
 
         plug WechatPay.Plug.Callback, handler: MyApp.WechatPayCallbackHandler
+
+        def callback(conn, _params) do
+          # nothing here. handled by the plug
+          conn
+        end
       end
 
       defmodule MyApp.WechatPayCallbackHandler do
