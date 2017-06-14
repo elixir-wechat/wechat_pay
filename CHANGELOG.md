@@ -1,5 +1,6 @@
 # master
 
+* Correctly handle malformed XML data.
 * Added `WechatPay.Error`.
 * Fixes warnings on Elixir 1.4.
 * Added `WechatPay.API.get_sandbox_signkey/0` to get sandbox signkey.

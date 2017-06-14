@@ -77,22 +77,13 @@ defmodule WechatPay.Plug.Callback do
   def call(conn, [handler: handler_module]) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
-    data = XMLParser.parse(body)
-
     with(
-      {:ok, data} <- process_result(data),
-      {:ok, data} <- verify_sign(data),
-      :ok <- apply(handler_module, :handle_data, [conn, data])
+      {:ok, data} <- XMLParser.parse(body),
+      :ok <- process_data(conn ,data, handler_module)
     ) do
       response_with_success_info(conn)
     else
-      {:error, %Error{reason: reason} = error} ->
-        # if handler_module.handle_error/3 does not exists, skip it
-        Code.ensure_loaded(handler_module)
-        if function_exported?(handler_module, :handle_error, 3) do
-          apply(handler_module, :handle_error, [conn, error, data])
-        end
-
+      {:error, %Error{reason: reason}} ->
         conn
         |> send_resp(:unprocessable_entity, reason)
     end
@@ -111,10 +102,29 @@ defmodule WechatPay.Plug.Callback do
     |> send_resp(:ok, body)
   end
 
-  defp process_result(%{return_code: "SUCCESS"} = data) do
+  defp process_data(conn, data, handler_module) do
+    with(
+      {:ok, data} <- process_return_field(data),
+      {:ok, data} <- verify_sign(data),
+      :ok <- apply(handler_module, :handle_data, [conn, data])
+    ) do
+      :ok
+    else
+      {:error, %Error{reason: reason} = error} ->
+        # if handler_module.handle_error/3 does not exists, skip it
+        Code.ensure_loaded(handler_module)
+        if function_exported?(handler_module, :handle_error, 3) do
+          apply(handler_module, :handle_error, [conn, error, data])
+        end 
+
+        {:error, error}
+    end
+  end
+
+  defp process_return_field(%{return_code: "SUCCESS"} = data) do
     {:ok, data}
   end
-  defp process_result(%{return_code: "FAIL", return_msg: reason}) do
+  defp process_return_field(%{return_code: "FAIL", return_msg: reason}) do
     {:error, %Error{reason: reason, type: :failed_return}}
   end
 

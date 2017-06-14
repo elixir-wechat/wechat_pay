@@ -64,5 +64,19 @@ defmodule WechatPay.Plug.CallbackTest do
       opts = Callback.init([handler: WechatPay.Plug.CallbackTest.Handler])
       Callback.call(conn, opts)
     end
+
+    test "handle malformed request data" do
+      req = ~s"""
+      <xml
+      """
+
+      opts = Callback.init([handler: WechatPay.Plug.CallbackTest.Handler])
+
+      conn =
+        conn(:post, "/foo", req)
+        |> Callback.call(opts)
+
+      assert conn.resp_body == "Malformed XML"
+    end
   end
 end

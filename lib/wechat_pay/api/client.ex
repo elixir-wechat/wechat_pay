@@ -156,18 +156,11 @@ defmodule WechatPay.API.Client do
   end
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}) do
-    data =
-      body
-      |> XMLParser.parse()
-
-    {:ok, data}
+    body
+    |> XMLParser.parse()
   end
   defp process_response(%HTTPoison.Response{status_code: 201, body: body}) do
-    data =
-      body
-      |> XMLParser.parse()
-
-    {:error, %Error{reason: data.return_msg, type: :unprocessable_entity}}
+    {:error, %Error{reason: body, type: :unprocessable_entity}}
   end
   defp process_response(%HTTPoison.Response{body: body}) do
     {:error, %Error{reason: body, type: :unknown_response}}
