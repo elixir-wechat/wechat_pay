@@ -20,7 +20,7 @@ defmodule WechatPay.API.DownloadBill do
       iex> WechatPay.API.DownloadBill.request(params)
       {:ok, data}
   """
-  @spec request(map) :: {:ok, String.t}
+  @spec request(map) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
   def request(params \\ %{}) do
     request_data =
       WechatPay.API.DownloadBill.RequestData

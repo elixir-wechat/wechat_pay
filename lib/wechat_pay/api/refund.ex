@@ -10,6 +10,16 @@ defmodule WechatPay.API.Refund do
   @doc """
   Call the `#{@api_path}` API
 
+  This requires the ssl config is set
+
+  ```
+  config :wechat_pay,
+    ssl_cacertfile: "certs/ca.cert",
+    ssl_certfile: "certs/client.crt",
+    ssl_keyfile: "certs/client.key",
+    ssl_password: "test"
+  ```
+
   ## Examples
 
       iex> params = %{
@@ -26,7 +36,7 @@ defmodule WechatPay.API.Refund do
       iex> WechatPay.API.Refund.request(params)
       {:ok, data}
   """
-  @spec request(map) :: {:ok, map} | {:error, any}
+  @spec request(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
   def request(params \\ %{}) do
     request_data =
       WechatPay.API.Refund.RequestData

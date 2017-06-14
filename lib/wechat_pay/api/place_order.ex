@@ -28,7 +28,7 @@ defmodule WechatPay.API.PlaceOrder do
       })
       {:ok, data}
   """
-  @spec request(map) :: {:ok, map} | {:error, any}
+  @spec request(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
   def request(params \\ %{}) do
     order =
       WechatPay.API.PlaceOrder.Order

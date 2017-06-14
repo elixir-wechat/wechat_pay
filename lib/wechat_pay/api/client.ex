@@ -8,32 +8,28 @@ defmodule WechatPay.API.Client do
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.NonceStr
   alias WechatPay.Utils.Signature
+  alias WechatPay.Error
 
   @sandbox_url "https://api.mch.weixin.qq.com/sandboxnew/"
   @production_url "https://api.mch.weixin.qq.com/"
 
   @doc """
-  Post data
-  then verify the connection & business result,
-  then verify the sign.
+  Post data while verifying the signature
   """
-  @spec post(String.t, map, keyword) :: {:ok, map} | {:error, any}
+  @spec post(String.t, map, keyword) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
   def post(path, data, options \\ []) do
     with(
       {:ok, data} <- post_without_verify_sign(path, data, options),
       {:ok, data} <- verify_sign(data)
     ) do
       {:ok, data}
-    else
-      err -> err
     end
   end
 
   @doc """
-  Post data
-  then verify the connection & business result.
+  Post data without verifying the signature
   """
-  @spec post_without_verify_sign(String.t, map, keyword) :: {:ok, map} | {:error, any}
+  @spec post_without_verify_sign(String.t, map, keyword) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
   def post_without_verify_sign(path, data, options \\ []) do
     path = base_url() <> path
 
@@ -49,25 +45,20 @@ defmodule WechatPay.API.Client do
       |> sign
       |> XMLBuilder.to_xml
 
-    response = HTTPoison.post!(path, request_data, headers, options)
-
     with(
+      {:ok, response} <- HTTPoison.post(path, request_data, headers, options),
       {:ok, response_data} <- process_response(response),
-      {:ok, data} <- process_connection_result(response_data),
-      {:ok, data} <- process_business_result(data)
+      {:ok, data} <- process_return_field(response_data),
+      {:ok, data} <- process_result_field(data)
     ) do
       {:ok, data}
-    else
-      err -> err
     end
   end
 
   @doc """
-  Post data with SSL certs,
-  then verify the connection & business result,
-  then verify the sign.
+  Post data with SSL certs
   """
-  @spec sec_post(String.t, map, keyword) :: {:ok, map} | {:error, any}
+  @spec sec_post(String.t, map, keyword) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
   def sec_post(path, data, options \\ []) do
     secure_options = [
       hackney: [ # :hackney options
@@ -85,7 +76,7 @@ defmodule WechatPay.API.Client do
   @doc """
   Download text data
   """
-  @spec download_text(String.t, map, keyword) :: {:ok, String.t}
+  @spec download_text(String.t, map, keyword) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
   def download_text(path, data, options \\ []) do
     path = base_url() <> path
 
@@ -101,15 +92,15 @@ defmodule WechatPay.API.Client do
       |> sign
       |> XMLBuilder.to_xml
 
-    response = HTTPoison.post!(path, request_data, headers, options)
-
-    {:ok, response.body}
+    with {:ok, response} <- HTTPoison.post(path, request_data, headers, options) do
+      {:ok, response.body}
+    end
   end
 
   @doc """
   Get the Sandbox API key
   """
-  @spec get_sandbox_signkey :: {:ok, String.t} | {:error, any}
+  @spec get_sandbox_signkey :: {:ok, String.t} | {:error, Error.t | HTTPoison.Error.t}
   def get_sandbox_signkey do
     path = @sandbox_url <> "pay/getsignkey"
 
@@ -124,15 +115,12 @@ defmodule WechatPay.API.Client do
       |> sign
       |> XMLBuilder.to_xml
 
-    response = HTTPoison.post!(path, request_data, headers)
-
     with(
+      {:ok, response} <- HTTPoison.post(path, request_data, headers),
       {:ok, response_data} <- process_response(response),
-      {:ok, data} <- process_connection_result(response_data)
+      {:ok, data} <- process_return_field(response_data)
     ) do
       {:ok, data}
-    else
-      err -> err
     end
   end
 
@@ -178,25 +166,33 @@ defmodule WechatPay.API.Client do
 
     {:ok, data}
   end
+  defp process_response(%HTTPoison.Response{status_code: 201, body: body}) do
+    data =
+      body
+      |> XMLParser.parse()
+
+    {:error, %Error{reason: data.return_msg, type: :unprocessable_entity}}
+  end
   defp process_response(%HTTPoison.Response{body: body}) do
-    {:error, body}
+    {:error, %Error{reason: body, type: :unknown_response}}
   end
 
-  defp process_connection_result(%{return_code: "SUCCESS"} = data) do
+  defp process_return_field(%{return_code: "SUCCESS"} = data) do
     {:ok, data}
   end
-  defp process_connection_result(%{return_code: "FAIL", return_msg: reason}) do
-    {:error, reason}
+  defp process_return_field(%{return_code: "FAIL", return_msg: reason}) do
+    {:error, %Error{reason: reason, type: :failed_return}}
   end
 
-  defp process_business_result(%{result_code: "SUCCESS"} = data) do
+  defp process_result_field(%{result_code: "SUCCESS"} = data) do
     {:ok, data}
   end
-  defp process_business_result(%{result_code: "FAIL", err_code: code, err_code_des: desc}) do
-    {:error, "Code: #{code}, msg: #{desc}, detail: http://wxpay.weixin.qq.com/errcode/index.php?interface=&errCode=#{code}&errReason="}
+  defp process_result_field(%{result_code: "FAIL", err_code: code, err_code_des: desc}) do
+    {:error, %Error{reason: "Code: #{code}, msg: #{desc}", type: :failed_result}}
   end
-  defp process_business_result(%{result_code: "FAIL", err_code: code, err_msg: desc}) do
-    process_business_result(%{result_code: "FAIL", err_code: code, err_code_des: desc})
+  defp process_result_field(%{result_code: "FAIL", err_code: code, err_msg: desc}) do
+    # sometimes the `err_code_des` is replaced by `err_msg`.
+    process_result_field(%{result_code: "FAIL", err_code: code, err_code_des: desc})
   end
 
   defp verify_sign(data) do
@@ -210,7 +206,7 @@ defmodule WechatPay.API.Client do
     if sign == calculated do
       {:ok, data}
     else
-      {:error, "invalid signature of wechat's response"}
+      {:error, %Error{reason: "Invalid signature of wechat's response", type: :invalid_signature}}
     end
   end
 end

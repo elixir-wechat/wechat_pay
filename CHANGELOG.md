@@ -1,5 +1,6 @@
 # master
 
+* Added `WechatPay.Error`.
 * Fixes warnings on Elixir 1.4.
 * Added `WechatPay.API.get_sandbox_signkey/0` to get sandbox signkey.
 * Rename `WechatPay.Plug.Notify` -> `WechatPay.Plug.Callback`, and rewrite the

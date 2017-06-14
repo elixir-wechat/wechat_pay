@@ -28,7 +28,7 @@ defmodule WechatPay.API.Report do
       iex> WechatPay.API.Report.request(params)
       {:ok, data}
   """
-  @spec request(map) :: {:ok, map} | {:error, any}
+  @spec request(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
   def request(params \\ %{}) do
     request_data =
       WechatPay.API.Report.RequestData

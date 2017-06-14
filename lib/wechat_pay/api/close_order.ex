@@ -15,7 +15,7 @@ defmodule WechatPay.API.CloseOrder do
       iex> WechatPay.API.CloseOrder.request(%{out_trade_no: "1415757673"})
       {:ok, data}
   """
-  @spec request(map) :: {:ok, map} | {:error, any}
+  @spec request(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
   def request(params \\ %{}) do
     order =
       WechatPay.API.CloseOrder.Order
