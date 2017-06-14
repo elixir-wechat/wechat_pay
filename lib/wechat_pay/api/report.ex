@@ -35,7 +35,7 @@ defmodule WechatPay.API.Report do
       |> struct(params)
       |> convert_execute_time
 
-    Client.post_without_verify_sign(@api_path, request_data)
+    Client.post(@api_path, request_data, [], false)
   end
 
   # Wechat will check presence of `execute_time_`,

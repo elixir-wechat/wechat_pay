@@ -14,23 +14,19 @@ defmodule WechatPay.API.Client do
   @production_url "https://api.mch.weixin.qq.com/"
 
   @doc """
-  Post data while verifying the signature
+  Post data
   """
-  @spec post(String.t, map, keyword) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
-  def post(path, data, options \\ []) do
+  @spec post(String.t, map, keyword, boolean) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
+  def post(path, data, options \\ [], verify_sign \\ true)
+  def post(path, data, options, true) do
     with(
-      {:ok, data} <- post_without_verify_sign(path, data, options),
+      {:ok, data} <- post(path, data, options, false),
       {:ok, data} <- verify_sign(data)
     ) do
       {:ok, data}
     end
   end
-
-  @doc """
-  Post data without verifying the signature
-  """
-  @spec post_without_verify_sign(String.t, map, keyword) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
-  def post_without_verify_sign(path, data, options \\ []) do
+  def post(path, data, options, false) do
     path = base_url() <> path
 
     headers = [
