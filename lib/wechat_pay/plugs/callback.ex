@@ -110,12 +110,8 @@ defmodule WechatPay.Plug.Callback do
     ) do
       :ok
     else
-      {:error, %Error{reason: reason} = error} ->
-        # if handler_module.handle_error/3 does not exists, skip it
-        Code.ensure_loaded(handler_module)
-        if function_exported?(handler_module, :handle_error, 3) do
-          apply(handler_module, :handle_error, [conn, error, data])
-        end 
+      {:error, %Error{} = error} ->
+        maybe_handle_error(handler_module, conn, error, data)
 
         {:error, error}
     end
@@ -140,6 +136,14 @@ defmodule WechatPay.Plug.Callback do
       {:ok, data}
     else
       {:error, %Error{reason: "Invalid signature of wechat's response", type: :invalid_signature}}
+    end
+  end
+
+  defp maybe_handle_error(handler_module, conn, error, data) do
+    # if handler_module.handle_error/3 does not exists, skip it
+    Code.ensure_loaded(handler_module)
+    if function_exported?(handler_module, :handle_error, 3) do
+      apply(handler_module, :handle_error, [conn, error, data])
     end
   end
 end
