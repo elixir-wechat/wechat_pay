@@ -5,7 +5,7 @@ defmodule WechatPay.Plug.Callback do
     """
 
     @callback handle_data(conn :: Plug.Conn.t, data :: map) :: :ok | {:error, any}
-    @callback handle_error(conn :: Plug.Conn.t, error :: any, data :: map) :: any
+    @callback handle_error(conn :: Plug.Conn.t, error :: WechatPay.Error.t, data :: map) :: any
 
     @optional_callbacks handle_error: 3
   end
@@ -60,6 +60,7 @@ defmodule WechatPay.Plug.Callback do
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
+  alias WechatPay.Error
 
   @spec init(keyword()) :: keyword()
   def init(opts) do
@@ -69,8 +70,8 @@ defmodule WechatPay.Plug.Callback do
   @doc """
   Process the data comes from Wechat's Payment Gateway.
 
-  If the data is success and verified, the result value will
-  be assigned to private `:wechat_pay_result` key of the `Plug.Conn.t` object.
+  If the data is valid, the Handler's `handle_data/2` will be called,
+  otherwise the `handle_error/3` will be called
   """
   @spec call(Plug.Conn.t, keyword()) :: Plug.Conn.t
   def call(conn, [handler: handler_module]) do
@@ -85,11 +86,11 @@ defmodule WechatPay.Plug.Callback do
     ) do
       response_with_success_info(conn)
     else
-      {:error, reason} ->
+      {:error, %Error{reason: reason} = error} ->
         # if handler_module.handle_error/3 does not exists, skip it
         Code.ensure_loaded(handler_module)
         if function_exported?(handler_module, :handle_error, 3) do
-          apply(handler_module, :handle_error, [conn, reason, data])
+          apply(handler_module, :handle_error, [conn, error, data])
         end
 
         conn
@@ -114,7 +115,7 @@ defmodule WechatPay.Plug.Callback do
     {:ok, data}
   end
   defp process_result(%{return_code: "FAIL", return_msg: reason}) do
-    {:error, reason}
+    {:error, %Error{reason: reason, type: :failed_return}}
   end
 
   defp verify_sign(data) do
@@ -128,7 +129,7 @@ defmodule WechatPay.Plug.Callback do
     if sign == calculated do
       {:ok, data}
     else
-      {:error, "invalid signature"}
+      {:error, %Error{reason: "Invalid signature of wechat's response", type: :invalid_signature}}
     end
   end
 end

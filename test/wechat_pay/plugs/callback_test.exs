@@ -14,8 +14,8 @@ defmodule WechatPay.Plug.CallbackTest do
       :ok
     end
 
-    def handle_error(_conn, reason, data) do
-      assert reason == "签名失败"
+    def handle_error(_conn, error, data) do
+      assert error == %WechatPay.Error{reason: "签名失败", type: :failed_return}
       assert data.return_code == "FAIL"
     end
   end
