@@ -162,6 +162,9 @@ defmodule WechatPay.API.Client do
   defp process_response(%HTTPoison.Response{status_code: 201, body: body}) do
     {:error, %Error{reason: body, type: :unprocessable_entity}}
   end
+  defp process_response(%HTTPoison.Response{status_code: 404, body: body}) do
+    {:error, %Error{reason: "The endpoint is not found", type: :not_found}}
+  end
   defp process_response(%HTTPoison.Response{body: body}) do
     {:error, %Error{reason: body, type: :unknown_response}}
   end
