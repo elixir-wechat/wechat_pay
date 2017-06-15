@@ -21,7 +21,7 @@ defmodule WechatPay.API.Client do
   def post(path, data, options, true) do
     with(
       {:ok, data} <- post(path, data, options, false),
-      {:ok, data} <- verify_sign(data)
+      :ok <- Signature.verify(data)
     ) do
       {:ok, data}
     end
@@ -162,7 +162,7 @@ defmodule WechatPay.API.Client do
   defp process_response(%HTTPoison.Response{status_code: 201, body: body}) do
     {:error, %Error{reason: body, type: :unprocessable_entity}}
   end
-  defp process_response(%HTTPoison.Response{status_code: 404, body: body}) do
+  defp process_response(%HTTPoison.Response{status_code: 404, body: _body}) do
     {:error, %Error{reason: "The endpoint is not found", type: :not_found}}
   end
   defp process_response(%HTTPoison.Response{body: body}) do
@@ -185,20 +185,5 @@ defmodule WechatPay.API.Client do
   defp process_result_field(%{result_code: "FAIL", err_code: code, err_msg: desc}) do
     # sometimes the `err_code_des` is replaced by `err_msg`.
     process_result_field(%{result_code: "FAIL", err_code: code, err_code_des: desc})
-  end
-
-  defp verify_sign(data) do
-    sign = data.sign
-
-    calculated =
-      data
-      |> Map.delete(:sign)
-      |> Signature.sign()
-
-    if sign == calculated do
-      {:ok, data}
-    else
-      {:error, %Error{reason: "Invalid signature of wechat's response", type: :invalid_signature}}
-    end
   end
 end

@@ -105,7 +105,7 @@ defmodule WechatPay.Plug.Callback do
   defp process_data(conn, data, handler_module) do
     with(
       {:ok, data} <- process_return_field(data),
-      {:ok, data} <- verify_sign(data),
+      :ok <- Signature.verify(data),
       :ok <- apply(handler_module, :handle_data, [conn, data])
     ) do
       :ok
@@ -122,21 +122,6 @@ defmodule WechatPay.Plug.Callback do
   end
   defp process_return_field(%{return_code: "FAIL", return_msg: reason}) do
     {:error, %Error{reason: reason, type: :failed_return}}
-  end
-
-  defp verify_sign(data) do
-    sign = data.sign
-
-    calculated =
-      data
-      |> Map.delete(:sign)
-      |> Signature.sign()
-
-    if sign == calculated do
-      {:ok, data}
-    else
-      {:error, %Error{reason: "Invalid signature of wechat's response", type: :invalid_signature}}
-    end
   end
 
   defp maybe_handle_error(handler_module, conn, error, data) do
