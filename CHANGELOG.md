@@ -1,5 +1,7 @@
 # master
 
+# v0.2.0
+
 * Correctly handle malformed XML data.
 * Added `WechatPay.Error`.
 * Fixes warnings on Elixir 1.4.
