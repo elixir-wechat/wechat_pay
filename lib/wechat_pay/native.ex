@@ -1,4 +1,10 @@
 defmodule WechatPay.Native do
+  @moduledoc """
+  Module for the *Native* payment method
+
+  [API document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1)
+  """
+
   alias WechatPay.API
   alias WechatPay.API.Client
 

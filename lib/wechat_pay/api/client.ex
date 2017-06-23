@@ -1,6 +1,6 @@
 defmodule WechatPay.API.Client do
   @moduledoc """
-  API Client
+  The HTTP Client
   """
 
   alias WechatPay.Config

@@ -1,4 +1,10 @@
 defmodule WechatPay.Js do
+  @moduledoc """
+  Module for the *JSAPI* payment method
+
+  [API document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)
+  """
+
   alias WechatPay.API
   alias WechatPay.Config
   alias WechatPay.Utils.NonceStr

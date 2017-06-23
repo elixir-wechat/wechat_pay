@@ -1,4 +1,10 @@
 defmodule WechatPay.App do
+  @moduledoc """
+  Module for the *App* payment method.
+
+  [API document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1)
+  """
+
   alias WechatPay.API
 
   defdelegate place_order(attrs), to: API
