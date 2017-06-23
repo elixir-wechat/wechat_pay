@@ -2,8 +2,6 @@
 
 WechatPay API wrapper in Elixir.
 
-:warning: Be careful, some of the Wechat's [API docs](https://pay.weixin.qq.com/wiki/doc/api/index.html) are inconsistent with the real API endpoints. I only test those APIs on a Wechat MP App.
-
 [![Travis](https://img.shields.io/travis/linjunpop/wechat_pay.svg)](https://travis-ci.org/linjunpop/wechat_pay)
 [![Hex.pm](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
 [![codebeat badge](https://codebeat.co/badges/35908fb7-9d5b-4622-b75b-93b69aea416b)](https://codebeat.co/projects/github-com-linjunpop-wechat_pay-master)
@@ -37,60 +35,25 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 use Mix.Config
 
 config :wechat_pay,
-  env: :sandbox, # or :production
+  env: :production, # or :sandbox
   appid: "wx8888888888888888",
   mch_id: "1900000109",
-  apikey: "192006250b4c09247ec02edce69f6a2d",
-  ssl_cacertfile: "certs/ca.cert",
-  ssl_certfile: "certs/client.crt",
-  ssl_keyfile: "certs/client.key",
-  ssl_password: "test"
+  apikey: "192006250b4c09247ec02edce69f6a2d"
 ```
 
-> :warning:
-> If the env is `:sandbox`,
-> you should fill the real `appid, mch_id, apikey` here,
-> then call `WechatPay.API.get_sandbox_signkey()` to get the sandbox apikey,
-> then replace the `apikey` with this one.
-> It's verbose, but it's a workaround for using in the sandbox env.
+> ⚠️ **Workaround of using in `:sandbox` env**.
+>
+> you should config with the production `appid, mch_id, apikey`,
+> and call `WechatPay.Helper.get_sandbox_signkey()` to get the sandbox apikey,
+> then replace the `apikey` with the generated one.
 
-### APIs
+### Module per payment method
 
-[https://pay.weixin.qq.com/wiki/doc/api/index.html](https://pay.weixin.qq.com/wiki/doc/api/index.html)
+* `WechatPay.Native` for [the Native payment method](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
+* `WechatPay.Js` for the [JSAPI payment method](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
+* `WechatPay.App` for the [App payment method](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
 
-#### JSAPI（公众号支付）
-
-- [x] `WechatPay.API.place_order(params)`
-- [x] `WechatPay.API.query_order(params)`
-- [x] `WechatPay.API.close_order(params)`
-- [x] `WechatPay.API.refund(params)`
-- [x] `WechatPay.API.query_refund(params)`
-- [x] `WechatPay.API.download_bill(params)`
-- [x] `WechatPay.API.report(params)`
-- [x] `WechatPay.HTML.generate_pay_request(prepay_id)`
-
-#### Native（扫码支付）
-
-- [x] `WechatPay.API.place_order(params)`
-- [x] `WechatPay.API.query_order(params)`
-- [x] `WechatPay.API.close_order(params)`
-- [x] `WechatPay.API.refund(params)`
-- [x] `WechatPay.API.query_refund(params)`
-- [x] `WechatPay.API.download_bill(params)`
-- [x] `WechatPay.API.report(params)`
-- [x] `WechatPay.API.shorten_url(url)`
-
-#### APP（APP支付）
-
-- [x] `WechatPay.API.place_order(params)`
-- [x] `WechatPay.API.query_order(params)`
-- [x] `WechatPay.API.close_order(params)`
-- [x] `WechatPay.API.refund(params)`
-- [x] `WechatPay.API.query_refund(params)`
-- [x] `WechatPay.API.report(params)`
-- [x] `WechatPay.API.download_bill(params)`
-
-#### Example
+### Example
 
 ```elixir
 params = %{
@@ -108,7 +71,7 @@ params = %{
   openid: User.openid(user),
 }
 
-case WechatPay.API.place_order(params) do
+case WechatPay.Native.place_order(params) do
   {:ok, order} ->
     order
   {:error, reason} ->
@@ -116,13 +79,13 @@ case WechatPay.API.place_order(params) do
 end
 ```
 
-## Plug
+### Plug
 
 There's a plug `WechatPay.Plug.Callback` to handle callback from Wechat's server
 
-Here's an [Pheonix](http://www.phoenixframework.org) example:
+Here's a [Pheonix](http://www.phoenixframework.org) example:
 
-### Router
+#### Router
 
 ```elixir
 # lib/my_app/web/router.ex
@@ -131,7 +94,7 @@ scope "/wechat", as: :wechat do
 end
 ```
 
-### The Callback handler
+#### The Callback handler
 
 ```elixir
 # lib/my_app/wechat_pay/callback_handler.ex
