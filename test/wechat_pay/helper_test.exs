@@ -12,3 +12,4 @@ defmodule WechatPay.API.GetSandboxSignkeyTest do
     end
   end
 end
+

@@ -14,19 +14,19 @@ defmodule WechatPay.API.Client do
   @production_url "https://api.mch.weixin.qq.com/"
 
   @doc """
-  Post data
+  Send a POST request to Wehchat's Server
   """
   @spec post(String.t, map, keyword, boolean) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
-  def post(path, data, options \\ [], verify_sign \\ true)
-  def post(path, data, options, true) do
+  def post(path, attrs, options \\ [], verify_sign \\ true)
+  def post(path, attrs, options, true) do
     with(
-      {:ok, data} <- post(path, data, options, false),
+      {:ok, data} <- post(path, attrs, options, false),
       :ok <- Signature.verify(data)
     ) do
       {:ok, data}
     end
   end
-  def post(path, data, options, false) do
+  def post(path, attrs, options, false) do
     path = base_url() <> path
 
     headers = [
@@ -35,7 +35,7 @@ defmodule WechatPay.API.Client do
     ]
 
     request_data =
-      data
+      attrs
       |> append_ids
       |> generate_nonce_str
       |> sign
@@ -49,24 +49,6 @@ defmodule WechatPay.API.Client do
     ) do
       {:ok, data}
     end
-  end
-
-  @doc """
-  Post data with SSL certs
-  """
-  @spec sec_post(String.t, map, keyword) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
-  def sec_post(path, data, options \\ []) do
-    secure_options = [
-      hackney: [ # :hackney options
-        ssl_options: [ # :ssl options
-          cacertfile: Config.ssl_cacertfile,
-          certfile: Config.ssl_certfile,
-          keyfile: Config.ssl_keyfile,
-          password: String.to_charlist(Config.ssl_password)
-        ]
-      ]
-    ]
-    post(path, data, Keyword.merge(secure_options, options))
   end
 
   @doc """

@@ -2,7 +2,7 @@ defmodule WechatPay.API.DownloadBillTest do
   use ExUnit.Case, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  alias WechatPay.API.DownloadBill
+  alias WechatPay.API
 
   test "download bills" do
     use_cassette "download_bill" do
@@ -12,7 +12,7 @@ defmodule WechatPay.API.DownloadBillTest do
         bill_type: "ALL"
       }
 
-      {:ok, data} = DownloadBill.request(params)
+      {:ok, data} = API.download_bill(params)
 
       assert data =~ ~r/公众账号ID/
     end

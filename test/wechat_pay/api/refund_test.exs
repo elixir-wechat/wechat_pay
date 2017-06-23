@@ -2,7 +2,7 @@ defmodule WechatPay.API.RefundTest do
   use ExUnit.Case, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  alias WechatPay.API.Refund
+  alias WechatPay.API
 
   test "refund" do
     use_cassette "refund" do
@@ -18,7 +18,18 @@ defmodule WechatPay.API.RefundTest do
         refund_account: "REFUND_SOURCE_RECHARGE_FUNDS"
       }
 
-      {:ok, data} = Refund.request(params)
+      opts = [
+        hackney: [
+          ssl_options: [
+            cacertfile: "fixture/certs/all.pem",
+            certfile: "fixture/certs/apiclient_cert.pem",
+            keyfile: "fixture/certs/apiclient_key.pem",
+            password: ""
+          ]
+        ]
+      ]
+
+      {:ok, data} = API.refund(params, opts)
 
       assert data.return_msg == "OK"
     end

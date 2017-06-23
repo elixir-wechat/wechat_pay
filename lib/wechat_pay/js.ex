@@ -1,18 +1,29 @@
-defmodule WechatPay.HTML do
-  @moduledoc """
-  HTML
-  """
-
+defmodule WechatPay.Js do
+  alias WechatPay.API
   alias WechatPay.Config
   alias WechatPay.Utils.NonceStr
   alias WechatPay.Utils.Signature
+
+  defdelegate place_order(attrs), to: API
+
+  defdelegate query_order(attrs), to: API
+
+  defdelegate close_order(attrs), to: API
+
+  defdelegate refund(attrs, opts), to: API
+
+  defdelegate query_refund(attrs), to: API
+
+  defdelegate download_bill(attrs), to: API
+
+  defdelegate report(attrs), to: API
 
   @doc """
   Generate pay request used inside Wehcat's Browser
 
   ## Example
 
-      iex> WechatPay.HTML.generate_pay_request
+      iex> WechatPay.Js.generate_pay_request
       %{
         "appId" => "wx2421b1c4370ec43b",
         "timeStamp" => "1395712654",
