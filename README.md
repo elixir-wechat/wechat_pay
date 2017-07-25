@@ -89,9 +89,7 @@ Here's a [Pheonix](http://www.phoenixframework.org) example:
 
 ```elixir
 # lib/my_app/web/router.ex
-scope "/wechat", as: :wechat do
-  post "/pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
-end
+post "/wechat-pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
 ```
 
 #### The Callback handler
@@ -101,6 +99,7 @@ end
 defmodule MyApp.WechatPayCallbackHandler do
   @behaviour WechatPay.Plug.Callback.Handler
 
+  @impl true
   def handle_data(conn, data) do
     IO.inspect data
     # %{
@@ -125,6 +124,7 @@ defmodule MyApp.WechatPayCallbackHandler do
   end
 
   # optional
+  @impl true
   def handle_error(conn, reason, data) do
     reason == "签名失败"
     data.return_code == "FAIL"

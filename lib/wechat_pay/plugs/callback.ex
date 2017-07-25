@@ -13,67 +13,74 @@ defmodule WechatPay.Plug.Callback do
   @moduledoc """
   Plug to handle callback from Wechat's payment gateway
 
-  If the callback is success and verified, the result value will
-  be assigned to private `:wechat_pay_result` key of the `Plug.Conn.t` object.
+  If the data is valid, the Handler's `handle_data/2` will be called,
+  otherwise the `handle_error/3` will be called
 
   ## A Phoenix Example
-      # lib/my_app/web/router.ex
-      scope "/wechat", as: :wechat do
-        post "/pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
-      end
 
-      # lib/my_app/wechat_pay/callback_handler.ex
-      defmodule MyApp.WechatPay.CallbackHandler do
-        @behaviour WechatPay.Plug.Callback.Handler
+  Mount the Plug in router:
 
-        def handle_data(conn, data) do
-          IO.inspect data
-          # %{
-          #   appid: "wx2421b1c4370ec43b",
-          #   attach: "支付测试",
-          #   bank_type: "CFT",
-          #   fee_type: "CNY",
-          #   is_subscribe: "Y",
-          #   mch_id: "10000100",
-          #   nonce_str: "5d2b6c2a8db53831f7eda20af46e531c",
-          #   openid: "oUpF8uMEb4qRXf22hE3X68TekukE",
-          #   out_trade_no: "1409811653",
-          #   result_code: "SUCCESS",
-          #   return_code: "SUCCESS",
-          #   sign: "594B6D97F089D24B55156CE09A5FF412",
-          #   sub_mch_id: "10000100",
-          #   time_end: "20140903131540",
-          #   total_fee: "1",
-          #   trade_type: "JSAPI",
-          #   transaction_id: "1004400740201409030005092168"
-          # }
-        end
+  ```elixir
+  # lib/my_app/web/router.ex
+  post "/wechat-pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
+  ```
 
-        # optional
-        def handle_error(conn, reason, data) do
-          reason == "签名失败"
-          data.return_code == "FAIL"
-        end
-      end
+  Implement your own handler:
+
+  ```elixir
+  # lib/my_app/wechat_pay/callback_handler.ex
+  defmodule MyApp.WechatPay.CallbackHandler do
+    @behaviour WechatPay.Plug.Callback.Handler
+
+    @impl true
+    def handle_data(conn, data) do
+      IO.inspect data
+      # %{
+      #   appid: "wx2421b1c4370ec43b",
+      #   attach: "支付测试",
+      #   bank_type: "CFT",
+      #   fee_type: "CNY",
+      #   is_subscribe: "Y",
+      #   mch_id: "10000100",
+      #   nonce_str: "5d2b6c2a8db53831f7eda20af46e531c",
+      #   openid: "oUpF8uMEb4qRXf22hE3X68TekukE",
+      #   out_trade_no: "1409811653",
+      #   result_code: "SUCCESS",
+      #   return_code: "SUCCESS",
+      #   sign: "594B6D97F089D24B55156CE09A5FF412",
+      #   sub_mch_id: "10000100",
+      #   time_end: "20140903131540",
+      #   total_fee: "1",
+      #   trade_type: "JSAPI",
+      #   transaction_id: "1004400740201409030005092168"
+      # }
+    end
+
+    # optional
+    @impl true
+    def handle_error(conn, reason, data) do
+      reason == "签名失败"
+      data.return_code == "FAIL"
+    end
+  end
+  ```
   """
+
+  @behaviour Plug
   import Plug.Conn
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
   alias WechatPay.Error
 
-  @spec init(keyword()) :: keyword()
+  @impl Plug
   def init(opts) do
-    opts
+    handler = Keyword.get(opts, :handler)
+
+    [handler: handler]
   end
 
-  @doc """
-  Process the data comes from Wechat's Payment Gateway.
-
-  If the data is valid, the Handler's `handle_data/2` will be called,
-  otherwise the `handle_error/3` will be called
-  """
-  @spec call(Plug.Conn.t, keyword()) :: Plug.Conn.t
+  @impl Plug
   def call(conn, [handler: handler_module]) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 

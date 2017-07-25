@@ -7,6 +7,7 @@ defmodule WechatPay.Plug.CallbackTest do
   defmodule Handler do
     @behaviour WechatPay.Plug.Callback.Handler
 
+    @impl true
     def handle_data(_conn, data) do
       assert data.appid == "wx2421b1c4370ec43b"
       assert data.result_code == "SUCCESS"
@@ -14,6 +15,7 @@ defmodule WechatPay.Plug.CallbackTest do
       :ok
     end
 
+    @impl true
     def handle_error(_conn, error, data) do
       assert error == %WechatPay.Error{reason: "签名失败", type: :failed_return}
       assert data.return_code == "FAIL"
