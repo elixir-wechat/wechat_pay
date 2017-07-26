@@ -96,7 +96,7 @@ post "/wechat-pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.
 
 ```elixir
 # lib/my_app/wechat_pay/callback_handler.ex
-defmodule MyApp.WechatPayCallbackHandler do
+defmodule MyApp.WechatPay.CallbackHandler do
   @behaviour WechatPay.Plug.Callback.Handler
 
   @impl true
