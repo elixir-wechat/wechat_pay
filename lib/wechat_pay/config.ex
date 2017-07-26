@@ -11,7 +11,11 @@ defmodule WechatPay.Config do
       env: :sandbox,
       appid: "wx8888888888888888",
       mch_id: "1900000109",
-      apikey: "192006250b4c09247ec02edce69f6a2d"
+      apikey: "192006250b4c09247ec02edce69f6a2d",
+      ssl_cacertfile: "certs/ca.cert",
+      ssl_certfile: "certs/client.crt",
+      ssl_keyfile: "certs/client.key",
+      ssl_password: "test"
     ```
   """
 
@@ -43,6 +47,34 @@ defmodule WechatPay.Config do
   """
   def mch_id do
     get(:mch_id)
+  end
+
+  @doc """
+  Fetch CA Cert file path from config
+  """
+  def ssl_cacertfile do
+    get(:ssl_cacertfile)
+  end
+
+  @doc """
+  Fetch Cert file path from config
+  """
+  def ssl_certfile do
+    get(:ssl_certfile)
+  end
+
+  @doc """
+  Fetch Key file path from config
+  """
+  def ssl_keyfile do
+    get(:ssl_keyfile)
+  end
+
+  @doc """
+  Fetch Key Password path from config
+  """
+  def ssl_password do
+    get(:ssl_password)
   end
 
   defp get(key, default \\ nil) do

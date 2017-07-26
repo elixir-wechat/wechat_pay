@@ -18,18 +18,7 @@ defmodule WechatPay.API.RefundTest do
         refund_account: "REFUND_SOURCE_RECHARGE_FUNDS"
       }
 
-      opts = [
-        hackney: [
-          ssl_options: [
-            cacertfile: "fixture/certs/all.pem",
-            certfile: "fixture/certs/apiclient_cert.pem",
-            keyfile: "fixture/certs/apiclient_key.pem",
-            password: ""
-          ]
-        ]
-      ]
-
-      {:ok, data} = API.refund(params, opts)
+      {:ok, data} = API.refund(params)
 
       assert data.return_msg == "OK"
     end

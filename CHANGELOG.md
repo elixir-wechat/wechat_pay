@@ -5,8 +5,6 @@
 * Separate APIs into differnt modules, might be less confusion, one per payment
   method. `WehcatPay.Js`, `WechatPay.Native` and `WechatPay.App` for now.
 * `WechatPay.API.get_sandbox_signkey/0` => `WechatPay.Helper.get_sandbox_signkey/0`.
-* Allow to set the http client options per function call. So we also drop support
-  for SSL configs.
 
 # v0.2.0
 

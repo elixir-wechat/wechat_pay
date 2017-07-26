@@ -3,14 +3,8 @@ defmodule WechatPay.API do
   Main module to call Wehcat's API.
   """
 
-  @typedoc """
-  The options passed to HTTP client
-
-  See *Options:* Section in the `HTTPoison.request/5` doc
-  """
-  @type http_options :: keyword
-
   alias WechatPay.API.Client
+  alias WechatPay.Config
 
   @doc """
   Request to close the order
@@ -20,9 +14,9 @@ defmodule WechatPay.API do
       iex> WechatPay.API.close_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec close_order(map, http_options) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def close_order(attrs, opts \\ []) do
-    Client.post("pay/closeorder", attrs, opts)
+  @spec close_order(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def close_order(attrs \\ %{}) do
+    Client.post("pay/closeorder", attrs)
   end
 
   @doc """
@@ -46,9 +40,9 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec place_order(map, http_options) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def place_order(attrs, opts \\ []) do
-    Client.post("pay/unifiedorder", attrs, opts)
+  @spec place_order(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def place_order(attrs \\ %{}) do
+    Client.post("pay/unifiedorder", attrs)
   end
 
   @doc """
@@ -59,9 +53,9 @@ defmodule WechatPay.API do
       iex> WechatPay.API.query_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec query_order(map, http_options) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def query_order(attrs, opts \\ []) do
-    Client.post("pay/orderquery", attrs, opts)
+  @spec query_order(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def query_order(attrs \\ %{}) do
+    Client.post("pay/orderquery", attrs)
   end
 
   @doc """
@@ -76,9 +70,9 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec download_bill(map, http_options) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
-  def download_bill(attrs, opts \\ []) do
-    Client.download_text("pay/downloadbill", attrs, opts)
+  @spec download_bill(map) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
+  def download_bill(attrs \\ %{}) do
+    Client.download_text("pay/downloadbill", attrs)
   end
 
   @doc """
@@ -92,9 +86,9 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec query_refund(map, http_options) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def query_refund(attrs, opts \\ []) do
-    Client.post("pay/refundquery", attrs, opts)
+  @spec query_refund(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def query_refund(attrs \\ %{}) do
+    Client.post("pay/refundquery", attrs)
   end
 
   @doc """
@@ -115,19 +109,22 @@ defmodule WechatPay.API do
         op_user_id: "1900000109",
         refund_account: "REFUND_SOURCE_RECHARGE_FUNDS"
       }
-      ...> opts = [
-        ssl: [
-          cacertfile: "certs/ca.cert",
-          certfile: "certs/client.crt",
-          keyfile: "certs/client.key",
-          password: "test"
-        ]
-      ]
       ...> WechatPay.API.refund(attrs, opts)
       ...> {:ok, data}
   """
-  @spec refund(map, http_options) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def refund(attrs, opts \\ []) do
+  @spec refund(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def refund(attrs \\ %{}) do
+    opts = [
+      hackney: [ # :hackney options
+        ssl_options: [ # :ssl options
+          cacertfile: Config.ssl_cacertfile,
+          certfile: Config.ssl_certfile,
+          keyfile: Config.ssl_keyfile,
+          password: String.to_charlist(Config.ssl_password)
+        ]
+      ]
+    ]
+
     Client.post("secapi/pay/refund", attrs, opts)
   end
 
@@ -152,8 +149,8 @@ defmodule WechatPay.API do
       ...> WechatPay.API.report(params)
       ...> {:ok, data}
   """
-  @spec report(map, http_options) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def report(attrs, opts \\ []) do
-    Client.post("payitil/report", attrs, opts, false)
+  @spec report(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def report(attrs \\ %{}) do
+    Client.post("payitil/report", attrs, [], false)
   end
 end
