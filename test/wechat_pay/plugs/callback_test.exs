@@ -22,6 +22,18 @@ defmodule WechatPay.Plug.CallbackTest do
     end
   end
 
+  defmodule HandlerThatOnlyHandleData do
+    @behaviour WechatPay.Plug.Callback.Handler
+
+    @impl true
+    def handle_data(_conn, data) do
+      assert data.appid == "wx2421b1c4370ec43b"
+      assert data.result_code == "SUCCESS"
+
+      :ok
+    end
+  end
+
   describe "receive notification from Wechat's payment gateway" do
     test "handle data" do
       req = ~s"""
@@ -64,6 +76,20 @@ defmodule WechatPay.Plug.CallbackTest do
       conn = conn(:post, "/foo", req)
 
       opts = Callback.init([handler: WechatPay.Plug.CallbackTest.Handler])
+      Callback.call(conn, opts)
+    end
+
+    test "handler only handle data, not error" do
+      req = ~s"""
+      <xml>
+        <return_code><![CDATA[FAIL]]></return_code>
+        <return_msg><![CDATA[签名失败]]></return_msg>
+      </xml>
+      """
+
+      conn = conn(:post, "/foo", req)
+
+      opts = Callback.init([handler: WechatPay.Plug.CallbackTest.HandlerThatOnlyHandleData])
       Callback.call(conn, opts)
     end
 
