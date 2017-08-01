@@ -53,9 +53,9 @@ config :wechat_pay,
 
 ### Payment methods
 
-* `WechatPay.Native` for [the Native payment method](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
-* `WechatPay.JSAPI` for the [JSAPI payment method](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
-* `WechatPay.App` for the [App payment method](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
+* `WechatPay.Native` - [Native payment method](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
+* `WechatPay.JSAPI` - [JSAPI payment method](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
+* `WechatPay.App` - [App payment method](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
 
 ### Example
 
