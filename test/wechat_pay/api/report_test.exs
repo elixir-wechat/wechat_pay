@@ -1,10 +1,10 @@
 defmodule WechatPay.API.ReportTest do
-  use ExUnit.Case, async: false
+  use TestCase, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   alias WechatPay.API
 
-  test "report" do
+  test "report", %{config: config} do
     use_cassette "report" do
       params = %{
         device_info: "013467007045764",
@@ -20,7 +20,7 @@ defmodule WechatPay.API.ReportTest do
         time: "20091227091010"
       }
 
-      {:ok, data} = API.report(params)
+      {:ok, data} = API.report(params, config)
 
       assert data.result_code == "SUCCESS"
     end

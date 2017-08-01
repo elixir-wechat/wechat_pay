@@ -10,7 +10,7 @@ defmodule WechatPay.Utils.XMLParser do
   @doc """
   Convert a XML string to map
   """
-  @spec parse(String.t) :: map
+  @spec parse(String.t) :: {:ok, map} | {:error, Error.t}
   def parse(data) when is_binary(data) do
     try do
       parsed_data =

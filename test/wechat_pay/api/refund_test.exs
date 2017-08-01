@@ -1,10 +1,10 @@
 defmodule WechatPay.API.RefundTest do
-  use ExUnit.Case, async: false
+  use TestCase, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   alias WechatPay.API
 
-  test "refund" do
+  test "refund", %{config: config} do
     use_cassette "refund" do
       params = %{
         device_info: "013467007045764",
@@ -18,7 +18,7 @@ defmodule WechatPay.API.RefundTest do
         refund_account: "REFUND_SOURCE_RECHARGE_FUNDS"
       }
 
-      {:ok, data} = API.refund(params)
+      {:ok, data} = API.refund(params, config)
 
       assert data.return_msg == "OK"
     end

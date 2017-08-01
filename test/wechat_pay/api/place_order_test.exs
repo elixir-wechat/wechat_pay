@@ -1,10 +1,10 @@
 defmodule WechatPay.API.PlaceOrderTest do
-  use ExUnit.Case, async: false
+  use TestCase, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   alias WechatPay.API
 
-  test "place an order" do
+  test "place an order", %{config: config} do
     params = %{
       body: "foobar",
       out_trade_no: "xxx",
@@ -17,7 +17,7 @@ defmodule WechatPay.API.PlaceOrderTest do
     }
 
     use_cassette "place_order" do
-      {:ok, data} = API.place_order(params)
+      {:ok, data} = API.place_order(params, config)
 
       assert data.trade_type == "JSAPI"
       assert data.prepay_id

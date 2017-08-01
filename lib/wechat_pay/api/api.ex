@@ -4,7 +4,6 @@ defmodule WechatPay.API do
   """
 
   alias WechatPay.API.Client
-  alias WechatPay.Config
 
   @doc """
   Request to close the order
@@ -14,9 +13,9 @@ defmodule WechatPay.API do
       iex> WechatPay.API.close_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec close_order(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def close_order(attrs \\ %{}) do
-    Client.post("pay/closeorder", attrs)
+  @spec close_order(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def close_order(attrs, config) do
+    Client.post("pay/closeorder", attrs, [], config)
   end
 
   @doc """
@@ -40,9 +39,9 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec place_order(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def place_order(attrs \\ %{}) do
-    Client.post("pay/unifiedorder", attrs)
+  @spec place_order(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def place_order(attrs, config) do
+    Client.post("pay/unifiedorder", attrs, [], config)
   end
 
   @doc """
@@ -53,9 +52,9 @@ defmodule WechatPay.API do
       iex> WechatPay.API.query_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec query_order(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def query_order(attrs \\ %{}) do
-    Client.post("pay/orderquery", attrs)
+  @spec query_order(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def query_order(attrs, config) do
+    Client.post("pay/orderquery", attrs, [], config)
   end
 
   @doc """
@@ -70,9 +69,9 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec download_bill(map) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
-  def download_bill(attrs \\ %{}) do
-    Client.download_text("pay/downloadbill", attrs)
+  @spec download_bill(map, WechatPay.config) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
+  def download_bill(attrs, config) do
+    Client.download_text("pay/downloadbill", attrs, [], config)
   end
 
   @doc """
@@ -86,9 +85,9 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec query_refund(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def query_refund(attrs \\ %{}) do
-    Client.post("pay/refundquery", attrs)
+  @spec query_refund(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def query_refund(attrs, config) do
+    Client.post("pay/refundquery", attrs, [], config)
   end
 
   @doc """
@@ -112,20 +111,20 @@ defmodule WechatPay.API do
       ...> WechatPay.API.refund(attrs, opts)
       ...> {:ok, data}
   """
-  @spec refund(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def refund(attrs \\ %{}) do
+  @spec refund(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def refund(attrs, config) do
     opts = [
       hackney: [ # :hackney options
         ssl_options: [ # :ssl options
-          cacertfile: Config.ssl_cacertfile,
-          certfile: Config.ssl_certfile,
-          keyfile: Config.ssl_keyfile,
-          password: String.to_charlist(Config.ssl_password)
+          cacertfile: Keyword.get(config, :ssl_cacertfile),
+          certfile: Keyword.get(config, :ssl_certfile),
+          keyfile: Keyword.get(config, :ssl_keyfile),
+          password: Keyword.get(config, :ssl_password) |> String.to_charlist()
         ]
       ]
     ]
 
-    Client.post("secapi/pay/refund", attrs, opts)
+    Client.post("secapi/pay/refund", attrs, opts, config)
   end
 
   @doc """
@@ -149,8 +148,12 @@ defmodule WechatPay.API do
       ...> WechatPay.API.report(params)
       ...> {:ok, data}
   """
-  @spec report(map) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
-  def report(attrs \\ %{}) do
-    Client.post("payitil/report", attrs, [], false)
+  @spec report(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def report(attrs, config) do
+    config =
+      config
+      |> Keyword.merge([verify_sign: false])
+
+    Client.post("payitil/report", attrs, [], config)
   end
 end

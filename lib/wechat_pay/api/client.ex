@@ -3,7 +3,21 @@ defmodule WechatPay.API.Client do
   The HTTP Client
   """
 
-  alias WechatPay.Config
+  @typedoc """
+  The Config
+  """
+  @type config :: [
+    env: :sandbox | :production,
+    appid: String.t,
+    mch_id: String.t,
+    apikey: String.t,
+    ssl_cacertfile: String.t,
+    ssl_certfile: String.t,
+    ssl_keyfile: String.t,
+    ssl_password: String.t,
+    verify_sign: boolean
+  ]
+
   alias WechatPay.Utils.XMLBuilder
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.NonceStr
@@ -16,18 +30,28 @@ defmodule WechatPay.API.Client do
   @doc """
   Send a POST request to Wehchat's Server
   """
-  @spec post(String.t, map, keyword, boolean) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
-  def post(path, attrs, options \\ [], verify_sign \\ true)
-  def post(path, attrs, options, true) do
+  @spec post(String.t, map, Keyword.t, config) :: {:ok, map} | {:error, Error.t | HTTPoison.Error.t}
+  def post(path, attrs, options, config) do
+    case Keyword.get(config, :verify_sign) do
+      nil ->
+        do_post_with_verify_sign(path, attrs, options, config)
+      true ->
+        do_post_with_verify_sign(path, attrs, options, config)
+      false ->
+        do_post_without_verify_sign(path, attrs, options, config)
+    end
+  end
+
+  defp do_post_with_verify_sign(path, attrs, options, config) do
     with(
-      {:ok, data} <- post(path, attrs, options, false),
-      :ok <- Signature.verify(data)
+      {:ok, data} <- do_post_without_verify_sign(path, attrs, options, config),
+      :ok <- Signature.verify(data, Keyword.get(config, :apikey))
     ) do
       {:ok, data}
     end
   end
-  def post(path, attrs, options, false) do
-    path = base_url() <> path
+  defp do_post_without_verify_sign(path, attrs, options, config) do
+    path = base_url(config) <> path
 
     headers = [
       {"Accept", "application/xml"},
@@ -36,9 +60,9 @@ defmodule WechatPay.API.Client do
 
     request_data =
       attrs
-      |> append_ids
+      |> append_ids(config)
       |> generate_nonce_str
-      |> sign
+      |> sign(config)
       |> XMLBuilder.to_xml
 
     with(
@@ -54,9 +78,9 @@ defmodule WechatPay.API.Client do
   @doc """
   Download text data
   """
-  @spec download_text(String.t, map, keyword) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
-  def download_text(path, data, options \\ []) do
-    path = base_url() <> path
+  @spec download_text(String.t, map, Keyword.t, config) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
+  def download_text(path, data, options, config) do
+    path = base_url(config) <> path
 
     headers = [
       {"Accept", "text/plain"},
@@ -65,9 +89,9 @@ defmodule WechatPay.API.Client do
 
     request_data =
       data
-      |> append_ids
+      |> append_ids(config)
       |> generate_nonce_str
-      |> sign
+      |> sign(config)
       |> XMLBuilder.to_xml
 
     with {:ok, response} <- HTTPoison.post(path, request_data, headers, options) do
@@ -78,8 +102,8 @@ defmodule WechatPay.API.Client do
   @doc """
   Get the Sandbox API key
   """
-  @spec get_sandbox_signkey :: {:ok, String.t} | {:error, Error.t | HTTPoison.Error.t}
-  def get_sandbox_signkey do
+  @spec get_sandbox_signkey(String.t, String.t) :: {:ok, String.t} | {:error, Error.t | HTTPoison.Error.t}
+  def get_sandbox_signkey(apikey, mch_id) do
     path = @sandbox_url <> "pay/getsignkey"
 
     headers = [
@@ -88,9 +112,9 @@ defmodule WechatPay.API.Client do
     ]
 
     request_data =
-      %{mch_id: Config.mch_id}
+      %{mch_id: mch_id}
       |> generate_nonce_str
-      |> sign
+      |> sign([apikey: apikey])
       |> XMLBuilder.to_xml
 
     with(
@@ -102,8 +126,8 @@ defmodule WechatPay.API.Client do
     end
   end
 
-  defp base_url do
-    case Config.env do
+  defp base_url(config) do
+    case Keyword.get(config, :env) do
       :sandbox ->
         @sandbox_url
       :production ->
@@ -113,11 +137,11 @@ defmodule WechatPay.API.Client do
     end
   end
 
-  defp append_ids(data) when is_map(data) do
+  defp append_ids(data, config) when is_map(data) do
     ids =
       %{
-        appid: Config.appid,
-        mch_id: Config.mch_id,
+        appid: Keyword.get(config, :appid),
+        mch_id: Keyword.get(config, :mch_id),
       }
 
     Map.merge(data, ids)
@@ -128,10 +152,10 @@ defmodule WechatPay.API.Client do
     |> Map.merge(%{nonce_str: NonceStr.generate})
   end
 
-  defp sign(data) when is_map(data) do
+  defp sign(data, config) when is_map(data) do
     sign =
       data
-      |> Signature.sign
+      |> Signature.sign(Keyword.get(config, :apikey))
 
     data
     |> Map.merge(%{sign: sign})

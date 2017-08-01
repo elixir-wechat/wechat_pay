@@ -1,8 +1,9 @@
 defmodule WechatPay.PlugTest do
-  use ExUnit.Case, async: false
+  use TestCase, async: false
   use Plug.Test
 
-  alias WechatPay.Plug, as: WechatPayPlug
+  alias Pay.Plug, as: WechatPayPlug
+
   alias WechatPay.PlugTest.Handler
   alias WechatPay.PlugTest.HandlerThatOnlyHandleData
 

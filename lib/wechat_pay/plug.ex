@@ -15,27 +15,39 @@ defmodule WechatPay.Plug do
   See `WechatPay.CallbackHandler` for how to implement a handler.
   """
 
-  @behaviour Plug
-  import Plug.Conn
-
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
   alias WechatPay.Error
 
-  @impl Plug
-  def init(opts) do
-    handler = Keyword.get(opts, :handler)
+  import Plug.Conn
 
-    [handler: handler]
+  defmacro __using__(opts) do
+    quote do
+      mod = Keyword.fetch!(unquote(opts), :mod)
+
+      defdelegate get_config, to: mod
+
+      @behaviour Plug
+
+      @impl Plug
+      def init(opts) do
+        handler = Keyword.get(opts, :handler)
+
+        [handler: handler]
+      end
+
+      @impl Plug
+      def call(conn, [handler: handler]),
+        do: WechatPay.Plug.call(conn, [handler: handler], get_config())
+    end
   end
 
-  @impl Plug
-  def call(conn, [handler: handler_module]) do
+  def call(conn, [handler: handler_module], config) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with(
       {:ok, data} <- XMLParser.parse(body),
-      :ok <- process_data(conn ,data, handler_module)
+      :ok <- process_data(conn ,data, handler_module, config)
     ) do
       response_with_success_info(conn)
     else
@@ -58,10 +70,10 @@ defmodule WechatPay.Plug do
     |> send_resp(:ok, body)
   end
 
-  defp process_data(conn, data, handler_module) do
+  defp process_data(conn, data, handler_module, config) do
     with(
       {:ok, data} <- process_return_field(data),
-      :ok <- Signature.verify(data),
+      :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
       :ok <- apply(handler_module, :handle_data, [conn, data])
     ) do
       :ok
