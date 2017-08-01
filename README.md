@@ -29,7 +29,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ## Usage
 
-### Config `:wechat_pay`
+### Configuration
 
 ```elixir
 use Mix.Config
@@ -38,7 +38,11 @@ config :wechat_pay,
   env: :production, # or :sandbox
   appid: "wx8888888888888888",
   mch_id: "1900000109",
-  apikey: "192006250b4c09247ec02edce69f6a2d"
+  apikey: "192006250b4c09247ec02edce69f6a2d",
+  ssl_cacertfile: "certs/ca.cert",
+  ssl_certfile: "certs/client.crt",
+  ssl_keyfile: "certs/client.key",
+  ssl_password: "test"
 ```
 
 > ⚠️ **Workaround of using in `:sandbox` env**.
@@ -79,25 +83,26 @@ case WechatPay.Native.place_order(params) do
 end
 ```
 
-### Plug
+### Handle callback from Wechat's Payment Gateway
 
-There's a plug `WechatPay.Plug.Callback` to handle callback from Wechat's server
+WechatPay provide a plug `WechatPay.Plug` to handle callback from Wechat's server
 
-Here's a [Pheonix](http://www.phoenixframework.org) example:
+[Pheonix](http://www.phoenixframework.org) example:
 
 #### Router
 
 ```elixir
 # lib/my_app/web/router.ex
-post "/wechat-pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
+post "/wechat-pay/callback", WechatPay.Plug, [handler: MyApp.WechatPay.CallbackHandler]
 ```
 
-#### The Callback handler
-
+#### The handler module
 ```elixir
 # lib/my_app/wechat_pay/callback_handler.ex
 defmodule MyApp.WechatPay.CallbackHandler do
-  @behaviour WechatPay.Plug.Callback.Handler
+  use WechatPay.CallbackHandler
+
+  require Logger
 
   @impl true
   def handle_data(conn, data) do
@@ -125,9 +130,8 @@ defmodule MyApp.WechatPay.CallbackHandler do
 
   # optional
   @impl true
-  def handle_error(conn, reason, data) do
-    reason == "签名失败"
-    data.return_code == "FAIL"
+  def handle_error(conn, error, data) do
+    Logger.error(inspect(error))
   end
 end
 ```

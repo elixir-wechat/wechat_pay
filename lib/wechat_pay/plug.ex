@@ -1,69 +1,18 @@
-defmodule WechatPay.Plug.Callback do
-  defmodule Handler do
-    @moduledoc """
-    The behaviour for callback handler.
-    """
-
-    @callback handle_data(conn :: Plug.Conn.t, data :: map) :: :ok | {:error, any}
-    @callback handle_error(conn :: Plug.Conn.t, error :: WechatPay.Error.t, data :: map) :: any
-
-    @optional_callbacks handle_error: 3
-  end
-
+defmodule WechatPay.Plug do
   @moduledoc """
   Plug to handle callback from Wechat's payment gateway
 
   If the data is valid, the Handler's `handle_data/2` will be called,
   otherwise the `handle_error/3` will be called
 
-  ## A Phoenix Example
-
-  Mount the Plug in router:
+  ## Phoenix Example
 
   ```elixir
   # lib/my_app/web/router.ex
-  post "/wechat-pay/callback", WechatPay.Plug.Callback, [handler: MyApp.WechatPay.CallbackHandler]
+  post "/wechat-pay/callback", WechatPay.Plug, [handler: MyApp.WechatCallbackHandler]
   ```
 
-  Implement your own handler:
-
-  ```elixir
-  # lib/my_app/wechat_pay/callback_handler.ex
-  defmodule MyApp.WechatPay.CallbackHandler do
-    @behaviour WechatPay.Plug.Callback.Handler
-
-    @impl true
-    def handle_data(conn, data) do
-      IO.inspect data
-      # %{
-      #   appid: "wx2421b1c4370ec43b",
-      #   attach: "支付测试",
-      #   bank_type: "CFT",
-      #   fee_type: "CNY",
-      #   is_subscribe: "Y",
-      #   mch_id: "10000100",
-      #   nonce_str: "5d2b6c2a8db53831f7eda20af46e531c",
-      #   openid: "oUpF8uMEb4qRXf22hE3X68TekukE",
-      #   out_trade_no: "1409811653",
-      #   result_code: "SUCCESS",
-      #   return_code: "SUCCESS",
-      #   sign: "594B6D97F089D24B55156CE09A5FF412",
-      #   sub_mch_id: "10000100",
-      #   time_end: "20140903131540",
-      #   total_fee: "1",
-      #   trade_type: "JSAPI",
-      #   transaction_id: "1004400740201409030005092168"
-      # }
-    end
-
-    # optional
-    @impl true
-    def handle_error(conn, reason, data) do
-      reason == "签名失败"
-      data.return_code == "FAIL"
-    end
-  end
-  ```
+  See `WechatPay.CallbackHandler` for how to implement a handler.
   """
 
   @behaviour Plug
@@ -132,11 +81,6 @@ defmodule WechatPay.Plug.Callback do
   end
 
   defp maybe_handle_error(handler_module, conn, error, data) do
-    try do
-      handler_module.handle_error(conn, error, data)
-    rescue
-      UndefinedFunctionError ->
-        :undefined
-    end
+    handler_module.handle_error(conn, error, data)
   end
 end
