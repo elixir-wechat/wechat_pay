@@ -5,6 +5,11 @@
 * Separate APIs into differnt modules, might be less confusion, one per payment
   method. `WehcatPay.Js`, `WechatPay.Native` and `WechatPay.App` for now.
 * `WechatPay.API.get_sandbox_signkey/0` => `WechatPay.Helper.get_sandbox_signkey/0`.
+* Extract callback handler as `WechatPay.CallbackHandler`, Which handle the
+callback data from Wechat's server.
+* Also Rename `WechatPay.Plug.Callback` => `WechatPay.Plug`, now this plug only
+takes the responsibility to commutate with Wechat's server, then pass down the
+data to the handler.
 
 # v0.2.0
 
