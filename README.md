@@ -51,10 +51,10 @@ config :wechat_pay,
 > and call `WechatPay.Helper.get_sandbox_signkey()` to get the sandbox apikey,
 > then replace the `apikey` with the generated one.
 
-### Module per payment method
+### Payment methods
 
 * `WechatPay.Native` for [the Native payment method](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
-* `WechatPay.Js` for the [JSAPI payment method](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
+* `WechatPay.JSAPI` for the [JSAPI payment method](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
 * `WechatPay.App` for the [App payment method](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
 
 ### Example

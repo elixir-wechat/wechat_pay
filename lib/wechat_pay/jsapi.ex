@@ -1,4 +1,4 @@
-defmodule WechatPay.Js do
+defmodule WechatPay.JSAPI do
   @moduledoc """
   Module for the *JSAPI* payment method
 
@@ -29,7 +29,7 @@ defmodule WechatPay.Js do
 
   ## Example
 
-      iex> WechatPay.Js.generate_pay_request
+      iex> WechatPay.JSAPI.generate_pay_request
       %{
         "appId" => "wx2421b1c4370ec43b",
         "timeStamp" => "1395712654",
