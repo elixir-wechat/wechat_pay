@@ -37,7 +37,7 @@ defmodule WechatPay.Plug.PaymentTest do
     end
   end
 
-  describe "receive notification from Wechat's payment gateway" do
+  describe "receive notification from Wechat's Payment Gateway" do
     test "handle data" do
       req = ~s"""
       <xml>

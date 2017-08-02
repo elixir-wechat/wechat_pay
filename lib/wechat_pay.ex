@@ -45,14 +45,7 @@ defmodule WechatPay do
   simplify the process of handling notification from Wechat's Payment Gateway:
 
   - `MyApp.Pay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
-
-  #### Phoenix Example
-
-  In `lib/my_app_web/router.ex`:
-
-  ```elixir
-  post "/pay/cb/payment", MyApp.Pay.Plug.Payment, [handler: MyApp.PaymentHandler]
-  ```
+  - `MyApp.Pay.Plug.Refund` - Implements the `WechatPay.Plug.Refund` behaviour
   """
 
   @typedoc """
@@ -117,13 +110,22 @@ defmodule WechatPay do
         Macro.Env.location(__ENV__)
       )
 
-      # define module `MyModule.Plug.Payment`
+      # define module `MyModule.Plug.Payment` & `MyModule.Plug.Refund`
       if Code.ensure_loaded?(Plug) do
         [__MODULE__, :Plug, :Payment]
         |> Module.concat()
         |> Module.create(
           quote do
             use WechatPay.Plug.Payment, mod: unquote(__MODULE__)
+          end,
+          Macro.Env.location(__ENV__)
+        )
+
+        [__MODULE__, :Plug, :Refund]
+        |> Module.concat()
+        |> Module.create(
+          quote do
+            use WechatPay.Plug.Refund, mod: unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )

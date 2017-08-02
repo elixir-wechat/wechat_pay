@@ -1,6 +1,6 @@
-defmodule WechatPay.Plug.Payment do
+defmodule WechatPay.Plug.Refund do
   @moduledoc """
-  Plug behaviour to handle **Payment** Notification from Wechat's Payment Gateway.
+  Plug behaviour to handle **Refund** Notification from Wechat's Payment Gateway.
 
   See `WechatPay.Handler` for how to implement a handler.
   """
@@ -9,14 +9,13 @@ defmodule WechatPay.Plug.Payment do
   @callback call(conn :: Plug.Conn.t, opts :: Plug.opts) :: Plug.Conn.t
 
   alias WechatPay.Utils.XMLParser
-  alias WechatPay.Utils.Signature
   alias WechatPay.Error
 
   import Plug.Conn
 
   defmacro __using__(opts) do
     quote do
-      @behaviour WechatPay.Plug.Payment
+      @behaviour WechatPay.Plug.Refund
 
       mod = Keyword.fetch!(unquote(opts), :mod)
 
@@ -31,7 +30,7 @@ defmodule WechatPay.Plug.Payment do
 
       @impl true
       def call(conn, [handler: handler]),
-        do: WechatPay.Plug.Payment.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Refund.call(conn, [handler: handler], get_config())
     end
   end
 
@@ -67,8 +66,8 @@ defmodule WechatPay.Plug.Payment do
   defp process_data(conn, data, handler_module, config) do
     with(
       {:ok, data} <- process_return_field(data),
-      :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
-      :ok <- apply(handler_module, :handle_data, [conn, data])
+      {:ok, decrypted_data} <- decrypt_data(data, config),
+      :ok <- apply(handler_module, :handle_data, [conn, decrypted_data])
     ) do
       :ok
     else
@@ -88,6 +87,21 @@ defmodule WechatPay.Plug.Payment do
 
   defp maybe_handle_error(handler_module, conn, error, data) do
     handler_module.handle_error(conn, error, data)
+  end
+
+  defp decrypt_data(%{req_info: encrypted_data}, config) do
+    key = Keyword.get(config, :apikey)
+
+    key =
+      :md5
+      |> :crypto.hash(key)
+      |> Base.encode16(case: :lower)
+
+    encrypted_data
+    |> Base.decode64!()
+
+    # FIXME: document is confusing. :(
+    %{}
   end
 end
 
