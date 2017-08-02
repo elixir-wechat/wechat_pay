@@ -2,7 +2,10 @@ defmodule WechatPay do
   @moduledoc """
   WechatPay provide toolkit for the Wechat Payment Platform.
 
-  When `use` WechatPay, you'll need an implementation module.
+  ### Setup
+
+  You need to define you own pay module, then `use` WechatPay, with an `:otp_app`
+  option.
 
   ```elixir
   defmodule MyApp.Pay do
@@ -10,13 +13,33 @@ defmodule WechatPay do
   end
   ```
 
-  the `:otp_app` option is required.
+  Then you can config your app with:
 
-  This will generate four modules:
+  ```elixir
+  config :my_app, MyApp.Pay,
+    env: :production,
+    appid: "wx8888888888888888",
+    mch_id: "1900000109",
+    apikey: "192006250b4c09247ec02edce69f6a2d",
+    ssl_cacertfile: "fixture/certs/all.pem",
+    ssl_certfile: "fixture/certs/apiclient_cert.pem",
+    ssl_keyfile: "fixture/certs/apiclient_key.pem",
+    ssl_password: ""
+  ```
 
-  - `MyApp.Pay.App` - [App payment method](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
-  - `MyApp.Pay.JSAPI` - [JSAPI payment method](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
-  - `MyApp.Pay.Native` - [Native payment method](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
+  > NOTE: If your are using the `:sandbox` environment,
+  > You need to use `WechatPay.Helper.get_sandbox_signkey/2` to
+  > fetch the Sandbox API Key.
+  > where the `apikey` and `mch_id` is the production one.
+
+  ### Usage
+
+  When `use` WechatPay in `MyApp.Pay` module, it will generate following modules
+  for you:
+
+  - `MyApp.Pay.App` - Implements the `WechatPay.PaymentMethod.App` Behaviour
+  - `MyApp.Pay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` Behaviour
+  - `MyApp.Pay.Native` - Implements the `WechatPay.PaymentMethod.Native` Behaviour
   - `MyApp.Pay.Plug` - Handle callback from Wechat's server
   """
 
@@ -47,6 +70,7 @@ defmodule WechatPay do
     quote bind_quoted: [opts: opts] do
       otp_app = Keyword.fetch!(opts, :otp_app)
 
+      @doc false
       @spec get_config :: WechatPay.config
       def get_config do
         __MODULE__
