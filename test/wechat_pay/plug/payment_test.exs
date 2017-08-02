@@ -1,16 +1,16 @@
-defmodule WechatPay.PlugTest do
+defmodule WechatPay.Plug.PaymentTest do
   use TestCase, async: false
   use Plug.Test
 
-  alias Pay.Plug, as: WechatPayPlug
+  alias Pay.Plug.Payment, as: PaymentPlug
 
   alias WechatPay.PlugTest.Handler
   alias WechatPay.PlugTest.HandlerThatOnlyHandleData
 
   defmodule Handler do
-    use WechatPay.CallbackHandler
+    use WechatPay.Handler
 
-    @impl WechatPay.CallbackHandler
+    @impl WechatPay.Handler
     def handle_data(_conn, data) do
       assert data.appid == "wx2421b1c4370ec43b"
       assert data.result_code == "SUCCESS"
@@ -18,7 +18,7 @@ defmodule WechatPay.PlugTest do
       :ok
     end
 
-    @impl WechatPay.CallbackHandler
+    @impl WechatPay.Handler
     def handle_error(_conn, error, data) do
       assert error == %WechatPay.Error{reason: "签名失败", type: :failed_return}
       assert data.return_code == "FAIL"
@@ -26,9 +26,9 @@ defmodule WechatPay.PlugTest do
   end
 
   defmodule HandlerThatOnlyHandleData do
-    use WechatPay.CallbackHandler
+    use WechatPay.Handler
 
-    @impl WechatPay.CallbackHandler
+    @impl WechatPay.Handler
     def handle_data(_conn, data) do
       assert data.appid == "wx2421b1c4370ec43b"
       assert data.result_code == "SUCCESS"
@@ -63,9 +63,9 @@ defmodule WechatPay.PlugTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = WechatPayPlug.init([handler: Handler])
+      opts = PaymentPlug.init([handler: Handler])
 
-      WechatPayPlug.call(conn, opts)
+      PaymentPlug.call(conn, opts)
     end
 
     test "handle error" do
@@ -78,8 +78,8 @@ defmodule WechatPay.PlugTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = WechatPayPlug.init([handler: Handler])
-      WechatPayPlug.call(conn, opts)
+      opts = PaymentPlug.init([handler: Handler])
+      PaymentPlug.call(conn, opts)
     end
 
     test "handler only handle data, not error" do
@@ -92,8 +92,8 @@ defmodule WechatPay.PlugTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = WechatPayPlug.init([handler: HandlerThatOnlyHandleData])
-      WechatPayPlug.call(conn, opts)
+      opts = PaymentPlug.init([handler: HandlerThatOnlyHandleData])
+      PaymentPlug.call(conn, opts)
     end
 
     test "handle malformed request data" do
@@ -101,11 +101,11 @@ defmodule WechatPay.PlugTest do
       <xml
       """
 
-      opts = WechatPayPlug.init([handler: Handler])
+      opts = PaymentPlug.init([handler: Handler])
 
       conn =
         conn(:post, "/foo", req)
-        |> WechatPayPlug.call(opts)
+        |> PaymentPlug.call(opts)
 
       assert conn.resp_body == "Malformed XML"
     end

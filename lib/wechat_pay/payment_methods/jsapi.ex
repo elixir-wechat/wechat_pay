@@ -1,8 +1,8 @@
 defmodule WechatPay.PaymentMethod.JSAPI do
   @moduledoc """
-  Module for the
-  *[JSAPI](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)*
-  payment method
+  The **JSAPI** payment method.
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
   """
 
   @doc """

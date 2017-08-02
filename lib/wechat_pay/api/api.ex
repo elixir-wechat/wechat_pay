@@ -119,7 +119,7 @@ defmodule WechatPay.API do
           cacertfile: Keyword.get(config, :ssl_cacertfile),
           certfile: Keyword.get(config, :ssl_certfile),
           keyfile: Keyword.get(config, :ssl_keyfile),
-          password: Keyword.get(config, :ssl_password) |> String.to_charlist()
+          password: config |> Keyword.get(:ssl_password) |> String.to_charlist()
         ]
       ]
     ]

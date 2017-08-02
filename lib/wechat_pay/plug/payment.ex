@@ -1,19 +1,12 @@
-defmodule WechatPay.Plug do
+defmodule WechatPay.Plug.Payment do
   @moduledoc """
-  Plug to handle callback from Wechat's payment gateway
+  Plug behaviour to handle Payment Notification from Wechat's Payment Gateway
 
-  If the data is valid, the Handler's `handle_data/2` will be called,
-  otherwise the `handle_error/3` will be called
-
-  ## Phoenix Example
-
-  ```elixir
-  # lib/my_app/web/router.ex
-  post "/wechat-pay/callback", WechatPay.Plug, [handler: MyApp.WechatCallbackHandler]
-  ```
-
-  See `WechatPay.CallbackHandler` for how to implement a handler.
+  See `WechatPay.Handler` for how to implement a handler.
   """
+
+  @callback init(opts :: Plug.opts) :: Plug.opts
+  @callback call(conn :: Plug.Conn.t, opts :: Plug.opts) :: Plug.Conn.t
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
@@ -23,31 +16,32 @@ defmodule WechatPay.Plug do
 
   defmacro __using__(opts) do
     quote do
+      @behaviour WechatPay.Plug.Payment
+
       mod = Keyword.fetch!(unquote(opts), :mod)
 
       defdelegate get_config, to: mod
 
-      @behaviour Plug
-
-      @impl Plug
+      @impl true
       def init(opts) do
         handler = Keyword.get(opts, :handler)
 
         [handler: handler]
       end
 
-      @impl Plug
+      @impl true
       def call(conn, [handler: handler]),
-        do: WechatPay.Plug.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Payment.call(conn, [handler: handler], get_config())
     end
   end
 
+  @doc false
   def call(conn, [handler: handler_module], config) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with(
       {:ok, data} <- XMLParser.parse(body),
-      :ok <- process_data(conn ,data, handler_module, config)
+      :ok <- process_data(conn, data, handler_module, config)
     ) do
       response_with_success_info(conn)
     else
@@ -96,3 +90,4 @@ defmodule WechatPay.Plug do
     handler_module.handle_error(conn, error, data)
   end
 end
+

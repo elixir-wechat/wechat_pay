@@ -101,6 +101,8 @@ defmodule WechatPay.API.Client do
 
   @doc """
   Get the Sandbox API key
+
+  where the `apikey` and `mch_id` is the **production** values.
   """
   @spec get_sandbox_signkey(String.t, String.t) :: {:ok, String.t} | {:error, Error.t | HTTPoison.Error.t}
   def get_sandbox_signkey(apikey, mch_id) do

@@ -1,8 +1,8 @@
 defmodule WechatPay.PaymentMethod.Native do
   @moduledoc """
-  Module for the
-  *[Native](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)*
-  payment method
+  The **Native** payment method.
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
   """
 
   @doc """

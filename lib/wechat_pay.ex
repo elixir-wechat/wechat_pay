@@ -30,17 +30,22 @@ defmodule WechatPay do
   > NOTE: If your are using the `:sandbox` environment,
   > You need to use `WechatPay.Helper.get_sandbox_signkey/2` to
   > fetch the Sandbox API Key.
-  > where the `apikey` and `mch_id` is the production one.
 
-  ### Usage
+  ### Payment methods
 
-  When `use` WechatPay in `MyApp.Pay` module, it will generate following modules
-  for you:
+  When `use` WechatPay in `MyApp.Pay` module, it will generate following
+  payment method modules for you:
 
-  - `MyApp.Pay.App` - Implements the `WechatPay.PaymentMethod.App` Behaviour
-  - `MyApp.Pay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` Behaviour
-  - `MyApp.Pay.Native` - Implements the `WechatPay.PaymentMethod.Native` Behaviour
-  - `MyApp.Pay.Plug` - Handle callback from Wechat's server
+  - `MyApp.Pay.App` - Implements the `WechatPay.PaymentMethod.App` behaviour
+  - `MyApp.Pay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` behaviour
+  - `MyApp.Pay.Native` - Implements the `WechatPay.PaymentMethod.Native` behaviour
+
+  ### Plug
+
+  We will also generate some [Plugs](https://github.com/elixir-plug/plug) to
+  simplify the process of handling notification from Wechat's Payment Gateway:
+
+  - `MyApp.Pay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
   """
 
   @typedoc """
@@ -107,13 +112,13 @@ defmodule WechatPay do
         Macro.Env.location(__ENV__)
       )
 
-      # define module `MyModule.Plug`
+      # define module `MyModule.Plug.Payment`
       if Code.ensure_loaded?(Plug) do
-        __MODULE__
-        |> Module.concat(:Plug)
+        [__MODULE__, :Plug, :Payment]
+        |> Module.concat()
         |> Module.create(
           quote do
-            use WechatPay.Plug, mod: unquote(__MODULE__)
+            use WechatPay.Plug.Payment, mod: unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
