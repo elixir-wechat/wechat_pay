@@ -1,6 +1,6 @@
 defmodule WechatPay do
   @moduledoc """
-  WechatPay provide toolkit for the Wechat Payment Platform.
+  WechatPay provide toolkit for Wechat Payment Platform.
 
   ### Setup
 
@@ -46,6 +46,14 @@ defmodule WechatPay do
   simplify the process of handling notification from Wechat's Payment Gateway:
 
   - `MyApp.Pay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
+
+  #### Phoenix Example
+
+  In `lib/my_app_web/router.ex`:
+
+  ```elixir
+  post "/pay/cb/payment", MyApp.Pay.Plug.Payment, [handler: MyApp.PaymentHandler]
+  ```
   """
 
   @typedoc """
