@@ -115,9 +115,9 @@ defmodule WechatPay.API do
   def refund(attrs, config) do
     opts = [
       ssl: [
-        cacerts: [Keyword.get(config, :ssl_cacert) |> decode_public()],
-        cert: Keyword.get(config, :ssl_cert) |> decode_public(),
-        key: Keyword.get(config, :ssl_key) |> decode_private(),
+        cacerts: [config |> Keyword.get(:ssl_cacert) |> decode_public()],
+        cert: config |> Keyword.get(:ssl_cert) |> decode_public(),
+        key: config |> Keyword.get(:ssl_key) |> decode_private(),
       ]
     ]
 

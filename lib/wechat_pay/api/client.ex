@@ -13,7 +13,7 @@ defmodule WechatPay.API.Client do
     apikey: String.t,
     ssl_cacert: String.t,
     ssl_cert: String.t,
-    ssl_key: String.t
+    ssl_key: String.t,
     verify_sign: boolean
   ]
 
