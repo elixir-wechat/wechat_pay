@@ -29,24 +29,14 @@ use Mix.Config
 
 use Mix.Config
 
-# config :wechat_pay,
-#   env: :sandbox,
-#   appid: "wx8888888888888888",
-#   mch_id: "1900000109",
-#   apikey: "192006250b4c09247ec02edce69f6a2d",
-#   ssl_cacertfile: "fixture/certs/all.pem",
-#   ssl_certfile: "fixture/certs/apiclient_cert.pem",
-#   ssl_keyfile: "fixture/certs/apiclient_key.pem",
-#   ssl_password: ""
-
 config :plug, :validate_header_keys_during_test, true
 
-config :wechat_pay, TestCase.Pay,
+config :wechat_pay, MyPay,
   env: :sandbox,
   appid: "wx8888888888888888",
   mch_id: "1900000109",
   apikey: "192006250b4c09247ec02edce69f6a2d",
-  ssl_cacertfile: "fixture/certs/all.pem",
-  ssl_certfile: "fixture/certs/apiclient_cert.pem",
-  ssl_keyfile: "fixture/certs/apiclient_key.pem",
-  ssl_password: ""
+  ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+  ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+  ssl_key: File.read!("fixture/certs/apiclient_key.pem")
+

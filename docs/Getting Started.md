@@ -43,10 +43,9 @@ config :my_app, MyApp.Pay,
   appid: "the-appid",
   mch_id: "the-mch-id",
   apikey: "the-apikey",
-  ssl_cacertfile: "fixture/certs/all.pem",
-  ssl_certfile: "fixture/certs/apiclient_cert.pem",
-  ssl_keyfile: "fixture/certs/apiclient_key.pem",
-  ssl_password: ""
+  ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+  ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+  ssl_key: File.read!("fixture/certs/apiclient_key.pem")
 ```
 
 ## Place an order

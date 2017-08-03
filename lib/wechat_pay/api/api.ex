@@ -114,13 +114,10 @@ defmodule WechatPay.API do
   @spec refund(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
   def refund(attrs, config) do
     opts = [
-      hackney: [ # :hackney options
-        ssl_options: [ # :ssl options
-          cacertfile: Keyword.get(config, :ssl_cacertfile),
-          certfile: Keyword.get(config, :ssl_certfile),
-          keyfile: Keyword.get(config, :ssl_keyfile),
-          password: config |> Keyword.get(:ssl_password) |> String.to_charlist()
-        ]
+      ssl: [
+        cacerts: [Keyword.get(config, :ssl_cacert) |> decode_public()],
+        cert: Keyword.get(config, :ssl_cert) |> decode_public(),
+        key: Keyword.get(config, :ssl_key) |> decode_private(),
       ]
     ]
 
@@ -155,5 +152,21 @@ defmodule WechatPay.API do
       |> Keyword.merge([verify_sign: false])
 
     Client.post("payitil/report", attrs, [], config)
+  end
+
+  defp decode_public(pem) do
+    [{:Certificate, der_bin, :not_encrypted}] =
+      pem
+      |> :public_key.pem_decode()
+
+    der_bin
+  end
+
+  defp decode_private(pem) do
+    [{type, der_bin, :not_encrypted}] =
+      pem
+      |> :public_key.pem_decode()
+
+    {type, der_bin}
   end
 end

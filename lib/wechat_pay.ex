@@ -21,10 +21,9 @@ defmodule WechatPay do
     appid: "wx8888888888888888",
     mch_id: "1900000109",
     apikey: "192006250b4c09247ec02edce69f6a2d",
-    ssl_cacertfile: "fixture/certs/all.pem",
-    ssl_certfile: "fixture/certs/apiclient_cert.pem",
-    ssl_keyfile: "fixture/certs/apiclient_key.pem",
-    ssl_password: ""
+    ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+    ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+    ssl_key: File.read!("fixture/certs/apiclient_key.pem")
   ```
 
   > NOTE: If your are using the `:sandbox` environment,
@@ -63,20 +62,18 @@ defmodule WechatPay do
   - `appid` - APP ID
   - `mch_id` - Merchant ID
   - `apikey` - API key
-  - `ssl_cacertfile` - CA certficate file path
-  - `ssl_certfile` - Certificate file path
-  - `ssl_keyfile` - Private key file path
-  - `ssl_password` - Password for the private key
+  - `ssl_cacert` - CA Root certificate in PEM
+  - `ssl_cert` - Certificate in PEM
+  - `ssl_key` - Private key in PEM
   """
   @type config :: [
     env: :sandbox | :production,
     appid: String.t,
     mch_id: String.t,
     apikey: String.t,
-    ssl_cacertfile: String.t,
-    ssl_certfile: String.t,
-    ssl_keyfile: String.t,
-    ssl_password: String.t
+    ssl_cacert: String.t,
+    ssl_cert: String.t,
+    ssl_key: String.t
   ]
 
   defmacro __using__(opts) do

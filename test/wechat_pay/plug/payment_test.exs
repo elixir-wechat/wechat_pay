@@ -2,7 +2,7 @@ defmodule WechatPay.Plug.PaymentTest do
   use TestCase, async: false
   use Plug.Test
 
-  alias Pay.Plug.Payment, as: PaymentPlug
+  alias MyPay.Plug.Payment, as: PaymentPlug
 
   alias WechatPay.PlugTest.Handler
   alias WechatPay.PlugTest.HandlerThatOnlyHandleData

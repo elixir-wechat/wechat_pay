@@ -11,10 +11,9 @@ defmodule WechatPay.API.Client do
     appid: String.t,
     mch_id: String.t,
     apikey: String.t,
-    ssl_cacertfile: String.t,
-    ssl_certfile: String.t,
-    ssl_keyfile: String.t,
-    ssl_password: String.t,
+    ssl_cacert: String.t,
+    ssl_cert: String.t,
+    ssl_key: String.t
     verify_sign: boolean
   ]
 
