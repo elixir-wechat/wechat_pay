@@ -21,9 +21,7 @@ defmodule WechatPay.Mixfile do
       source_url: @url,
       homepage_url: @url,
       package: package(),
-      docs: [
-        main: "WechatPay"
-      ]
+      docs: docs()
     ]
   end
 
@@ -74,4 +72,14 @@ defmodule WechatPay.Mixfile do
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_),     do: ["lib"]
+
+  defp docs do
+    [
+      main: "getting-started",
+      extras: [
+        "docs/Getting Started.md",
+        "docs/Phoenix.md"
+      ]
+    ]
+  end
 end
