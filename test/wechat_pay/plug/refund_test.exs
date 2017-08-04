@@ -2,7 +2,7 @@ defmodule WechatPay.Plug.RefundTest do
   use TestCase, async: false
   use Plug.Test
 
-  alias Pay.Plug.Refund, as: RefundPlug
+  alias MyPay.Plug.Refund, as: RefundPlug
 
   alias WechatPay.PlugTest.Handler
 
