@@ -68,7 +68,18 @@ defmodule WechatPay.PaymentMethod.App do
     attrs :: map
   ) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
 
+  @doc """
+  Generate pay request info, which is required for the App SDK
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2)
+  """
+  @callback generate_pay_request(
+    prepay_id :: String.t
+  ) :: map
+
   alias WechatPay.API
+  alias WechatPay.Utils.NonceStr
+  alias WechatPay.Utils.Signature
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
@@ -105,6 +116,28 @@ defmodule WechatPay.PaymentMethod.App do
       @impl true
       def report(attrs),
         do: API.report(attrs, get_config())
+
+      @impl true
+      def generate_pay_request(prepay_id),
+        do: WechatPay.PaymentMethod.App.generate_pay_request(prepay_id, get_config())
     end
+  end
+
+  @doc false
+  @spec generate_pay_request(String.t, WechatPay.config) :: map
+  def generate_pay_request(prepay_id, config) do
+    %{
+      "appid" => Keyword.get(config, :appid),
+      "partnerid" => Keyword.get(config, :mch_id),
+      "prepayid" => prepay_id,
+      "package" => "Sign=WXPay",
+      "noncestr" => NonceStr.generate,
+      "timestamp" => Integer.to_string(:os.system_time),
+    } |> sign(Keyword.get(config, :apikey))
+  end
+
+  defp sign(data, apikey) do
+    data
+    |> Map.merge(%{"sign" => Signature.sign(data, apikey)})
   end
 end

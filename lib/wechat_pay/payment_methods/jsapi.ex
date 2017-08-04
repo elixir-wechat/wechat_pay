@@ -69,7 +69,7 @@ defmodule WechatPay.PaymentMethod.JSAPI do
   ) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
 
   @doc """
-  Generate pay request info, which is required for calling the JavaScript API
+  Generate pay request info, which is required for the JavaScript API
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6)
   """
