@@ -7,6 +7,13 @@ defmodule WechatPay.Utils.Signature do
 
   @doc """
   Generate the signature of data with API key
+
+  ## Example
+
+  ```elixir
+  iex> WechatPay.Utils.Signature.sign(%{...}, "wx9999")
+  ...> "02696FC7E3E19F852A0335F2F007DD3E"
+  ```
   """
   @spec sign(map, String.t) :: String.t
   def sign(data, apikey) when is_map(data) do
@@ -26,6 +33,13 @@ defmodule WechatPay.Utils.Signature do
 
   @doc """
   Verify the signature of Wechat's response
+
+  ## Example
+
+  ```elixir
+  iex > WechatPay.Utils.Signature.verify(%{sign: "foobar"}, "wx9999")
+  ... > :ok
+  ```
   """
   @spec verify(map, String.t) :: :ok | {:error, Error.t}
   def verify(data, apikey) when is_map(data) do

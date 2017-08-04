@@ -4,7 +4,14 @@ defmodule WechatPay.Utils.NonceStr do
   """
 
   @doc """
-  Generate a nonce string
+  Generate a 32 length nonce string
+
+  ## Example
+
+  ```elixir
+  iex> WechatPay.Utils.NonceStr.generate()
+  ...> "dzhGXJ8zotL1LYkqnjnDSX9Cw0S2vV0"
+  ```
   """
   @spec generate() :: String.t
   def generate do

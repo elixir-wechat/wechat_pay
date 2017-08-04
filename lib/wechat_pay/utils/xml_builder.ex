@@ -5,6 +5,13 @@ defmodule WechatPay.Utils.XMLBuilder do
 
   @doc """
   Convert a map to XML string
+
+  ## Example
+
+  ```elixir
+  iex> WechatPay.Utils.XMLBuilder.to_xml(%{foo: "bar"})
+  ...> "<xml><foo><![CDATA[bar]]></foo></xml>"
+  ```
   """
   @spec to_xml(map) :: String.t
   def to_xml(data) when is_map(data) do

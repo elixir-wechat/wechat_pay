@@ -9,6 +9,13 @@ defmodule WechatPay.Utils.XMLParser do
 
   @doc """
   Convert a XML string to map
+
+  ## Example
+
+  ```elixir
+  iex> WechatPay.Utils.XMLParser.parse "<xml><foo><![CDATA[bar]]></foo></xml>"
+  ...> {:ok, %{foo: "bar"}}
+  ```
   """
   @spec parse(String.t) :: {:ok, map} | {:error, Error.t}
   def parse(data) when is_binary(data) do
