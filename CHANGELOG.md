@@ -2,9 +2,14 @@
 
 ⚠️ Breaking changes
 
+## Guides
+
+Guides are added on the [Online documentation](https://hexdocs.pm/wechat_pay).
+I strongly recommend you to go through it aftre reading this changelog.
+
 ## You own implementation module
 
-Now you need to define you own pay module, then `use` WechatPay,
+Now you have to define you own pay module, then `use` WechatPay,
 with an `:otp_app` option.
 
 ```elixir
@@ -26,7 +31,10 @@ config :my_app, MyApp.Pay,
   ssl_key: File.read!("fixture/certs/apiclient_key.pem")
 ```
 
-this makes WechatPay works well with umbrella apps.
+This change makes it possible to define multiple pay modules with their own
+configuration.
+
+## Separating payment methods
 
 When `use` WechatPay in `MyApp.Pay` module, it will generate following
 payment method modules for you:
@@ -35,36 +43,70 @@ payment method modules for you:
 - `MyApp.Pay.JSAPI`
 - `MyApp.Pay.Native`
 
+Each refers to a pay scenario of WechatPay.
+
 ## Handler
 
-Now the plugs are only takes the responsibility to commutate with Wechat's
-Payment Gateway, then you should implement your own `WechatPay.Handler` to
-process the result.
+A new module `WechatPay.Handler` is added to assist processing the data from
+Wechat's Payment Gateway.
+
+Now the Plugs are only takes the responsibility to commutate with Wechat's
+Payment Gateway, so you should passed in your own handler:
 
 ```elixir
 post "/pay/cb/payment", MyApp.Pay.Plug.Payment, [handler: MyApp.PaymentHandler]
 ```
 
+and the handler implementation should looks like this:
+
 ```elixir
-defmodule MyApp.WechatHandler do
+defmodule MyApp.PaymentHandler do
   use WechatPay.Handler
 
   @impl WechatPay.Handler
   def handle_data(conn, data) do
+    # do something with data
     :ok
   end
 
   # This is optional
   @impl WechatPay.Handler
   def handle_error(conn, error, data) do
+    Logger.error(inspect(error))
   end
 end
 ```
 
-## Others
+## Sandbox API Key
 
-* `WechatPay.API.get_sandbox_signkey/0` => `WechatPay.Helper.get_sandbox_signkey/2`.
-* Change SSL config to load from binary instead of file.
+As the Sandbox API Key is requried to be fetched before configuring,
+so the `WechatPay.API.get_sandbox_signkey/0` is moved to
+`WechatPay.Helper.get_sandbox_signkey/2`, which accept `apikey` and `mch_id`
+to generate the Sandbox API Key.
+
+```elixir
+iex> WechatPay.Helper.get_sandbox_signkey("wx8888888888888888", "1900000109")
+...> {:ok, "the-key"}
+```
+
+## SSL configuration
+
+The `ssl_cacertfile`, `ssl_certfile`, `ssl_keyfile` and `ssl_password`
+configuration are removed.
+
+Instead, the `ssl_cacert`, `ssl_cert` and `ssl_key` configuration is added, these
+new configs accepts binary. Which make it possible to read these sensitive data
+from an ENV.
+
+```elixir
+config :wechat_pay, MyApp.Pay,
+  ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+  ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+  ssl_key: "${MY_APP_WECHAT_PAY_SSL_KEY}"
+```
+
+## Other changes
+
 * Added `MyApp.Pay.App.generate_pay_request/1` to generate pay request for App.
 
 # v0.2.0
