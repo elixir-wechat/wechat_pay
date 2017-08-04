@@ -27,7 +27,7 @@ defmodule WechatPay do
   ```
 
   > NOTE: If your are using the `:sandbox` environment,
-  > You need to use `WechatPay.Helper.get_sandbox_signkey/2` to
+  > You need to use `mix wechat_pay.get_sandbox_signkey` to
   > fetch the Sandbox API Key.
 
   ### Payment methods

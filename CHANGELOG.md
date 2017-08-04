@@ -1,5 +1,6 @@
 # master
 
+* Added task `mix wechat_pay.get_sandbox_signkey` to get the Sandbox API Key.
 * Fixes wrong return value of `WechatPay.Helper.get_sandbox_signkey/2`.
 
 # V0.3.0

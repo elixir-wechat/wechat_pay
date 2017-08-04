@@ -9,9 +9,9 @@ defmodule WechatPay.API.HelperTest do
       apikey = Keyword.get(config, :apikey)
       mch_id = Keyword.get(config, :mch_id)
 
-      {:ok, data} = Helper.get_sandbox_signkey(apikey, mch_id)
+      {:ok, sandbox_signkey} = Helper.get_sandbox_signkey(apikey, mch_id)
 
-      assert data.sandbox_signkey
+      assert sandbox_signkey == "bd1c50c287f1f5d4c9bd602c4fba6f8a"
     end
   end
 end
