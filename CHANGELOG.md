@@ -65,7 +65,7 @@ end
 
 * `WechatPay.API.get_sandbox_signkey/0` => `WechatPay.Helper.get_sandbox_signkey/2`.
 * Change SSL config to load from binary instead of file.
-* Added `MyApp.Pay.App.generate_pay_request/2` to generate pay request for App.
+* Added `MyApp.Pay.App.generate_pay_request/1` to generate pay request for App.
 
 # v0.2.0
 
