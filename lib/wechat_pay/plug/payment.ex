@@ -40,7 +40,7 @@ defmodule WechatPay.Plug.Payment do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with(
-      {:ok, data} <- XMLParser.parse(body),
+      {:ok, data} <- XMLParser.parse_response(body),
       :ok <- process_data(conn, data, handler_module, config)
     ) do
       response_with_success_info(conn)

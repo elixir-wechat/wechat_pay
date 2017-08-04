@@ -39,7 +39,7 @@ defmodule WechatPay.Plug.Refund do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with(
-      {:ok, data} <- XMLParser.parse(body),
+      {:ok, data} <- XMLParser.parse_response(body),
       :ok <- process_data(conn, data, handler_module, config)
     ) do
       response_with_success_info(conn)
@@ -67,7 +67,8 @@ defmodule WechatPay.Plug.Refund do
     with(
       {:ok, data} <- process_return_field(data),
       {:ok, decrypted_data} <- decrypt_data(data, config),
-      :ok <- apply(handler_module, :handle_data, [conn, decrypted_data])
+      {:ok, map} <- XMLParser.parse_decrypted(decrypted_data),
+      :ok <- apply(handler_module, :handle_data, [conn, map])
     ) do
       :ok
     else
@@ -90,18 +91,31 @@ defmodule WechatPay.Plug.Refund do
   end
 
   defp decrypt_data(%{req_info: encrypted_data}, config) do
-    key = Keyword.get(config, :apikey)
+    api_key = Keyword.get(config, :apikey)
 
     key =
       :md5
-      |> :crypto.hash(key)
+      |> :crypto.hash(api_key)
       |> Base.encode16(case: :lower)
 
-    encrypted_data
-    |> Base.decode64!()
+    {:ok, data} =
+      encrypted_data
+      |> Base.decode64()
+ 
+    try do
+      File.write("bar", data)
+      xml_string = :crypto.block_decrypt(:aes_ecb, key, data)
 
-    # FIXME: document is confusing. :(
-    %{}
+      # new = :crypto.block_encrypt(:aes_ecb, "192006250b4c09247ec02edce69f6a2d", xml_string)
+      # File.write("foo", new)
+
+      {:ok, xml_string}
+    rescue
+      ArgumentError ->
+        {:error, %Error{reason: "Fail to decrypt req_info", type: :fail_to_decrypt_req_info}}
+    end
+  end
+  defp decrypt_data(_, _config) do
+    {:error, %Error{reason: "Missing `req_info` in response data", type: :missing_req_info}}
   end
 end
-

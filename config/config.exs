@@ -39,4 +39,3 @@ config :wechat_pay, MyPay,
   ssl_cacert: File.read!("fixture/certs/rootca.pem"),
   ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
   ssl_key: File.read!("fixture/certs/apiclient_key.pem")
-
