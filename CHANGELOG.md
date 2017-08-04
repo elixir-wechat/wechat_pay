@@ -1,5 +1,7 @@
 # master
 
+* Fixes wrong return value of `WechatPay.Helper.get_sandbox_signkey/2`.
+
 # V0.3.0
 
 ⚠️ Breaking changes

@@ -22,7 +22,7 @@ defmodule WechatPay.Helper do
   ) :: {:ok, String.t} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
   def get_sandbox_signkey(apikey, mch_id) do
     case Client.get_sandbox_signkey(apikey, mch_id) do
-      {:ok, sandbox_signkey: signkey} ->
+      {:ok, %{sandbox_signkey: signkey}} ->
         {:ok, signkey}
       err -> err
     end
