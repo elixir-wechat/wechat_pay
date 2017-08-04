@@ -118,22 +118,25 @@ defmodule WechatPay.PaymentMethod.JSAPI do
         do: API.report(attrs, get_config())
 
       @impl true
-      def generate_pay_request(prepay_id) do
-        %{
-          "appId" => Keyword.get(get_config(), :appid),
-          "timeStamp" => Integer.to_string(:os.system_time),
-          "nonceStr" => NonceStr.generate,
-          "package" => "prepay_id=#{prepay_id}",
-          "signType" => "MD5"
-        } |> sign
-      end
-
-      defp sign(data) do
-        apikey = Keyword.get(get_config(), :apikey)
-
-        data
-        |> Map.merge(%{"paySign" => Signature.sign(data, apikey)})
-      end
+      def generate_pay_request(prepay_id),
+        do: WechatPay.PaymentMethod.JSAPI.generate_pay_request(prepay_id, get_config())
     end
+  end
+
+  @doc false
+  @spec generate_pay_request(String.t, WechatPay.config) :: map
+  def generate_pay_request(prepay_id, config) do
+    %{
+      "appId" => Keyword.get(config, :appid),
+      "timeStamp" => Integer.to_string(:os.system_time),
+      "nonceStr" => NonceStr.generate,
+      "package" => "prepay_id=#{prepay_id}",
+      "signType" => "MD5"
+    } |> sign(Keyword.get(config, :apikey))
+  end
+
+  defp sign(data, apikey) do
+    data
+    |> Map.merge(%{"paySign" => Signature.sign(data, apikey)})
   end
 end
