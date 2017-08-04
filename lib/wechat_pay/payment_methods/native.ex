@@ -117,9 +117,15 @@ defmodule WechatPay.PaymentMethod.Native do
         do: API.report(attrs, get_config())
 
       @impl true
-      def shorten_url(url) do
-        Client.post("tools/shorturl", %{long_url: URI.encode(url)}, [], get_config())
-      end
+      def shorten_url(url),
+        do: WechatPay.PaymentMethod.Native.shorten_url(url, get_config())
     end
+  end
+
+  @spec shorten_url(
+    String.t, WechatPay.config
+  ) :: {:ok, String.t} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  def shorten_url(url, config) do
+    Client.post("tools/shorturl", %{long_url: URI.encode(url)}, [], config)
   end
 end
