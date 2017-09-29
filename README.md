@@ -1,6 +1,6 @@
 # WechatPay
 
-WechatPay API wrapper in Elixir.
+WechatPay in Elixir.
 
 [![Travis](https://img.shields.io/travis/linjunpop/wechat_pay.svg)](https://travis-ci.org/linjunpop/wechat_pay)
 [![Hex.pm](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
@@ -9,21 +9,11 @@ WechatPay API wrapper in Elixir.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add `wechat_pay` to your list of dependencies in `mix.exs`:
+Add `wechat_pay` to your list of dependencies in `mix.exs`:
 
     ```elixir
     def deps do
       [{:wechat_pay, "~> 0.3.0"}]
-    end
-    ```
-
-  2. Ensure `wechat_pay` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:wechat_pay]]
     end
     ```
 
