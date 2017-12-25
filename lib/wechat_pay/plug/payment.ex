@@ -2,6 +2,8 @@ defmodule WechatPay.Plug.Payment do
   @moduledoc """
   Plug behaviour to handle **Payment** Notification from Wechat's Payment Gateway.
 
+  Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
+
   See `WechatPay.Handler` for how to implement a handler.
   """
 

@@ -2,6 +2,8 @@ defmodule WechatPay.Plug.Refund do
   @moduledoc """
   Plug behaviour to handle **Refund** Notification from Wechat's Payment Gateway.
 
+  Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_16&index=9
+
   See `WechatPay.Handler` for how to implement a handler.
   """
 
@@ -103,11 +105,7 @@ defmodule WechatPay.Plug.Refund do
       |> Base.decode64()
  
     try do
-      File.write("bar", data)
       xml_string = :crypto.block_decrypt(:aes_ecb, key, data)
-
-      # new = :crypto.block_encrypt(:aes_ecb, "192006250b4c09247ec02edce69f6a2d", xml_string)
-      # File.write("foo", new)
 
       {:ok, xml_string}
     rescue
@@ -116,6 +114,6 @@ defmodule WechatPay.Plug.Refund do
     end
   end
   defp decrypt_data(_, _config) do
-    {:error, %Error{reason: "Missing `req_info` in response data", type: :missing_req_info}}
+    {:error, %Error{reason: "Missing the encrypted `req_info` in response data", type: :missing_req_info}}
   end
 end
