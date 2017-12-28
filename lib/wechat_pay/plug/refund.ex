@@ -41,7 +41,7 @@ defmodule WechatPay.Plug.Refund do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with(
-      {:ok, data} <- XMLParser.parse_response(body),
+      {:ok, data} <- XMLParser.parse(body),
       :ok <- process_data(conn, data, handler_module, config)
     ) do
       response_with_success_info(conn)
@@ -69,7 +69,7 @@ defmodule WechatPay.Plug.Refund do
     with(
       {:ok, data} <- process_return_field(data),
       {:ok, decrypted_data} <- decrypt_data(data, config),
-      {:ok, map} <- XMLParser.parse_decrypted(decrypted_data),
+      {:ok, map} <- XMLParser.parse(decrypted_data, "root"),
       :ok <- apply(handler_module, :handle_data, [conn, map])
     ) do
       :ok

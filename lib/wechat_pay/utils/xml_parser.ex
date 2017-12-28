@@ -2,9 +2,9 @@ defmodule WechatPay.Utils.XMLParser do
   @moduledoc """
   Module to convert a XML string to map
   """
+  require WechatPay.Utils.XML
 
-  import SweetXml
-
+  alias WechatPay.Utils.XML
   alias WechatPay.Error
 
   @doc """
@@ -13,63 +13,48 @@ defmodule WechatPay.Utils.XMLParser do
   ## Example
 
   ```elixir
-  iex> WechatPay.Utils.XMLParser.parse_response "<xml><foo><![CDATA[bar]]></foo></xml>"
+  iex> WechatPay.Utils.XMLParser.parse("<xml><foo><![CDATA[bar]]></foo></xml>", "xml")
+  ...> {:ok, %{foo: "bar"}}
+
+  iex> WechatPay.Utils.XMLParser.parse("<root><foo><![CDATA[bar]]></foo></root>", "root")
   ...> {:ok, %{foo: "bar"}}
   ```
   """
-  @spec parse_response(String.t) :: {:ok, map} | {:error, Error.t}
-  def parse_response(data) when is_binary(data) do
+  @spec parse(String.t, String.t) :: {:ok, map} | {:error, Error.t}
+  def parse(xml_string, root_element \\ "xml") when is_binary(xml_string) do
     try do
-      parsed_data =
-        data
-        |> xpath(~x"/xml/child::*"l)
-        |> Enum.map(&parse_node/1)
-        |> Enum.into(%{})
+      {doc, _} =
+        xml_string
+        |> :binary.bin_to_list()
+        |> :xmerl_scan.string()
 
-      {:ok, parsed_data}
+      parsed_xml = extract_doc(doc, root_element)
+
+      {:ok, parsed_xml}
     catch
       :exit, _ ->
-        {:error, %Error{reason: "Malformed response XML", type: :malformed_response_xml}}
+        {:error, %Error{reason: "Malformed XML, requires root element: #{root_element}", type: :malformed_xml}}
     end
   end
 
-  @doc """
-  Convert the decrypted XML string to map
-
-  ## Example
-
-  ```elixir
-  iex> WechatPay.Utils.XMLParser.parse_decrypted "<root>\n<out_refund_no><![CDATA[foobar]]></out_refund_no>\n<out_trade_no><![CDATA[foobar]]></out_trade_no>\n</root>"
-  ...> {:ok, %{out_refund_no: "foobar", out_trade_no: "foobar"}}
-  ```
-  """
-  @spec parse_decrypted(String.t) :: {:ok, map} | {:error, Error.t}
-  def parse_decrypted(data) when is_binary(data) do
-    try do
-      parsed_data =
-        data
-        |> xpath(~x"/root/child::*"l)
-        |> Enum.map(&parse_node/1)
-        |> Enum.into(%{})
-
-      {:ok, parsed_data}
-    catch
-      :exit, _ ->
-        {:error, %Error{reason: "Malformed decrypted XML", type: :malformed_decrypted_xml}}
-    end
+  defp extract_doc(doc, root) do
+    "/#{root}/child::*"
+    |> String.to_charlist()
+    |> :xmerl_xpath.string(doc)
+    |> Enum.map(&extract_element/1)
+    |> Enum.into(%{})
   end
 
-  defp parse_node(node) do
-    key =
-      node
-      |> xpath(~x"name(.)")
-      |> List.to_atom
+  defp extract_element(element) do
+    name = XML.xml_element(element, :name)
+
+    [content] = XML.xml_element(element, :content)
 
     value =
-      node
-      |> xpath(~x"./text()")
+      content
+      |> XML.xml_text(:value)
       |> String.Chars.to_string
 
-    {key, value}
+    {name, value}
   end
 end

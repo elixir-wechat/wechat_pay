@@ -107,7 +107,7 @@ defmodule WechatPay.Plug.PaymentTest do
         conn(:post, "/foo", req)
         |> PaymentPlug.call(opts)
 
-      assert conn.resp_body == "Malformed response XML"
+      assert conn.resp_body == "Malformed XML, requires root element: xml"
     end
   end
 end
