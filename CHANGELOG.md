@@ -1,5 +1,7 @@
 # master
 
+* Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
+
 # v0.3.1
 
 * Added task `mix wechat_pay.get_sandbox_signkey` to get the Sandbox API Key.
