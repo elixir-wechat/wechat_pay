@@ -122,6 +122,7 @@ defmodule WechatPay.PaymentMethod.Native do
     end
   end
 
+  @doc false
   @spec shorten_url(
     String.t, WechatPay.config
   ) :: {:ok, String.t} | {:error, WechatPay.Error.t | HTTPoison.Error.t}

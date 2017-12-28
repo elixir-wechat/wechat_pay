@@ -18,6 +18,7 @@ defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
 
   @shortdoc "Get WechatPay's Sandbox API Key"
 
+  @doc false
   def run(args) do
     {:ok, _} = Application.ensure_all_started(:wechat_pay)
 
