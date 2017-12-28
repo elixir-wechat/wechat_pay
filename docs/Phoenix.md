@@ -16,9 +16,12 @@ end
 
 The following modules are also generated for you:
 
-- `MyApp.Pay.Plug.Payment`
+- `MyApp.Pay.Plug.Payment` - Implements `WechatPay.Plug.Payment`
+- `MyApp.Pay.Plug.Refund` - Implements `WechatPay.Plug.Refund`
 
 ## Usage
+
+We use `MyApp.Pay.Plug.Payment` as an example:
 
 ### Implement the handler
 

@@ -1,8 +1,8 @@
-defmodule WechatPay.Plug.Payment do
+defmodule WechatPay.Plug.Refund do
   @moduledoc """
-  Plug behaviour to handle **Payment** Notification from Wechat's Payment Gateway.
+  Plug behaviour to handle **Refund** Notification from Wechat's Payment Gateway.
 
-  Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
+  Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_16&index=9
 
   See `WechatPay.Handler` for how to implement a handler.
   """
@@ -11,14 +11,13 @@ defmodule WechatPay.Plug.Payment do
   @callback call(conn :: Plug.Conn.t, opts :: Plug.opts) :: Plug.Conn.t
 
   alias WechatPay.Utils.XMLParser
-  alias WechatPay.Utils.Signature
   alias WechatPay.Error
 
   import Plug.Conn
 
   defmacro __using__(opts) do
     quote do
-      @behaviour WechatPay.Plug.Payment
+      @behaviour WechatPay.Plug.Refund
 
       mod = Keyword.fetch!(unquote(opts), :mod)
 
@@ -33,7 +32,7 @@ defmodule WechatPay.Plug.Payment do
 
       @impl true
       def call(conn, [handler: handler]),
-        do: WechatPay.Plug.Payment.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Refund.call(conn, [handler: handler], get_config())
     end
   end
 
@@ -69,8 +68,9 @@ defmodule WechatPay.Plug.Payment do
   defp process_data(conn, data, handler_module, config) do
     with(
       {:ok, data} <- process_return_field(data),
-      :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
-      :ok <- apply(handler_module, :handle_data, [conn, data])
+      {:ok, decrypted_data} <- decrypt_data(data, config),
+      {:ok, map} <- XMLParser.parse_decrypted(decrypted_data),
+      :ok <- apply(handler_module, :handle_data, [conn, map])
     ) do
       :ok
     else
@@ -91,5 +91,29 @@ defmodule WechatPay.Plug.Payment do
   defp maybe_handle_error(handler_module, conn, error, data) do
     handler_module.handle_error(conn, error, data)
   end
-end
 
+  defp decrypt_data(%{req_info: encrypted_data}, config) do
+    api_key = Keyword.get(config, :apikey)
+
+    key =
+      :md5
+      |> :crypto.hash(api_key)
+      |> Base.encode16(case: :lower)
+
+    {:ok, data} =
+      encrypted_data
+      |> Base.decode64()
+
+    try do
+      xml_string = :crypto.block_decrypt(:aes_ecb, key, data)
+
+      {:ok, xml_string}
+    rescue
+      ArgumentError ->
+        {:error, %Error{reason: "Fail to decrypt req_info", type: :fail_to_decrypt_req_info}}
+    end
+  end
+  defp decrypt_data(_, _config) do
+    {:error, %Error{reason: "Missing the encrypted `req_info` in response data", type: :missing_req_info}}
+  end
+end

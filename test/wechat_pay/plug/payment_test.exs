@@ -37,7 +37,7 @@ defmodule WechatPay.Plug.PaymentTest do
     end
   end
 
-  describe "receive notification from Wechat's payment gateway" do
+  describe "receive notification from Wechat's Payment Gateway" do
     test "handle data" do
       req = ~s"""
       <xml>
@@ -107,7 +107,7 @@ defmodule WechatPay.Plug.PaymentTest do
         conn(:post, "/foo", req)
         |> PaymentPlug.call(opts)
 
-      assert conn.resp_body == "Malformed XML"
+      assert conn.resp_body == "Malformed response XML"
     end
   end
 end
