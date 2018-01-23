@@ -19,3 +19,5 @@ erl_crash.dump
 # VS Code
 .vscode
 .elixir_ls
+
+.DS_Store
