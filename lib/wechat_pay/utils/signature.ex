@@ -15,12 +15,12 @@ defmodule WechatPay.Utils.Signature do
   ...> "02696FC7E3E19F852A0335F2F007DD3E"
   ```
   """
-  @spec sign(map, String.t) :: String.t
+  @spec sign(map, String.t()) :: String.t()
   def sign(data, apikey) when is_map(data) do
     sign =
       data
       |> Map.delete(:__struct__)
-      |> Enum.sort
+      |> Enum.sort()
       |> Enum.map(&process_param/1)
       |> Enum.reject(&is_nil/1)
       |> List.insert_at(-1, "key=#{apikey}")
@@ -28,7 +28,7 @@ defmodule WechatPay.Utils.Signature do
 
     :md5
     |> :crypto.hash(sign)
-    |> Base.encode16
+    |> Base.encode16()
   end
 
   @doc """
@@ -41,7 +41,7 @@ defmodule WechatPay.Utils.Signature do
   ... > :ok
   ```
   """
-  @spec verify(map, String.t) :: :ok | {:error, Error.t}
+  @spec verify(map, String.t()) :: :ok | {:error, Error.t()}
   def verify(data, apikey) when is_map(data) do
     calculated =
       data
@@ -58,12 +58,15 @@ defmodule WechatPay.Utils.Signature do
   defp process_param({_k, ""}) do
     nil
   end
+
   defp process_param({_k, nil}) do
     nil
   end
+
   defp process_param({k, v}) when is_map(v) do
     "#{k}=#{Poison.encode!(v)}"
   end
+
   defp process_param({k, v}) do
     "#{k}=#{v}"
   end

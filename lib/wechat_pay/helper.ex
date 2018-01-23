@@ -18,13 +18,16 @@ defmodule WechatPay.Helper do
   ```
   """
   @spec get_sandbox_signkey(
-    String.t, String.t
-  ) :: {:ok, String.t} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+          String.t(),
+          String.t()
+        ) :: {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def get_sandbox_signkey(apikey, mch_id) do
     case Client.get_sandbox_signkey(apikey, mch_id) do
       {:ok, %{sandbox_signkey: signkey}} ->
         {:ok, signkey}
-      err -> err
+
+      err ->
+        err
     end
   end
 end

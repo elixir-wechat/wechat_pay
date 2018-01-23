@@ -61,10 +61,10 @@ defmodule WechatPay.Handler do
         :nothing
       end
 
-      defoverridable [handle_error: 3]
+      defoverridable handle_error: 3
     end
   end
 
-  @callback handle_data(conn :: Plug.Conn.t, data :: map) :: :ok | {:error, any}
-  @callback handle_error(conn :: Plug.Conn.t, error :: WechatPay.Error.t, data :: map) :: any
+  @callback handle_data(conn :: Plug.Conn.t(), data :: map) :: :ok | {:error, any}
+  @callback handle_error(conn :: Plug.Conn.t(), error :: WechatPay.Error.t(), data :: map) :: any
 end

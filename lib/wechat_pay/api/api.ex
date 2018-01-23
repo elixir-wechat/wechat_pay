@@ -13,7 +13,8 @@ defmodule WechatPay.API do
       iex> WechatPay.API.close_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec close_order(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  @spec close_order(map, WechatPay.config()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def close_order(attrs, config) do
     Client.post("pay/closeorder", attrs, [], config)
   end
@@ -39,7 +40,8 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec place_order(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  @spec place_order(map, WechatPay.config()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def place_order(attrs, config) do
     Client.post("pay/unifiedorder", attrs, [], config)
   end
@@ -52,7 +54,8 @@ defmodule WechatPay.API do
       iex> WechatPay.API.query_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec query_order(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  @spec query_order(map, WechatPay.config()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def query_order(attrs, config) do
     Client.post("pay/orderquery", attrs, [], config)
   end
@@ -69,7 +72,8 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec download_bill(map, WechatPay.config) :: {:ok, String.t} | {:error, HTTPoison.Error.t}
+  @spec download_bill(map, WechatPay.config()) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
   def download_bill(attrs, config) do
     Client.download_text("pay/downloadbill", attrs, [], config)
   end
@@ -85,7 +89,8 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec query_refund(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  @spec query_refund(map, WechatPay.config()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def query_refund(attrs, config) do
     Client.post("pay/refundquery", attrs, [], config)
   end
@@ -111,13 +116,14 @@ defmodule WechatPay.API do
       ...> WechatPay.API.refund(attrs, opts)
       ...> {:ok, data}
   """
-  @spec refund(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  @spec refund(map, WechatPay.config()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def refund(attrs, config) do
     opts = [
       ssl: [
         cacerts: [config |> Keyword.get(:ssl_cacert) |> decode_public()],
         cert: config |> Keyword.get(:ssl_cert) |> decode_public(),
-        key: config |> Keyword.get(:ssl_key) |> decode_private(),
+        key: config |> Keyword.get(:ssl_key) |> decode_private()
       ]
     ]
 
@@ -145,11 +151,12 @@ defmodule WechatPay.API do
       ...> WechatPay.API.report(params)
       ...> {:ok, data}
   """
-  @spec report(map, WechatPay.config) :: {:ok, map} | {:error, WechatPay.Error.t | HTTPoison.Error.t}
+  @spec report(map, WechatPay.config()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def report(attrs, config) do
     config =
       config
-      |> Keyword.merge([verify_sign: false])
+      |> Keyword.merge(verify_sign: false)
 
     Client.post("payitil/report", attrs, [], config)
   end

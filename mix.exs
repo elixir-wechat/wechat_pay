@@ -9,12 +9,15 @@ defmodule WechatPay.Mixfile do
       app: :wechat_pay,
       version: @version,
       elixir: "~> 1.3",
-      elixirc_paths: elixirc_paths(Mix.env),
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       preferred_cli_env: [
-        vcr: :test, "vcr.delete": :test, "vcr.check": :test, "vcr.show": :test
+        vcr: :test,
+        "vcr.delete": :test,
+        "vcr.check": :test,
+        "vcr.show": :test
       ],
       name: "WechatPay",
       description: "WechatPay API wrapper in Elixir",
@@ -46,11 +49,9 @@ defmodule WechatPay.Mixfile do
       {:httpoison, "~> 0.9"},
       {:poison, "~> 2.2 or ~> 3.0"},
       {:plug, "~> 1.2", optional: true},
-
       {:exvcr, "~> 0.7", only: :test},
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:dialyxir, "~> 0.3", only: :dev},
-
       {:inch_ex, "~> 0.2", only: :docs},
       {:ex_doc, "~> 0.14", only: [:dev, :docs]}
     ]
@@ -70,7 +71,7 @@ defmodule WechatPay.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp docs do
     [

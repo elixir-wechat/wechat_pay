@@ -7,8 +7,8 @@ defmodule WechatPay.Plug.Refund do
   See `WechatPay.Handler` for how to implement a handler.
   """
 
-  @callback init(opts :: Plug.opts) :: Plug.opts
-  @callback call(conn :: Plug.Conn.t, opts :: Plug.opts) :: Plug.Conn.t
+  @callback init(opts :: Plug.opts()) :: Plug.opts()
+  @callback call(conn :: Plug.Conn.t(), opts :: Plug.opts()) :: Plug.Conn.t()
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Error
@@ -31,7 +31,7 @@ defmodule WechatPay.Plug.Refund do
       end
 
       @impl true
-      def call(conn, [handler: handler]),
+      def call(conn, handler: handler),
         do: WechatPay.Plug.Refund.call(conn, [handler: handler], get_config())
     end
   end
@@ -40,10 +40,8 @@ defmodule WechatPay.Plug.Refund do
   def call(conn, [handler: handler_module], config) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
-    with(
-      {:ok, data} <- XMLParser.parse(body),
-      :ok <- process_data(conn, data, handler_module, config)
-    ) do
+    with {:ok, data} <- XMLParser.parse(body),
+         :ok <- process_data(conn, data, handler_module, config) do
       response_with_success_info(conn)
     else
       {:error, %Error{reason: reason}} ->
@@ -66,12 +64,10 @@ defmodule WechatPay.Plug.Refund do
   end
 
   defp process_data(conn, data, handler_module, config) do
-    with(
-      {:ok, data} <- process_return_field(data),
-      {:ok, decrypted_data} <- decrypt_data(data, config),
-      {:ok, map} <- XMLParser.parse(decrypted_data, "root"),
-      :ok <- apply(handler_module, :handle_data, [conn, map])
-    ) do
+    with {:ok, data} <- process_return_field(data),
+         {:ok, decrypted_data} <- decrypt_data(data, config),
+         {:ok, map} <- XMLParser.parse(decrypted_data, "root"),
+         :ok <- apply(handler_module, :handle_data, [conn, map]) do
       :ok
     else
       {:error, %Error{} = error} ->
@@ -84,6 +80,7 @@ defmodule WechatPay.Plug.Refund do
   defp process_return_field(%{return_code: "SUCCESS"} = data) do
     {:ok, data}
   end
+
   defp process_return_field(%{return_code: "FAIL", return_msg: reason}) do
     {:error, %Error{reason: reason, type: :failed_return}}
   end
@@ -113,7 +110,9 @@ defmodule WechatPay.Plug.Refund do
         {:error, %Error{reason: "Fail to decrypt req_info", type: :fail_to_decrypt_req_info}}
     end
   end
+
   defp decrypt_data(_, _config) do
-    {:error, %Error{reason: "Missing the encrypted `req_info` in response data", type: :missing_req_info}}
+    {:error,
+     %Error{reason: "Missing the encrypted `req_info` in response data", type: :missing_req_info}}
   end
 end

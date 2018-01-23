@@ -13,7 +13,7 @@ defmodule WechatPay.Utils.XMLBuilder do
   ...> "<xml><foo><![CDATA[bar]]></foo></xml>"
   ```
   """
-  @spec to_xml(map) :: String.t
+  @spec to_xml(map) :: String.t()
   def to_xml(data) when is_map(data) do
     data
     |> Map.to_list()
@@ -26,12 +26,15 @@ defmodule WechatPay.Utils.XMLBuilder do
   defp build_node({_key, nil}) do
     # ignore nil values
   end
+
   defp build_node({key, value}) when is_map(value) do
     "<#{key}><![CDATA[#{Poison.encode!(value)}]]></#{key}>"
   end
+
   defp build_node({key, value}) when is_binary(value) do
     "<#{key}><![CDATA[#{value}]]></#{key}>"
   end
+
   defp build_node({key, value}) when is_integer(value) do
     "<#{key}><![CDATA[#{value}]]></#{key}>"
   end

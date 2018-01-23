@@ -29,9 +29,12 @@ defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
         strict: [apikey: :string, mch_id: :string]
       )
 
-    case WechatPay.Helper.get_sandbox_signkey(Keyword.get(opts, :apikey), Keyword.get(opts, :mch_id)) do
-      {:ok, key} -> Mix.shell.info(key)
-      {:error, err} -> Mix.shell.error(inspect(err))
+    case WechatPay.Helper.get_sandbox_signkey(
+           Keyword.get(opts, :apikey),
+           Keyword.get(opts, :mch_id)
+         ) do
+      {:ok, key} -> Mix.shell().info(key)
+      {:error, err} -> Mix.shell().error(inspect(err))
     end
   end
 end

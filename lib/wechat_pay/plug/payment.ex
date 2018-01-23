@@ -7,8 +7,8 @@ defmodule WechatPay.Plug.Payment do
   See `WechatPay.Handler` for how to implement a handler.
   """
 
-  @callback init(opts :: Plug.opts) :: Plug.opts
-  @callback call(conn :: Plug.Conn.t, opts :: Plug.opts) :: Plug.Conn.t
+  @callback init(opts :: Plug.opts()) :: Plug.opts()
+  @callback call(conn :: Plug.Conn.t(), opts :: Plug.opts()) :: Plug.Conn.t()
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
@@ -32,7 +32,7 @@ defmodule WechatPay.Plug.Payment do
       end
 
       @impl true
-      def call(conn, [handler: handler]),
+      def call(conn, handler: handler),
         do: WechatPay.Plug.Payment.call(conn, [handler: handler], get_config())
     end
   end
@@ -41,10 +41,8 @@ defmodule WechatPay.Plug.Payment do
   def call(conn, [handler: handler_module], config) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
-    with(
-      {:ok, data} <- XMLParser.parse(body),
-      :ok <- process_data(conn, data, handler_module, config)
-    ) do
+    with {:ok, data} <- XMLParser.parse(body),
+         :ok <- process_data(conn, data, handler_module, config) do
       response_with_success_info(conn)
     else
       {:error, %Error{reason: reason}} ->
@@ -67,11 +65,9 @@ defmodule WechatPay.Plug.Payment do
   end
 
   defp process_data(conn, data, handler_module, config) do
-    with(
-      {:ok, data} <- process_return_field(data),
-      :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
-      :ok <- apply(handler_module, :handle_data, [conn, data])
-    ) do
+    with {:ok, data} <- process_return_field(data),
+         :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
+         :ok <- apply(handler_module, :handle_data, [conn, data]) do
       :ok
     else
       {:error, %Error{} = error} ->
@@ -84,6 +80,7 @@ defmodule WechatPay.Plug.Payment do
   defp process_return_field(%{return_code: "SUCCESS"} = data) do
     {:ok, data}
   end
+
   defp process_return_field(%{return_code: "FAIL", return_msg: reason}) do
     {:error, %Error{reason: reason, type: :failed_return}}
   end
@@ -92,4 +89,3 @@ defmodule WechatPay.Plug.Payment do
     handler_module.handle_error(conn, error, data)
   end
 end
-

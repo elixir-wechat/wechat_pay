@@ -20,7 +20,7 @@ defmodule WechatPay.Utils.XMLParser do
   ...> {:ok, %{foo: "bar"}}
   ```
   """
-  @spec parse(String.t, String.t) :: {:ok, map} | {:error, Error.t}
+  @spec parse(String.t(), String.t()) :: {:ok, map} | {:error, Error.t()}
   def parse(xml_string, root_element \\ "xml") when is_binary(xml_string) do
     try do
       {doc, _} =
@@ -33,7 +33,11 @@ defmodule WechatPay.Utils.XMLParser do
       {:ok, parsed_xml}
     catch
       :exit, _ ->
-        {:error, %Error{reason: "Malformed XML, requires root element: #{root_element}", type: :malformed_xml}}
+        {:error,
+         %Error{
+           reason: "Malformed XML, requires root element: #{root_element}",
+           type: :malformed_xml
+         }}
     end
   end
 
@@ -53,7 +57,7 @@ defmodule WechatPay.Utils.XMLParser do
     value =
       content
       |> XML.xml_text(:value)
-      |> String.Chars.to_string
+      |> String.Chars.to_string()
 
     {name, value}
   end

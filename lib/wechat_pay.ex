@@ -60,21 +60,21 @@ defmodule WechatPay do
   - `ssl_key` - Private key in PEM
   """
   @type config :: [
-    env: :sandbox | :production,
-    appid: String.t,
-    mch_id: String.t,
-    apikey: String.t,
-    ssl_cacert: String.t,
-    ssl_cert: String.t,
-    ssl_key: String.t
-  ]
+          env: :sandbox | :production,
+          appid: String.t(),
+          mch_id: String.t(),
+          apikey: String.t(),
+          ssl_cacert: String.t(),
+          ssl_cert: String.t(),
+          ssl_key: String.t()
+        ]
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       otp_app = Keyword.fetch!(opts, :otp_app)
 
       @doc false
-      @spec get_config :: WechatPay.config
+      @spec get_config :: WechatPay.config()
       def get_config do
         __MODULE__
         |> WechatPay.build_config(unquote(otp_app))
