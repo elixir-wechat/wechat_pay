@@ -1,5 +1,7 @@
 # master
 
+# v0.4.0
+
 * Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
 * Parse XML with `:xmerl`, drop dependency on `sweet_xml`.
 
