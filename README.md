@@ -6,6 +6,7 @@ WechatPay in Elixir.
 [![Hex.pm](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
 [![codebeat badge](https://codebeat.co/badges/35908fb7-9d5b-4622-b75b-93b69aea416b)](https://codebeat.co/projects/github-com-linjunpop-wechat_pay-master)
 [![Inline docs](http://inch-ci.org/github/linjunpop/wechat_pay.svg)](http://inch-ci.org/github/linjunpop/wechat_pay)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flinjunpop%2Fwechat_pay.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flinjunpop%2Fwechat_pay?ref=badge_shield)
 
 ## Installation
 
@@ -23,3 +24,7 @@ Add `wechat_pay` to your list of dependencies in `mix.exs`:
 
 Please view the [Online documentation](https://hexdocs.pm/wechat_pay).
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flinjunpop%2Fwechat_pay.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flinjunpop%2Fwechat_pay?ref=badge_large)
