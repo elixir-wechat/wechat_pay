@@ -24,7 +24,8 @@ defmodule WechatPay.Mixfile do
       source_url: @url,
       homepage_url: @url,
       package: package(),
-      docs: docs()
+      docs: docs(),
+      dialyzer: [plt_add_apps: [:mix, :plug, :xmerl]]
     ]
   end
 
