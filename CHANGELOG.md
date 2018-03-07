@@ -1,5 +1,7 @@
 # master
 
+# v0.4.1
+
 * Fixes `:xmerl` is missing in the application list.
 
 # v0.4.0

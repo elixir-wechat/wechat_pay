@@ -7,7 +7,7 @@ Simply add `wechat_pay` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wechat_pay, "~> 0.4.0"}
+    {:wechat_pay, "~> 0.4.1"}
   ]
 end
 ```
