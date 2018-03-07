@@ -1,5 +1,7 @@
 # master
 
+* Fixes `:xmerl` is missing in the application list.
+
 # v0.4.0
 
 * Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
