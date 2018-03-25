@@ -46,6 +46,15 @@ defmodule WechatPay do
 
   - `MyApp.Pay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
   - `MyApp.Pay.Plug.Refund` - Implements the `WechatPay.Plug.Refund` behaviour
+
+  ### JSON Encoder
+
+  By default, `WechatPay` use `Jason` to encode JSON, if you want to use `Poison`,
+  you can configure `:wechat_pay` application with:
+
+  ```elixir
+  config :wechat_pay, :json_library, Poison
+  ```
   """
 
   @typedoc """

@@ -48,7 +48,8 @@ defmodule WechatPay.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9"},
-      {:poison, "~> 2.2 or ~> 3.0"},
+      {:poison, "~> 2.2 or ~> 3.0", optional: true},
+      {:jason, "~> 1.0", optional: true},
       {:plug, "~> 1.2", optional: true},
       {:exvcr, "~> 0.7", only: :test},
       {:credo, "~> 0.4", only: [:dev, :test]},

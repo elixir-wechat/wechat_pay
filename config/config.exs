@@ -31,6 +31,8 @@ use Mix.Config
 
 config :plug, :validate_header_keys_during_test, true
 
+config :wechat_pay, json_library: Poison
+
 config :wechat_pay, MyPay,
   env: :sandbox,
   appid: "wx8888888888888888",
