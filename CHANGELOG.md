@@ -1,5 +1,8 @@
 # master
 
+* Make JSON library an optional dependency,
+  [Jason](https://github.com/michalmuskala/jason) is recommended.
+
 # v0.4.1
 
 * Fixes `:xmerl` is missing in the application list.
@@ -55,9 +58,9 @@ configuration.
 When `use` WechatPay in `MyApp.Pay` module, it will generate following
 payment method modules for you:
 
-- `MyApp.Pay.App`
-- `MyApp.Pay.JSAPI`
-- `MyApp.Pay.Native`
+* `MyApp.Pay.App`
+* `MyApp.Pay.JSAPI`
+* `MyApp.Pay.Native`
 
 Each refers to a pay scenario of WechatPay.
 
