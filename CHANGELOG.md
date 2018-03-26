@@ -1,32 +1,36 @@
-# master
+# CHANGELOG
+
+## master
+
+## v0.5.0
 
 * Make JSON library an optional dependency,
   [Jason](https://github.com/michalmuskala/jason) is recommended.
 
-# v0.4.1
+## v0.4.1
 
 * Fixes `:xmerl` is missing in the application list.
 
-# v0.4.0
+## v0.4.0
 
 * Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
 * Parse XML with `:xmerl`, drop dependency on `sweet_xml`.
 
-# v0.3.1
+## v0.3.1
 
 * Added task `mix wechat_pay.get_sandbox_signkey` to get the Sandbox API Key.
 * Fixes wrong return value of `WechatPay.Helper.get_sandbox_signkey/2`.
 
-# V0.3.0
+## V0.3.0
 
 ⚠️ Breaking changes
 
-## Guides
+### Guides
 
 Guides are added on the [Online documentation](https://hexdocs.pm/wechat_pay).
 I strongly recommend you to go through it aftre reading this changelog.
 
-## You own implementation module
+### You own implementation module
 
 Now you have to define you own pay module, then `use` WechatPay,
 with an `:otp_app` option.
@@ -53,7 +57,7 @@ config :my_app, MyApp.Pay,
 This change makes it possible to define multiple pay modules with their own
 configuration.
 
-## Separating payment methods
+### Separating payment methods
 
 When `use` WechatPay in `MyApp.Pay` module, it will generate following
 payment method modules for you:
@@ -64,7 +68,7 @@ payment method modules for you:
 
 Each refers to a pay scenario of WechatPay.
 
-## Handler
+### Handler
 
 A new module `WechatPay.Handler` is added to assist processing the data from
 Wechat's Payment Gateway.
@@ -96,7 +100,7 @@ defmodule MyApp.PaymentHandler do
 end
 ```
 
-## Sandbox API Key
+### Sandbox API Key
 
 As the Sandbox API Key is requried to be fetched before configuring,
 so the `WechatPay.API.get_sandbox_signkey/0` is moved to
@@ -108,7 +112,7 @@ iex> WechatPay.Helper.get_sandbox_signkey("wx8888888888888888", "1900000109")
 ...> {:ok, "the-key"}
 ```
 
-## SSL configuration
+### SSL configuration
 
 The `ssl_cacertfile`, `ssl_certfile`, `ssl_keyfile` and `ssl_password`
 configuration are removed.
@@ -124,11 +128,11 @@ config :wechat_pay, MyApp.Pay,
   ssl_key: "${MY_APP_WECHAT_PAY_SSL_KEY}"
 ```
 
-## Other changes
+### Other changes
 
 * Added `MyApp.Pay.App.generate_pay_request/1` to generate pay request for App.
 
-# v0.2.0
+## v0.2.0
 
 ⚠️ Breaking changes
 
@@ -141,11 +145,11 @@ config :wechat_pay, MyApp.Pay,
 * Drop support for loading config from `{:system, ENV}`. It seems not a good
   idea to do this, consider https://github.com/bitwalker/conform.
 
-# v0.1.1
+## v0.1.1
 
 * Fixes hexdocs.pm does not recognize upcase in URL.
 * Improve docs.
 
-# v0.1.0
+## v0.1.0
 
 * Initial support Wechat Pay's JSAPI, Native and App.
