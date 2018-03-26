@@ -3,6 +3,10 @@ defmodule WechatPay.Utils.XMLBuilder do
   Module to convert a map to XML string
   """
 
+  alias WechatPay.JSON
+
+  require JSON
+
   @doc """
   Convert a map to XML string
 
@@ -28,7 +32,7 @@ defmodule WechatPay.Utils.XMLBuilder do
   end
 
   defp build_node({key, value}) when is_map(value) do
-    "<#{key}><![CDATA[#{Poison.encode!(value)}]]></#{key}>"
+    "<#{key}><![CDATA[#{JSON.encode!(value)}]]></#{key}>"
   end
 
   defp build_node({key, value}) when is_binary(value) do

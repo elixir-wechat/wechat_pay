@@ -11,15 +11,15 @@ WechatPay in Elixir.
 
 Add `wechat_pay` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [
-        {:wechat_pay, "~> 0.4.1"}
-      ]
-    end
-    ```
+```elixir
+def deps do
+  [
+    {:wechat_pay, "~> 0.4.1"},
+    {:jason, "~> 1.0"} # or {:poison, "~> 3.0"}
+  ]
+end
+```
 
 ## Usage
 
 Please view the [Online documentation](https://hexdocs.pm/wechat_pay).
-

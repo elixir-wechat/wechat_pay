@@ -33,7 +33,7 @@ defmodule WechatPay.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison, :poison, :xmerl]]
+    [applications: [:logger, :httpoison, :xmerl]]
   end
 
   # Dependencies can be Hex packages:
@@ -48,11 +48,18 @@ defmodule WechatPay.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9"},
-      {:poison, "~> 2.2 or ~> 3.0"},
+
+      # Optional
+      {:poison, "~> 2.2 or ~> 3.0", optional: true},
+      {:jason, "~> 1.0", optional: true},
       {:plug, "~> 1.2", optional: true},
+
+      # Dev
       {:exvcr, "~> 0.7", only: :test},
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:dialyxir, "~> 0.3", only: :dev},
+
+      # Docs
       {:inch_ex, "~> 0.2", only: :docs},
       {:ex_doc, "~> 0.14", only: [:dev, :docs]}
     ]

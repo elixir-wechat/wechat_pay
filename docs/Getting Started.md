@@ -7,7 +7,8 @@ Simply add `wechat_pay` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wechat_pay, "~> 0.4.1"}
+    {:wechat_pay, "~> 0.4.1"},
+    {:jason, "~> 1.0"} # or {:poison, "~> 3.0"}
   ]
 end
 ```
@@ -29,9 +30,9 @@ end
 
 this will generate following modules for you:
 
-- `MyApp.Pay.App`
-- `MyApp.Pay.JSAPI`
-- `MyApp.Pay.Native`
+* `MyApp.Pay.App`
+* `MyApp.Pay.JSAPI`
+* `MyApp.Pay.Native`
 
 which are correspond to different payment scenario.
 
@@ -69,4 +70,3 @@ case MyApp.Pay.Native.place_order(%{
     # do something with error
 end
 ```
-

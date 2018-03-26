@@ -4,6 +4,9 @@ defmodule WechatPay.Utils.Signature do
   """
 
   alias WechatPay.Error
+  alias WechatPay.JSON
+
+  require JSON
 
   @doc """
   Generate the signature of data with API key
@@ -64,7 +67,7 @@ defmodule WechatPay.Utils.Signature do
   end
 
   defp process_param({k, v}) when is_map(v) do
-    "#{k}=#{Poison.encode!(v)}"
+    "#{k}=#{JSON.encode!(v)}"
   end
 
   defp process_param({k, v}) do
