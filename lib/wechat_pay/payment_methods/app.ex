@@ -79,28 +79,28 @@ defmodule WechatPay.PaymentMethod.App do
 
       defdelegate get_config, to: mod
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def place_order(attrs), do: API.place_order(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def query_order(attrs), do: API.query_order(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def close_order(attrs), do: API.close_order(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def refund(attrs), do: API.refund(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def query_refund(attrs), do: API.query_refund(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def download_bill(attrs), do: API.download_bill(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def report(attrs), do: API.report(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.App
       def generate_pay_request(prepay_id),
         do: WechatPay.PaymentMethod.App.generate_pay_request(prepay_id, get_config())
     end

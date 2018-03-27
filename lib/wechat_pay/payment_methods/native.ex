@@ -79,28 +79,28 @@ defmodule WechatPay.PaymentMethod.Native do
 
       defdelegate get_config, to: mod
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def place_order(attrs), do: API.place_order(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def query_order(attrs), do: API.query_order(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def close_order(attrs), do: API.close_order(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def refund(attrs), do: API.refund(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def query_refund(attrs), do: API.query_refund(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def download_bill(attrs), do: API.download_bill(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def report(attrs), do: API.report(attrs, get_config())
 
-      @impl true
+      @impl WechatPay.PaymentMethod.Native
       def shorten_url(url), do: WechatPay.PaymentMethod.Native.shorten_url(url, get_config())
     end
   end
