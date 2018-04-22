@@ -31,7 +31,9 @@ defmodule MyApp.WechatHandler do
 
   @impl WechatPay.Handler
   def handle_data(conn, data) do
-    # do something with the data
+    # do something with the data. 
+    # the sign is already verified. if you want, you can verify again use `WechatPay.Utils.Signature.verify/2`. 
+    # return `:ok` to tell wechat server that you have successfully handled this notification.
     :ok
   end
 
