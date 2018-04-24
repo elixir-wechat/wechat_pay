@@ -77,31 +77,31 @@ defmodule WechatPay.PaymentMethod.Native do
 
       mod = Keyword.fetch!(opts, :mod)
 
-      defdelegate get_config, to: mod
+      defdelegate config, to: mod
 
       @impl WechatPay.PaymentMethod.Native
-      def place_order(attrs), do: API.place_order(attrs, get_config())
+      def place_order(attrs), do: API.place_order(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def query_order(attrs), do: API.query_order(attrs, get_config())
+      def query_order(attrs), do: API.query_order(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def close_order(attrs), do: API.close_order(attrs, get_config())
+      def close_order(attrs), do: API.close_order(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def refund(attrs), do: API.refund(attrs, get_config())
+      def refund(attrs), do: API.refund(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def query_refund(attrs), do: API.query_refund(attrs, get_config())
+      def query_refund(attrs), do: API.query_refund(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def download_bill(attrs), do: API.download_bill(attrs, get_config())
+      def download_bill(attrs), do: API.download_bill(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def report(attrs), do: API.report(attrs, get_config())
+      def report(attrs), do: API.report(attrs, config())
 
       @impl WechatPay.PaymentMethod.Native
-      def shorten_url(url), do: WechatPay.PaymentMethod.Native.shorten_url(url, get_config())
+      def shorten_url(url), do: WechatPay.PaymentMethod.Native.shorten_url(url, config())
     end
   end
 

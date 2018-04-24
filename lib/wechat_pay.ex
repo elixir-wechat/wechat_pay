@@ -68,7 +68,7 @@ defmodule WechatPay do
   - `ssl_cert` - Certificate in PEM
   - `ssl_key` - Private key in PEM
   """
-  @type config :: [
+  @type config_t :: [
           env: :sandbox | :production,
           appid: String.t(),
           mch_id: String.t(),
@@ -78,73 +78,101 @@ defmodule WechatPay do
           ssl_key: String.t()
         ]
 
+  @doc "defines a config for WechatPay"
+  @callback config :: config_t
+
   defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
-      otp_app = Keyword.fetch!(opts, :otp_app)
+    opts =
+      opts
+      |> Enum.into(%{})
 
-      @doc false
-      @spec get_config :: WechatPay.config()
-      def get_config do
+    config_ast =
+      case opts do
+        %{otp_app: otp_app} ->
+          quote do
+            @behaviour WechatPay
+
+            IO.warn(~s"""
+            The `:otp_app` option is deprecated, please define a config function as below:
+
+                defmodule #{__MODULE__} do
+                  use WechatPay
+
+                  @impl WechatPay
+                  def config do
+                    Application.get_env(:#{unquote(otp_app)}, #{__MODULE__})
+
+                    # or some customize without using the Mix config.
+                  end
+                end
+            """)
+
+            def config do
+              unquote(otp_app)
+              |> Application.fetch_env!(__MODULE__)
+            end
+          end
+
+        _ ->
+          quote do
+            @behaviour WechatPay
+          end
+      end
+
+    module_ast =
+      quote do
+        # define module `MyModule.App`
         __MODULE__
-        |> WechatPay.build_config(unquote(otp_app))
-      end
-
-      # define module `MyModule.App`
-      __MODULE__
-      |> Module.concat(:App)
-      |> Module.create(
-        quote do
-          use WechatPay.PaymentMethod.App, mod: unquote(__MODULE__)
-        end,
-        Macro.Env.location(__ENV__)
-      )
-
-      # define module `MyModule.JSAPI`
-      __MODULE__
-      |> Module.concat(:JSAPI)
-      |> Module.create(
-        quote do
-          use WechatPay.PaymentMethod.JSAPI, mod: unquote(__MODULE__)
-        end,
-        Macro.Env.location(__ENV__)
-      )
-
-      # define module `MyModule.Native`
-      __MODULE__
-      |> Module.concat(:Native)
-      |> Module.create(
-        quote do
-          use WechatPay.PaymentMethod.Native, mod: unquote(__MODULE__)
-        end,
-        Macro.Env.location(__ENV__)
-      )
-
-      # define module `MyModule.Plug.Payment` & `MyModule.Plug.Refund`
-      if Code.ensure_loaded?(Plug) do
-        [__MODULE__, :Plug, :Payment]
-        |> Module.concat()
+        |> Module.concat(:App)
         |> Module.create(
           quote do
-            use WechatPay.Plug.Payment, mod: unquote(__MODULE__)
+            use WechatPay.PaymentMethod.App, mod: unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
 
-        [__MODULE__, :Plug, :Refund]
-        |> Module.concat()
+        # define module `MyModule.JSAPI`
+        __MODULE__
+        |> Module.concat(:JSAPI)
         |> Module.create(
           quote do
-            use WechatPay.Plug.Refund, mod: unquote(__MODULE__)
+            use WechatPay.PaymentMethod.JSAPI, mod: unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
-      end
-    end
-  end
 
-  @doc false
-  def build_config(module, otp_app) do
-    otp_app
-    |> Application.fetch_env!(module)
+        # define module `MyModule.Native`
+        __MODULE__
+        |> Module.concat(:Native)
+        |> Module.create(
+          quote do
+            use WechatPay.PaymentMethod.Native, mod: unquote(__MODULE__)
+          end,
+          Macro.Env.location(__ENV__)
+        )
+
+        # define module `MyModule.Plug.Payment` & `MyModule.Plug.Refund`
+        if Code.ensure_loaded?(Plug) do
+          [__MODULE__, :Plug, :Payment]
+          |> Module.concat()
+          |> Module.create(
+            quote do
+              use WechatPay.Plug.Payment, mod: unquote(__MODULE__)
+            end,
+            Macro.Env.location(__ENV__)
+          )
+
+          [__MODULE__, :Plug, :Refund]
+          |> Module.concat()
+          |> Module.create(
+            quote do
+              use WechatPay.Plug.Refund, mod: unquote(__MODULE__)
+            end,
+            Macro.Env.location(__ENV__)
+          )
+        end
+      end
+
+    [config_ast, module_ast]
   end
 end

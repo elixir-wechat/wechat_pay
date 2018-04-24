@@ -22,7 +22,7 @@ defmodule WechatPay.Plug.Payment do
 
       mod = Keyword.fetch!(unquote(opts), :mod)
 
-      defdelegate get_config, to: mod
+      defdelegate config, to: mod
 
       @impl true
       def init(opts) do
@@ -33,7 +33,7 @@ defmodule WechatPay.Plug.Payment do
 
       @impl true
       def call(conn, handler: handler),
-        do: WechatPay.Plug.Payment.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Payment.call(conn, [handler: handler], config())
     end
   end
 

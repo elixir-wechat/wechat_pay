@@ -21,7 +21,7 @@ defmodule WechatPay.Plug.Refund do
 
       mod = Keyword.fetch!(unquote(opts), :mod)
 
-      defdelegate get_config, to: mod
+      defdelegate config, to: mod
 
       @impl true
       def init(opts) do
@@ -32,7 +32,7 @@ defmodule WechatPay.Plug.Refund do
 
       @impl true
       def call(conn, handler: handler),
-        do: WechatPay.Plug.Refund.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Refund.call(conn, [handler: handler], config())
     end
   end
 
