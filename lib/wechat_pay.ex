@@ -4,48 +4,47 @@ defmodule WechatPay do
 
   ### Setup
 
-  You need to define you own pay module, then `use` WechatPay, with an `:otp_app`
-  option.
+  You need to define you own pay module, then `use` WechatPay:
 
   ```elixir
-  defmodule MyApp.Pay do
-    use WechatPay, otp_app: :my_app
+  defmodule MyPay do
+    use WechatPay
+
+    @impl WechatPay.Behaviour
+    def config do
+      [
+        env: :production,
+        appid: "wx8888888888888888",
+        mch_id: "1900000109",
+        apikey: "192006250b4c09247ec02edce69f6a2d",
+        ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+        ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+        ssl_key: File.read!("fixture/certs/apiclient_key.pem")
+      ]
+    end
   end
   ```
 
-  Then you can config your app with:
-
-  ```elixir
-  config :my_app, MyApp.Pay,
-    env: :production,
-    appid: "wx8888888888888888",
-    mch_id: "1900000109",
-    apikey: "192006250b4c09247ec02edce69f6a2d",
-    ssl_cacert: File.read!("fixture/certs/rootca.pem"),
-    ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
-    ssl_key: File.read!("fixture/certs/apiclient_key.pem")
-  ```
-
   > NOTE: If your are using the `:sandbox` environment,
-  > You need to use `mix wechat_pay.get_sandbox_signkey` to
+  > You have to run `mix wechat_pay.get_sandbox_signkey` to
   > fetch the Sandbox API Key.
 
   ### Payment methods
 
-  When `use` WechatPay in `MyApp.Pay` module, it will generate following
-  payment method modules for you:
+  When `use` WechatPay in `MyPay` module, it will generate following
+  modules for you:
 
-  - `MyApp.Pay.App` - Implements the `WechatPay.PaymentMethod.App` behaviour
-  - `MyApp.Pay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` behaviour
-  - `MyApp.Pay.Native` - Implements the `WechatPay.PaymentMethod.Native` behaviour
+  - `MyPay.App` - Implements the `WechatPay.PaymentMethod.App` behaviour
+  - `MyPay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` behaviour
+  - `MyPay.Native` - Implements the `WechatPay.PaymentMethod.Native` behaviour
 
   ### Plug
 
-  We will also generate some [Plugs](https://github.com/elixir-plug/plug) to
+  WechatPay will also generate some [Plugs](https://github.com/elixir-plug/plug) to
   simplify the process of handling notification from Wechat's Payment Gateway:
 
-  - `MyApp.Pay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
-  - `MyApp.Pay.Plug.Refund` - Implements the `WechatPay.Plug.Refund` behaviour
+  - `MyPay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
+  - `MyPay.Plug.Refund` - Implements the `WechatPay.Plug.Refund` behaviour
 
   ### JSON Encoder
 
@@ -57,30 +56,6 @@ defmodule WechatPay do
   ```
   """
 
-  @typedoc """
-  The Configuration
-
-  - `env` - `:sandbox` or `:production`
-  - `appid` - APP ID
-  - `mch_id` - Merchant ID
-  - `apikey` - API key
-  - `ssl_cacert` - CA Root certificate in PEM
-  - `ssl_cert` - Certificate in PEM
-  - `ssl_key` - Private key in PEM
-  """
-  @type config_t :: [
-          env: :sandbox | :production,
-          appid: String.t(),
-          mch_id: String.t(),
-          apikey: String.t(),
-          ssl_cacert: String.t(),
-          ssl_cert: String.t(),
-          ssl_key: String.t()
-        ]
-
-  @doc "defines a config for WechatPay"
-  @callback config :: config_t
-
   defmacro __using__(opts) do
     opts =
       opts
@@ -90,7 +65,7 @@ defmodule WechatPay do
       case opts do
         %{otp_app: otp_app} ->
           quote do
-            @behaviour WechatPay
+            @behaviour WechatPay.Behaviour
 
             IO.warn(~s"""
             The `:otp_app` option is deprecated, please define a config function as below:
@@ -98,7 +73,7 @@ defmodule WechatPay do
                 defmodule #{__MODULE__} do
                   use WechatPay
 
-                  @impl WechatPay
+                  @impl WechatPay.Behaviour
                   def config do
                     Application.get_env(:#{unquote(otp_app)}, #{__MODULE__})
 
@@ -115,7 +90,7 @@ defmodule WechatPay do
 
         _ ->
           quote do
-            @behaviour WechatPay
+            @behaviour WechatPay.Behaviour
           end
       end
 

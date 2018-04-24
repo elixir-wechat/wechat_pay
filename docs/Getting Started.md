@@ -19,43 +19,37 @@ then run `mix deps.get` and you are ready to go.
 
 ### Define your pay module
 
-You need to define you own pay module, then `use` WechatPay, with an `:otp_app`
-option.
+You need to define you own pay module, then `use` `WechatPay`.
 
 ```elixir
-defmodule MyApp.Pay do
-  use WechatPay, otp_app: :my_app
+defmodule MyPay do
+  use WechatPay
+
+  @impl WechatPay.Behaviour
+  def config do
+    [
+      env: :production,
+      appid: "wx8888888888888888",
+      mch_id: "1900000109",
+      apikey: "192006250b4c09247ec02edce69f6a2d",
+    ]
+  end
 end
 ```
 
-this will generate following modules for you:
+the following modules will be generated for you:
 
-* `MyApp.Pay.App`
-* `MyApp.Pay.JSAPI`
-* `MyApp.Pay.Native`
+* `MyPay.App`
+* `MyPay.JSAPI`
+* `MyPay.Native`
 
-which are correspond to different payment scenario.
-
-### Configuration
-
-In your `config/config.exs`:
-
-```elixir
-config :my_app, MyApp.Pay,
-  env: :production,
-  appid: "the-appid",
-  mch_id: "the-mch-id",
-  apikey: "the-apikey",
-  ssl_cacert: File.read!("fixture/certs/rootca.pem"),
-  ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
-  ssl_key: File.read!("fixture/certs/apiclient_key.pem")
-```
+which are corresponding to different payment scenario.
 
 ## Place an order
 
 ```elixir
-case MyApp.Pay.Native.place_order(%{
-  body: "Premuim Plan",
+case MyPay.Native.place_order(%{
+  body: "Premium Plan",
   out_trade_no: "xxx-xxxx-xxx",
   fee_type: "CNY",
   total_fee: 49000,

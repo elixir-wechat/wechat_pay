@@ -36,7 +36,7 @@ Now you have to define you own pay module, then `use` WechatPay,
 with an `:otp_app` option.
 
 ```elixir
-defmodule MyApp.Pay do
+defmodule MyPay do
   use WechatPay, otp_app: :my_app
 end
 ```
@@ -44,7 +44,7 @@ end
 Then config with:
 
 ```elixir
-config :my_app, MyApp.Pay,
+config :my_app, MyPay,
   env: :production,
   appid: "wx8888888888888888",
   mch_id: "1900000109",
@@ -59,12 +59,12 @@ configuration.
 
 ### Separating payment methods
 
-When `use` WechatPay in `MyApp.Pay` module, it will generate following
+When `use` WechatPay in `MyPay` module, it will generate following
 payment method modules for you:
 
-* `MyApp.Pay.App`
-* `MyApp.Pay.JSAPI`
-* `MyApp.Pay.Native`
+* `MyPay.App`
+* `MyPay.JSAPI`
+* `MyPay.Native`
 
 Each refers to a pay scenario of WechatPay.
 
@@ -77,13 +77,13 @@ Now the Plugs are only takes the responsibility to commutate with Wechat's
 Payment Gateway, so you should passed in your own handler:
 
 ```elixir
-post "/pay/cb/payment", MyApp.Pay.Plug.Payment, [handler: MyApp.PaymentHandler]
+post "/pay/cb/payment", MyPay.Plug.Payment, [handler: MyPaymentHandler]
 ```
 
 and the handler implementation should looks like this:
 
 ```elixir
-defmodule MyApp.PaymentHandler do
+defmodule MyPaymentHandler do
   use WechatPay.Handler
 
   @impl WechatPay.Handler
@@ -122,7 +122,7 @@ new configs accepts binary. Which make it possible to read these sensitive data
 from an ENV.
 
 ```elixir
-config :wechat_pay, MyApp.Pay,
+config :wechat_pay, MyPay,
   ssl_cacert: File.read!("fixture/certs/rootca.pem"),
   ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
   ssl_key: "${MY_APP_WECHAT_PAY_SSL_KEY}"
@@ -130,7 +130,7 @@ config :wechat_pay, MyApp.Pay,
 
 ### Other changes
 
-* Added `MyApp.Pay.App.generate_pay_request/1` to generate pay request for App.
+* Added `MyPay.App.generate_pay_request/1` to generate pay request for App.
 
 ## v0.2.0
 
