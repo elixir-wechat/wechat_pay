@@ -10,7 +10,7 @@ defmodule WechatPay do
   defmodule MyPay do
     use WechatPay
 
-    @impl WechatPay.Behaviour
+    @impl WechatPay.Config
     def config do
       [
         env: :production,
@@ -34,9 +34,9 @@ defmodule WechatPay do
   When `use` WechatPay in `MyPay` module, it will generate following
   modules for you:
 
-  - `MyPay.App` - Implements the `WechatPay.PaymentMethod.App` behaviour
-  - `MyPay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` behaviour
-  - `MyPay.Native` - Implements the `WechatPay.PaymentMethod.Native` behaviour
+  - `MyPay.App` - Implements the `WechatPay.App` behaviour
+  - `MyPay.JSAPI` - Implements the `WechatPay.JSAPI` behaviour
+  - `MyPay.Native` - Implements the `WechatPay.Native` behaviour
 
   ### Plug
 
@@ -56,6 +56,8 @@ defmodule WechatPay do
   ```
   """
 
+  alias WechatPay.Config
+
   defmacro __using__(opts) do
     opts =
       opts
@@ -65,7 +67,7 @@ defmodule WechatPay do
       case opts do
         %{otp_app: otp_app} ->
           quote do
-            @behaviour WechatPay.Behaviour
+            @behaviour Config
 
             IO.warn(~s"""
             The `:otp_app` option is deprecated, please define a config function as below:
@@ -73,7 +75,7 @@ defmodule WechatPay do
                 defmodule #{__MODULE__} do
                   use WechatPay
 
-                  @impl WechatPay.Behaviour
+                  @impl WechatPay.Config
                   def config do
                     Application.get_env(:#{unquote(otp_app)}, #{__MODULE__})
 
@@ -85,12 +87,13 @@ defmodule WechatPay do
             def config do
               unquote(otp_app)
               |> Application.fetch_env!(__MODULE__)
+              |> Config.new()
             end
           end
 
         _ ->
           quote do
-            @behaviour WechatPay.Behaviour
+            @behaviour Config
           end
       end
 

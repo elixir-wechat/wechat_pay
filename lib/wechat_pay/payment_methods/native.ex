@@ -70,6 +70,7 @@ defmodule WechatPay.PaymentMethod.Native do
 
   alias WechatPay.API
   alias WechatPay.API.Client
+  alias WechatPay.Config
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
@@ -108,7 +109,7 @@ defmodule WechatPay.PaymentMethod.Native do
   @doc false
   @spec shorten_url(
           String.t(),
-          WechatPay.config()
+          Config.t()
         ) :: {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def shorten_url(url, config) do
     Client.post("tools/shorturl", %{long_url: URI.encode(url)}, [], config)

@@ -25,7 +25,7 @@ You need to define you own pay module, then `use` `WechatPay`.
 defmodule MyPay do
   use WechatPay
 
-  @impl WechatPay.Behaviour
+  @impl WechatPay.Config
   def config do
     [
       env: :production,
@@ -64,3 +64,11 @@ case MyPay.Native.place_order(%{
     # do something with error
 end
 ```
+
+## Phoenix
+
+See the [Phoenix doc](phoenix.html)
+
+## More
+
+For a detailed usage, please see the module doc for `WechatPay`.

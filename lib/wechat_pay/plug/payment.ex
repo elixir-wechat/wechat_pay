@@ -66,7 +66,7 @@ defmodule WechatPay.Plug.Payment do
 
   defp process_data(conn, data, handler_module, config) do
     with {:ok, data} <- process_return_field(data),
-         :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
+         :ok <- Signature.verify(data, config.apikey),
          :ok <- apply(handler_module, :handle_data, [conn, data]) do
       :ok
     else

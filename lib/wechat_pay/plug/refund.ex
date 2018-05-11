@@ -90,7 +90,7 @@ defmodule WechatPay.Plug.Refund do
   end
 
   defp decrypt_data(%{req_info: encrypted_data}, config) do
-    api_key = Keyword.get(config, :apikey)
+    api_key = config.apikey
 
     key =
       :md5

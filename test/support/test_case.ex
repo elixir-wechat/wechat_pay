@@ -1,6 +1,8 @@
 defmodule TestCase do
   use ExUnit.CaseTemplate
 
+  alias WechatPay.Config
+
   using do
     quote do
       use ExUnit.Case, async: false
@@ -10,6 +12,6 @@ defmodule TestCase do
   setup do
     config = Application.get_env(:wechat_pay, MyPay)
 
-    [config: config]
+    [config: Config.new(config)]
   end
 end

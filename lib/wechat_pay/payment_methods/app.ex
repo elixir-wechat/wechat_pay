@@ -70,6 +70,7 @@ defmodule WechatPay.PaymentMethod.App do
   alias WechatPay.API
   alias WechatPay.Utils.NonceStr
   alias WechatPay.Utils.Signature
+  alias WechatPay.Config
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
@@ -107,17 +108,17 @@ defmodule WechatPay.PaymentMethod.App do
   end
 
   @doc false
-  @spec generate_pay_request(String.t(), WechatPay.config()) :: map
+  @spec generate_pay_request(String.t(), Config.t()) :: map
   def generate_pay_request(prepay_id, config) do
     %{
-      "appid" => Keyword.get(config, :appid),
-      "partnerid" => Keyword.get(config, :mch_id),
+      "appid" => config.appid,
+      "partnerid" => config.mch_id,
       "prepayid" => prepay_id,
       "package" => "Sign=WXPay",
       "noncestr" => NonceStr.generate(),
       "timestamp" => Integer.to_string(:os.system_time())
     }
-    |> sign(Keyword.get(config, :apikey))
+    |> sign(config.apikey)
   end
 
   defp sign(data, apikey) do
