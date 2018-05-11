@@ -104,7 +104,7 @@ defmodule WechatPay do
         |> Module.concat(:App)
         |> Module.create(
           quote do
-            use WechatPay.PaymentMethod.App, mod: unquote(__MODULE__)
+            use WechatPay.PaymentMethod.App, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
@@ -114,7 +114,7 @@ defmodule WechatPay do
         |> Module.concat(:JSAPI)
         |> Module.create(
           quote do
-            use WechatPay.PaymentMethod.JSAPI, mod: unquote(__MODULE__)
+            use WechatPay.PaymentMethod.JSAPI, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
@@ -124,7 +124,7 @@ defmodule WechatPay do
         |> Module.concat(:Native)
         |> Module.create(
           quote do
-            use WechatPay.PaymentMethod.Native, mod: unquote(__MODULE__)
+            use WechatPay.PaymentMethod.Native, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
@@ -135,7 +135,7 @@ defmodule WechatPay do
           |> Module.concat()
           |> Module.create(
             quote do
-              use WechatPay.Plug.Payment, mod: unquote(__MODULE__)
+              use WechatPay.Plug.Payment, unquote(__MODULE__)
             end,
             Macro.Env.location(__ENV__)
           )
@@ -144,7 +144,7 @@ defmodule WechatPay do
           |> Module.concat()
           |> Module.create(
             quote do
-              use WechatPay.Plug.Refund, mod: unquote(__MODULE__)
+              use WechatPay.Plug.Refund, unquote(__MODULE__)
             end,
             Macro.Env.location(__ENV__)
           )

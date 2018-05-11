@@ -67,39 +67,19 @@ defmodule WechatPay.PaymentMethod.JSAPI do
   """
   @callback generate_pay_request(prepay_id :: String.t()) :: map
 
-  alias WechatPay.API
   alias WechatPay.Utils.NonceStr
   alias WechatPay.Utils.Signature
   alias WecahtPay.Config
 
-  defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
+  import WechatPay.PaymentMethod.Shared
+
+  defmacro __using__(mod) do
+    quote do
       @behaviour WechatPay.PaymentMethod.JSAPI
 
-      mod = Keyword.fetch!(opts, :mod)
+      defdelegate config, to: unquote(mod)
 
-      defdelegate config, to: mod
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def place_order(attrs), do: API.place_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def query_order(attrs), do: API.query_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def close_order(attrs), do: API.close_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def refund(attrs), do: API.refund(attrs, config())
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def query_refund(attrs), do: API.query_refund(attrs, config())
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def download_bill(attrs), do: API.download_bill(attrs, config())
-
-      @impl WechatPay.PaymentMethod.JSAPI
-      def report(attrs), do: API.report(attrs, config())
+      define_shared_behaviour(WechatPay.PaymentMethod.JSAPI)
 
       @impl WechatPay.PaymentMethod.JSAPI
       def generate_pay_request(prepay_id),

@@ -67,39 +67,19 @@ defmodule WechatPay.PaymentMethod.App do
   """
   @callback generate_pay_request(prepay_id :: String.t()) :: map
 
-  alias WechatPay.API
   alias WechatPay.Utils.NonceStr
   alias WechatPay.Utils.Signature
   alias WechatPay.Config
 
-  defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
+  import WechatPay.PaymentMethod.Shared
+
+  defmacro __using__(mod) do
+    quote do
       @behaviour WechatPay.PaymentMethod.App
 
-      mod = Keyword.fetch!(opts, :mod)
+      defdelegate config, to: unquote(mod)
 
-      defdelegate config, to: mod
-
-      @impl WechatPay.PaymentMethod.App
-      def place_order(attrs), do: API.place_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.App
-      def query_order(attrs), do: API.query_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.App
-      def close_order(attrs), do: API.close_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.App
-      def refund(attrs), do: API.refund(attrs, config())
-
-      @impl WechatPay.PaymentMethod.App
-      def query_refund(attrs), do: API.query_refund(attrs, config())
-
-      @impl WechatPay.PaymentMethod.App
-      def download_bill(attrs), do: API.download_bill(attrs, config())
-
-      @impl WechatPay.PaymentMethod.App
-      def report(attrs), do: API.report(attrs, config())
+      define_shared_behaviour(WechatPay.PaymentMethod.App)
 
       @impl WechatPay.PaymentMethod.App
       def generate_pay_request(prepay_id),

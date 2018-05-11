@@ -16,13 +16,11 @@ defmodule WechatPay.Plug.Payment do
 
   import Plug.Conn
 
-  defmacro __using__(opts) do
+  defmacro __using__(mod) do
     quote do
       @behaviour WechatPay.Plug.Payment
 
-      mod = Keyword.fetch!(unquote(opts), :mod)
-
-      defdelegate config, to: mod
+      defdelegate config, to: unquote(mod)
 
       @impl true
       def init(opts) do

@@ -68,38 +68,18 @@ defmodule WechatPay.PaymentMethod.Native do
   @callback shorten_url(url :: String.t()) ::
               {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
 
-  alias WechatPay.API
   alias WechatPay.API.Client
   alias WechatPay.Config
 
-  defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
+  import WechatPay.PaymentMethod.Shared
+
+  defmacro __using__(mod) do
+    quote do
       @behaviour WechatPay.PaymentMethod.Native
 
-      mod = Keyword.fetch!(opts, :mod)
+      defdelegate config, to: unquote(mod)
 
-      defdelegate config, to: mod
-
-      @impl WechatPay.PaymentMethod.Native
-      def place_order(attrs), do: API.place_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def query_order(attrs), do: API.query_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def close_order(attrs), do: API.close_order(attrs, config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def refund(attrs), do: API.refund(attrs, config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def query_refund(attrs), do: API.query_refund(attrs, config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def download_bill(attrs), do: API.download_bill(attrs, config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def report(attrs), do: API.report(attrs, config())
+      define_shared_behaviour(WechatPay.PaymentMethod.Native)
 
       @impl WechatPay.PaymentMethod.Native
       def shorten_url(url), do: WechatPay.PaymentMethod.Native.shorten_url(url, config())
