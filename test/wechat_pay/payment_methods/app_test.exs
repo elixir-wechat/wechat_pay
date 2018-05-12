@@ -1,4 +1,4 @@
-defmodule WechatPay.PaymentMethod.AppTest do
+defmodule WechatPay.AppTest do
   use TestCase, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 

@@ -1,4 +1,4 @@
-defmodule WechatPay.PaymentMethod.Shared do
+defmodule WechatPay.Shared do
   @moduledoc false
 
   defmacro define_shared_behaviour(impl_module) do

@@ -1,7 +1,5 @@
 defmodule WechatPay.API.Client do
-  @moduledoc """
-  The HTTP Client
-  """
+  @moduledoc false
 
   alias WechatPay.Config
   alias WechatPay.Utils.XMLBuilder

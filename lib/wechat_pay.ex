@@ -34,9 +34,9 @@ defmodule WechatPay do
   When `use` WechatPay in `MyPay` module, it will generate following
   modules for you:
 
-  - `MyPay.App` - Implements the `WechatPay.App` behaviour
-  - `MyPay.JSAPI` - Implements the `WechatPay.JSAPI` behaviour
-  - `MyPay.Native` - Implements the `WechatPay.Native` behaviour
+  - `MyPay.App` - Implements the `WechatPay.App.Behaviour` behaviour
+  - `MyPay.JSAPI` - Implements the `WechatPay.JSAPI.Behaviour` behaviour
+  - `MyPay.Native` - Implements the `WechatPay.Native.Behaviour` behaviour
 
   ### Plug
 
@@ -104,7 +104,7 @@ defmodule WechatPay do
         |> Module.concat(:App)
         |> Module.create(
           quote do
-            use WechatPay.PaymentMethod.App, unquote(__MODULE__)
+            use WechatPay.App, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
@@ -114,7 +114,7 @@ defmodule WechatPay do
         |> Module.concat(:JSAPI)
         |> Module.create(
           quote do
-            use WechatPay.PaymentMethod.JSAPI, unquote(__MODULE__)
+            use WechatPay.JSAPI, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
@@ -124,7 +124,7 @@ defmodule WechatPay do
         |> Module.concat(:Native)
         |> Module.create(
           quote do
-            use WechatPay.PaymentMethod.Native, unquote(__MODULE__)
+            use WechatPay.Native, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )

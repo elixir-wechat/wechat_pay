@@ -1,7 +1,5 @@
 defmodule WechatPay.API do
-  @moduledoc """
-  Main module to call Wehcat's API.
-  """
+  @moduledoc false
 
   alias WechatPay.API.Client
   alias WechatPay.Config
