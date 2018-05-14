@@ -34,7 +34,7 @@ config :plug, :validate_header_keys_during_test, true
 config :wechat_pay, json_library: Poison
 
 config :wechat_pay, MyPay,
-  env: :sandbox,
+  api_host: "https://api.mch.weixin.qq.com/sandboxnew/",
   appid: "wx8888888888888888",
   mch_id: "1900000109",
   apikey: "192006250b4c09247ec02edce69f6a2d",

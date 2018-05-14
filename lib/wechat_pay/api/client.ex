@@ -8,9 +8,6 @@ defmodule WechatPay.API.Client do
   alias WechatPay.Utils.Signature
   alias WechatPay.Error
 
-  @sandbox_url "https://api.mch.weixin.qq.com/sandboxnew/"
-  @production_url "https://api.mch.weixin.qq.com/"
-
   @doc """
   Send a POST request to Wehchat's Server
   """
@@ -34,7 +31,10 @@ defmodule WechatPay.API.Client do
   end
 
   defp do_post_without_verify_sign(path, attrs, options, config) do
-    path = base_url(config) <> path
+    path =
+      config.api_host
+      |> URI.merge(path)
+      |> to_string()
 
     headers = [
       {"Accept", "application/xml"},
@@ -62,7 +62,10 @@ defmodule WechatPay.API.Client do
   @spec download_text(String.t(), map, Keyword.t(), Config.t()) ::
           {:ok, String.t()} | {:error, HTTPoison.Error.t()}
   def download_text(path, data, options, config) do
-    path = base_url(config) <> path
+    path =
+      config.api_host
+      |> URI.merge(path)
+      |> to_string()
 
     headers = [
       {"Accept", "text/plain"},
@@ -89,7 +92,10 @@ defmodule WechatPay.API.Client do
   @spec get_sandbox_signkey(String.t(), String.t()) ::
           {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
   def get_sandbox_signkey(apikey, mch_id) do
-    path = @sandbox_url <> "pay/getsignkey"
+    path =
+      "https://api.mch.weixin.qq.com/sandboxnew/"
+      |> URI.merge("pay/getsignkey")
+      |> to_string()
 
     headers = [
       {"Accept", "text/plain"},
@@ -106,19 +112,6 @@ defmodule WechatPay.API.Client do
          {:ok, response_data} <- process_response(response),
          {:ok, data} <- process_return_field(response_data) do
       {:ok, data}
-    end
-  end
-
-  defp base_url(config) do
-    case config.env do
-      :sandbox ->
-        @sandbox_url
-
-      :production ->
-        @production_url
-
-      _ ->
-        @sandbox_url
     end
   end
 

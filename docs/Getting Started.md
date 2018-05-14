@@ -41,7 +41,6 @@ In your `config/config.exs`:
 
 ```elixir
 config :my_app, MyPay,
-  env: :production,
   appid: "the-appid",
   mch_id: "the-mch-id",
   apikey: "the-apikey",

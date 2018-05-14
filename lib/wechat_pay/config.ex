@@ -1,11 +1,18 @@
 defmodule WechatPay.Config do
   alias WechatPay.Config
 
-  @enforce_keys [:env, :appid, :mch_id, :apikey]
-  defstruct [:env, :appid, :mch_id, :apikey, :ssl_cacert, :ssl_cert, :ssl_key, verify_sign: false]
+  @enforce_keys [:appid, :mch_id, :apikey]
+  defstruct api_host: "https://api.mch.weixin.qq.com/",
+            appid: nil,
+            mch_id: nil,
+            apikey: nil,
+            ssl_cacert: nil,
+            ssl_cert: nil,
+            ssl_key: nil,
+            verify_sign: false
 
   @type t :: %Config{
-          env: :sandbox | :production,
+          api_host: String.t(),
           appid: String.t(),
           mch_id: String.t(),
           apikey: String.t(),
