@@ -3,25 +3,25 @@
 ## Setup
 
 WechatPay also generate some [Plugs](https://github.com/elixir-plug/plug) to
-  simplify the process of handling notification from Wechat's Payment Gateway
+simplify the process of handling notification from Wechat's Payment Gateway
 
 If you are using WechatPay in a phoenix App,
 when you `use` WechatPay in your module:
 
 ```elixir
-defmodule MyApp.Pay do
+defmodule MyPay do
   use WechatPay, otp_app: :my_app
 end
 ```
 
 The following modules are also generated for you:
 
-- `MyApp.Pay.Plug.Payment` - Implements `WechatPay.Plug.Payment`
-- `MyApp.Pay.Plug.Refund` - Implements `WechatPay.Plug.Refund`
+* `MyPay.Plug.Payment` - Implements `WechatPay.Plug.Payment`
+* `MyPay.Plug.Refund` - Implements `WechatPay.Plug.Refund`
 
 ## Usage
 
-We use `MyApp.Pay.Plug.Payment` as an example:
+We use `MyPay.Plug.Payment` as an example:
 
 ### Implement the handler
 
@@ -31,8 +31,8 @@ defmodule MyApp.WechatHandler do
 
   @impl WechatPay.Handler
   def handle_data(conn, data) do
-    # do something with the data. 
-    # the sign is already verified. if you want, you can verify again use `WechatPay.Utils.Signature.verify/2`. 
+    # do something with the data.
+    # the sign is already verified. if you want, you can verify again use `WechatPay.Utils.Signature.verify/2`.
     # return `:ok` to tell wechat server that you have successfully handled this notification.
     :ok
   end
@@ -50,7 +50,7 @@ end
 In your app's `lib/my_app_web/router.ex`:
 
 ```elixir
-post "/pay/cb/payment", MyApp.Pay.Plug.Payment, [handler: MyApp.WechatHandler]
+post "/pay/cb/payment", MyPay.Plug.Payment, [handler: MyApp.WechatHandler]
 ```
 
 ### Placing order
@@ -58,7 +58,7 @@ post "/pay/cb/payment", MyApp.Pay.Plug.Payment, [handler: MyApp.WechatHandler]
 When you are placing an order, you should set the `noficy_url` as this endpoint.
 
 ```elixir
-case MyApp.Pay.Native.place_order(%{
+case MyPay.Native.place_order(%{
   body: "Premuim Plan",
   out_trade_no: "xxx-xxxx-xxx",
   fee_type: "CNY",

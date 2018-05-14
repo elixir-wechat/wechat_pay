@@ -15,13 +15,11 @@ defmodule WechatPay.Plug.Refund do
 
   import Plug.Conn
 
-  defmacro __using__(opts) do
+  defmacro __using__(mod) do
     quote do
       @behaviour WechatPay.Plug.Refund
 
-      mod = Keyword.fetch!(unquote(opts), :mod)
-
-      defdelegate get_config, to: mod
+      defdelegate config, to: unquote(mod)
 
       @impl true
       def init(opts) do
@@ -32,7 +30,7 @@ defmodule WechatPay.Plug.Refund do
 
       @impl true
       def call(conn, handler: handler),
-        do: WechatPay.Plug.Refund.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Refund.call(conn, [handler: handler], config())
     end
   end
 
@@ -90,7 +88,7 @@ defmodule WechatPay.Plug.Refund do
   end
 
   defp decrypt_data(%{req_info: encrypted_data}, config) do
-    api_key = Keyword.get(config, :apikey)
+    api_key = config.apikey
 
     key =
       :md5

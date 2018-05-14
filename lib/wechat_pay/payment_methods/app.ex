@@ -1,123 +1,109 @@
-defmodule WechatPay.PaymentMethod.App do
+defmodule WechatPay.App do
   @moduledoc """
   The **App** payment method.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
   """
 
+  alias WechatPay.Utils.NonceStr
+  alias WechatPay.Utils.Signature
+  alias WechatPay.Config
+  alias WechatPay.API
+
+  import WechatPay.Shared
+
+  defmacro __using__(mod) do
+    quote do
+      @behaviour WechatPay.App.Behaviour
+
+      defdelegate config, to: unquote(mod)
+
+      define_shared_behaviour(WechatPay.App.Behaviour)
+
+      @impl WechatPay.App.Behaviour
+      def generate_pay_request(prepay_id),
+        do: WechatPay.App.generate_pay_request(prepay_id, config())
+    end
+  end
+
   @doc """
   Place an order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1)
   """
-  @callback place_order(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec place_order(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate place_order(attrs, config), to: API
 
   @doc """
   Query the order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_2&index=4)
   """
-  @callback query_order(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec query_order(map, Configt.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate query_order(attrs, config), to: API
 
   @doc """
   Close the order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_3&index=5)
   """
-  @callback close_order(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec close_order(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate close_order(attrs, config), to: API
 
   @doc """
   Request to refund
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_4&index=6)
   """
-  @callback refund(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec refund(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate refund(attrs, config), to: API
 
   @doc """
   Query the refund
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_5&index=7)
   """
-  @callback query_refund(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec query_refund(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate query_refund(attrs, config), to: API
 
   @doc """
   Download bill
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_6&index=8)
   """
-  @callback download_bill(attrs :: map) :: {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  @spec download_bill(map, Config.t()) :: {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate download_bill(attrs, config), to: API
 
   @doc """
   Report
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_8&index=9)
   """
-  @callback report(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec report(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate report(attrs, config), to: API
 
   @doc """
   Generate pay request info, which is required for the App SDK
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2)
   """
-  @callback generate_pay_request(prepay_id :: String.t()) :: map
-
-  alias WechatPay.API
-  alias WechatPay.Utils.NonceStr
-  alias WechatPay.Utils.Signature
-
-  defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
-      @behaviour WechatPay.PaymentMethod.App
-
-      mod = Keyword.fetch!(opts, :mod)
-
-      defdelegate get_config, to: mod
-
-      @impl WechatPay.PaymentMethod.App
-      def place_order(attrs), do: API.place_order(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def query_order(attrs), do: API.query_order(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def close_order(attrs), do: API.close_order(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def refund(attrs), do: API.refund(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def query_refund(attrs), do: API.query_refund(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def download_bill(attrs), do: API.download_bill(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def report(attrs), do: API.report(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.App
-      def generate_pay_request(prepay_id),
-        do: WechatPay.PaymentMethod.App.generate_pay_request(prepay_id, get_config())
-    end
-  end
-
-  @doc false
-  @spec generate_pay_request(String.t(), WechatPay.config()) :: map
+  @spec generate_pay_request(String.t(), Config.t()) :: map
   def generate_pay_request(prepay_id, config) do
     %{
-      "appid" => Keyword.get(config, :appid),
-      "partnerid" => Keyword.get(config, :mch_id),
+      "appid" => config.appid,
+      "partnerid" => config.mch_id,
       "prepayid" => prepay_id,
       "package" => "Sign=WXPay",
       "noncestr" => NonceStr.generate(),
       "timestamp" => Integer.to_string(:os.system_time())
     }
-    |> sign(Keyword.get(config, :apikey))
+    |> sign(config.apikey)
   end
 
   defp sign(data, apikey) do

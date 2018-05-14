@@ -1,7 +1,5 @@
 defmodule WechatPay.Helper do
-  @moduledoc """
-  Collection of helper functions
-  """
+  @moduledoc false
 
   alias WechatPay.API.Client
 

@@ -1,114 +1,99 @@
-defmodule WechatPay.PaymentMethod.Native do
+defmodule WechatPay.Native do
   @moduledoc """
   The **Native** payment method.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
   """
 
+  alias WechatPay.API.Client
+  alias WechatPay.Config
+  alias WechatPay.API
+
+  import WechatPay.Shared
+
+  defmacro __using__(mod) do
+    quote do
+      @behaviour WechatPay.Native.Behaviour
+
+      defdelegate config, to: unquote(mod)
+
+      define_shared_behaviour(WechatPay.Native.Behaviour)
+
+      @impl WechatPay.Native.Behaviour
+      def shorten_url(url), do: WechatPay.Native.shorten_url(url, config())
+    end
+  end
+
   @doc """
   Place an order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1)
   """
-  @callback place_order(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec place_order(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate place_order(attrs, config), to: API
 
   @doc """
   Query the order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_2)
   """
-  @callback query_order(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec query_order(map, Configt.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate query_order(attrs, config), to: API
 
   @doc """
   Close the order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_3)
   """
-  @callback close_order(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec close_order(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate close_order(attrs, config), to: API
 
   @doc """
   Request to refund
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_4)
   """
-  @callback refund(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec refund(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate refund(attrs, config), to: API
 
   @doc """
   Query the refund
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_5)
   """
-  @callback query_refund(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec query_refund(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate query_refund(attrs, config), to: API
 
   @doc """
   Download bill
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_6)
   """
-  @callback download_bill(attrs :: map) :: {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  @spec download_bill(map, Config.t()) :: {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate download_bill(attrs, config), to: API
 
   @doc """
   Report
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_8)
   """
-  @callback report(attrs :: map) ::
-              {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  @spec report(map, Config.t()) ::
+          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  defdelegate report(attrs, config), to: API
 
   @doc """
   Shorten the URL to reduce the QR image size
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_9)
   """
-  @callback shorten_url(url :: String.t()) ::
-              {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-
-  alias WechatPay.API
-  alias WechatPay.API.Client
-
-  defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
-      @behaviour WechatPay.PaymentMethod.Native
-
-      mod = Keyword.fetch!(opts, :mod)
-
-      defdelegate get_config, to: mod
-
-      @impl WechatPay.PaymentMethod.Native
-      def place_order(attrs), do: API.place_order(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def query_order(attrs), do: API.query_order(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def close_order(attrs), do: API.close_order(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def refund(attrs), do: API.refund(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def query_refund(attrs), do: API.query_refund(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def download_bill(attrs), do: API.download_bill(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def report(attrs), do: API.report(attrs, get_config())
-
-      @impl WechatPay.PaymentMethod.Native
-      def shorten_url(url), do: WechatPay.PaymentMethod.Native.shorten_url(url, get_config())
-    end
-  end
-
-  @doc false
   @spec shorten_url(
           String.t(),
-          WechatPay.config()
+          Config.t()
         ) :: {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def shorten_url(url, config) do
     Client.post("tools/shorturl", %{long_url: URI.encode(url)}, [], config)

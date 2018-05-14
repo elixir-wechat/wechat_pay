@@ -16,13 +16,11 @@ defmodule WechatPay.Plug.Payment do
 
   import Plug.Conn
 
-  defmacro __using__(opts) do
+  defmacro __using__(mod) do
     quote do
       @behaviour WechatPay.Plug.Payment
 
-      mod = Keyword.fetch!(unquote(opts), :mod)
-
-      defdelegate get_config, to: mod
+      defdelegate config, to: unquote(mod)
 
       @impl true
       def init(opts) do
@@ -33,7 +31,7 @@ defmodule WechatPay.Plug.Payment do
 
       @impl true
       def call(conn, handler: handler),
-        do: WechatPay.Plug.Payment.call(conn, [handler: handler], get_config())
+        do: WechatPay.Plug.Payment.call(conn, [handler: handler], config())
     end
   end
 
@@ -66,7 +64,7 @@ defmodule WechatPay.Plug.Payment do
 
   defp process_data(conn, data, handler_module, config) do
     with {:ok, data} <- process_return_field(data),
-         :ok <- Signature.verify(data, Keyword.get(config, :apikey)),
+         :ok <- Signature.verify(data, config.apikey),
          :ok <- apply(handler_module, :handle_data, [conn, data]) do
       :ok
     else

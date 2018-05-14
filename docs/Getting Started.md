@@ -19,29 +19,28 @@ then run `mix deps.get` and you are ready to go.
 
 ### Define your pay module
 
-You need to define you own pay module, then `use` WechatPay, with an `:otp_app`
-option.
+You need to define you own pay module, then `use` `WechatPay`.
 
 ```elixir
-defmodule MyApp.Pay do
+defmodule MyPay do
   use WechatPay, otp_app: :my_app
 end
 ```
 
-this will generate following modules for you:
+the following modules will be generated for you:
 
-* `MyApp.Pay.App`
-* `MyApp.Pay.JSAPI`
-* `MyApp.Pay.Native`
+* `MyPay.App`
+* `MyPay.JSAPI`
+* `MyPay.Native`
 
-which are correspond to different payment scenario.
+which are corresponding to different payment scenario.
 
 ### Configuration
 
 In your `config/config.exs`:
 
 ```elixir
-config :my_app, MyApp.Pay,
+config :my_app, MyPay,
   env: :production,
   appid: "the-appid",
   mch_id: "the-mch-id",
@@ -54,8 +53,8 @@ config :my_app, MyApp.Pay,
 ## Place an order
 
 ```elixir
-case MyApp.Pay.Native.place_order(%{
-  body: "Premuim Plan",
+case MyPay.Native.place_order(%{
+  body: "Premium Plan",
   out_trade_no: "xxx-xxxx-xxx",
   fee_type: "CNY",
   total_fee: 49000,
@@ -70,3 +69,11 @@ case MyApp.Pay.Native.place_order(%{
     # do something with error
 end
 ```
+
+## Phoenix
+
+See the [Phoenix doc](phoenix.html)
+
+## More
+
+For a detailed usage, please see the module doc for `WechatPay`.

@@ -6,8 +6,8 @@ defmodule WechatPay.API.HelperTest do
 
   test "get the sandbox signkey", %{config: config} do
     use_cassette "get_sandbox_signkey" do
-      apikey = Keyword.get(config, :apikey)
-      mch_id = Keyword.get(config, :mch_id)
+      apikey = config.apikey
+      mch_id = config.mch_id
 
       {:ok, sandbox_signkey} = Helper.get_sandbox_signkey(apikey, mch_id)
 
@@ -15,4 +15,3 @@ defmodule WechatPay.API.HelperTest do
     end
   end
 end
-

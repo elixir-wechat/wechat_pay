@@ -4,48 +4,49 @@ defmodule WechatPay do
 
   ### Setup
 
-  You need to define you own pay module, then `use` WechatPay, with an `:otp_app`
-  option.
+  You need to define you own pay module, then `use` WechatPay:
 
   ```elixir
-  defmodule MyApp.Pay do
+  defmodule MyPay do
     use WechatPay, otp_app: :my_app
   end
   ```
 
-  Then you can config your app with:
+  Then config your app in `config/config.exs`:
 
   ```elixir
-  config :my_app, MyApp.Pay,
+  config :my_app, MyPay,
     env: :production,
-    appid: "wx8888888888888888",
-    mch_id: "1900000109",
-    apikey: "192006250b4c09247ec02edce69f6a2d",
+    appid: "the-appid",
+    mch_id: "the-mch-id",
+    apikey: "the-apikey",
     ssl_cacert: File.read!("fixture/certs/rootca.pem"),
     ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
     ssl_key: File.read!("fixture/certs/apiclient_key.pem")
   ```
 
+  If this does not fit your needs, you might want to check [Configuration](configuration.html).
+
   > NOTE: If your are using the `:sandbox` environment,
-  > You need to use `mix wechat_pay.get_sandbox_signkey` to
+  > You have to run `mix wechat_pay.get_sandbox_signkey` to
   > fetch the Sandbox API Key.
 
   ### Payment methods
 
-  When `use` WechatPay in `MyApp.Pay` module, it will generate following
-  payment method modules for you:
+  When `use` WechatPay in `MyPay` module, it will generate following
+  modules for you:
 
-  - `MyApp.Pay.App` - Implements the `WechatPay.PaymentMethod.App` behaviour
-  - `MyApp.Pay.JSAPI` - Implements the `WechatPay.PaymentMethod.JSAPI` behaviour
-  - `MyApp.Pay.Native` - Implements the `WechatPay.PaymentMethod.Native` behaviour
+  - `MyPay.App` - Implements the `WechatPay.App.Behaviour` behaviour
+  - `MyPay.JSAPI` - Implements the `WechatPay.JSAPI.Behaviour` behaviour
+  - `MyPay.Native` - Implements the `WechatPay.Native.Behaviour` behaviour
 
   ### Plug
 
-  We will also generate some [Plugs](https://github.com/elixir-plug/plug) to
+  WechatPay will also generate some [Plugs](https://github.com/elixir-plug/plug) to
   simplify the process of handling notification from Wechat's Payment Gateway:
 
-  - `MyApp.Pay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
-  - `MyApp.Pay.Plug.Refund` - Implements the `WechatPay.Plug.Refund` behaviour
+  - `MyPay.Plug.Payment` - Implements the `WechatPay.Plug.Payment` behaviour
+  - `MyPay.Plug.Refund` - Implements the `WechatPay.Plug.Refund` behaviour
 
   ### JSON Encoder
 
@@ -57,94 +58,86 @@ defmodule WechatPay do
   ```
   """
 
-  @typedoc """
-  The Configuration
-
-  - `env` - `:sandbox` or `:production`
-  - `appid` - APP ID
-  - `mch_id` - Merchant ID
-  - `apikey` - API key
-  - `ssl_cacert` - CA Root certificate in PEM
-  - `ssl_cert` - Certificate in PEM
-  - `ssl_key` - Private key in PEM
-  """
-  @type config :: [
-          env: :sandbox | :production,
-          appid: String.t(),
-          mch_id: String.t(),
-          apikey: String.t(),
-          ssl_cacert: String.t(),
-          ssl_cert: String.t(),
-          ssl_key: String.t()
-        ]
+  alias WechatPay.Config
 
   defmacro __using__(opts) do
-    quote bind_quoted: [opts: opts] do
-      otp_app = Keyword.fetch!(opts, :otp_app)
+    opts =
+      opts
+      |> Enum.into(%{})
 
-      @doc false
-      @spec get_config :: WechatPay.config()
-      def get_config do
+    config_ast =
+      case opts do
+        %{otp_app: otp_app} ->
+          quote do
+            @behaviour Config
+
+            def config do
+              unquote(otp_app)
+              |> Application.fetch_env!(__MODULE__)
+              |> Config.new()
+            end
+          end
+
+        _ ->
+          quote do
+            @behaviour Config
+          end
+      end
+
+    module_ast =
+      quote do
+        # define module `MyModule.App`
         __MODULE__
-        |> WechatPay.build_config(unquote(otp_app))
-      end
-
-      # define module `MyModule.App`
-      __MODULE__
-      |> Module.concat(:App)
-      |> Module.create(
-        quote do
-          use WechatPay.PaymentMethod.App, mod: unquote(__MODULE__)
-        end,
-        Macro.Env.location(__ENV__)
-      )
-
-      # define module `MyModule.JSAPI`
-      __MODULE__
-      |> Module.concat(:JSAPI)
-      |> Module.create(
-        quote do
-          use WechatPay.PaymentMethod.JSAPI, mod: unquote(__MODULE__)
-        end,
-        Macro.Env.location(__ENV__)
-      )
-
-      # define module `MyModule.Native`
-      __MODULE__
-      |> Module.concat(:Native)
-      |> Module.create(
-        quote do
-          use WechatPay.PaymentMethod.Native, mod: unquote(__MODULE__)
-        end,
-        Macro.Env.location(__ENV__)
-      )
-
-      # define module `MyModule.Plug.Payment` & `MyModule.Plug.Refund`
-      if Code.ensure_loaded?(Plug) do
-        [__MODULE__, :Plug, :Payment]
-        |> Module.concat()
+        |> Module.concat(:App)
         |> Module.create(
           quote do
-            use WechatPay.Plug.Payment, mod: unquote(__MODULE__)
+            use WechatPay.App, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
 
-        [__MODULE__, :Plug, :Refund]
-        |> Module.concat()
+        # define module `MyModule.JSAPI`
+        __MODULE__
+        |> Module.concat(:JSAPI)
         |> Module.create(
           quote do
-            use WechatPay.Plug.Refund, mod: unquote(__MODULE__)
+            use WechatPay.JSAPI, unquote(__MODULE__)
           end,
           Macro.Env.location(__ENV__)
         )
-      end
-    end
-  end
 
-  @doc false
-  def build_config(module, otp_app) do
-    otp_app
-    |> Application.fetch_env!(module)
+        # define module `MyModule.Native`
+        __MODULE__
+        |> Module.concat(:Native)
+        |> Module.create(
+          quote do
+            use WechatPay.Native, unquote(__MODULE__)
+          end,
+          Macro.Env.location(__ENV__)
+        )
+
+        # define module `MyModule.Plug.Payment` & `MyModule.Plug.Refund`
+        if Code.ensure_loaded?(Plug) do
+          [__MODULE__, :Plug, :Payment]
+          |> Module.concat()
+          |> Module.create(
+            quote do
+              use WechatPay.Plug.Payment, unquote(__MODULE__)
+            end,
+            Macro.Env.location(__ENV__)
+          )
+
+          [__MODULE__, :Plug, :Refund]
+          |> Module.concat()
+          |> Module.create(
+            quote do
+              use WechatPay.Plug.Refund, unquote(__MODULE__)
+            end,
+            Macro.Env.location(__ENV__)
+          )
+        end
+      end
+
+    [config_ast, module_ast]
   end
 end
