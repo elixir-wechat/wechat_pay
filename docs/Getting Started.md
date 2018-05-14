@@ -23,17 +23,7 @@ You need to define you own pay module, then `use` `WechatPay`.
 
 ```elixir
 defmodule MyPay do
-  use WechatPay
-
-  @impl WechatPay.Config
-  def config do
-    [
-      env: :production,
-      appid: "wx8888888888888888",
-      mch_id: "1900000109",
-      apikey: "192006250b4c09247ec02edce69f6a2d",
-    ]
-  end
+  use WechatPay, otp_app: :my_app
 end
 ```
 
@@ -44,6 +34,21 @@ the following modules will be generated for you:
 * `MyPay.Native`
 
 which are corresponding to different payment scenario.
+
+### Configuration
+
+In your `config/config.exs`:
+
+```elixir
+config :my_app, MyPay,
+  env: :production,
+  appid: "the-appid",
+  mch_id: "the-mch-id",
+  apikey: "the-apikey",
+  ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+  ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+  ssl_key: File.read!("fixture/certs/apiclient_key.pem")
+```
 
 ## Place an order
 

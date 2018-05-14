@@ -8,21 +8,21 @@ defmodule WechatPay do
 
   ```elixir
   defmodule MyPay do
-    use WechatPay
-
-    @impl WechatPay.Config
-    def config do
-      [
-        env: :production,
-        appid: "wx8888888888888888",
-        mch_id: "1900000109",
-        apikey: "192006250b4c09247ec02edce69f6a2d",
-        ssl_cacert: File.read!("fixture/certs/rootca.pem"),
-        ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
-        ssl_key: File.read!("fixture/certs/apiclient_key.pem")
-      ]
-    end
+    use WechatPay, otp_app: :my_app
   end
+  ```
+
+  Then config your app in `config/config.exs`:
+
+  ```elixir
+  config :my_app, MyPay,
+    env: :production,
+    appid: "the-appid",
+    mch_id: "the-mch-id",
+    apikey: "the-apikey",
+    ssl_cacert: File.read!("fixture/certs/rootca.pem"),
+    ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
+    ssl_key: File.read!("fixture/certs/apiclient_key.pem")
   ```
 
   > NOTE: If your are using the `:sandbox` environment,
@@ -68,21 +68,6 @@ defmodule WechatPay do
         %{otp_app: otp_app} ->
           quote do
             @behaviour Config
-
-            IO.warn(~s"""
-            The `:otp_app` option is deprecated, please define a config function as below:
-
-                defmodule #{__MODULE__} do
-                  use WechatPay
-
-                  @impl WechatPay.Config
-                  def config do
-                    Application.get_env(:#{unquote(otp_app)}, #{__MODULE__})
-
-                    # or some customize without using the Mix config.
-                  end
-                end
-            """)
 
             def config do
               unquote(otp_app)
