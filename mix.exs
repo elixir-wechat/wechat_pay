@@ -25,7 +25,9 @@ defmodule WechatPay.Mixfile do
       homepage_url: @url,
       package: package(),
       docs: docs(),
-      dialyzer: [plt_add_apps: [:mix, :plug, :xmerl]]
+      dialyzer: [
+        plt_add_apps: [:mix, :plug, :xmerl, :poison]
+      ]
     ]
   end
 
@@ -86,7 +88,18 @@ defmodule WechatPay.Mixfile do
       main: "getting-started",
       extras: [
         "docs/Getting Started.md",
-        "docs/Phoenix.md"
+        "docs/Phoenix.md",
+        "docs/Configuration.md"
+      ],
+      groups_for_modules: [
+        "Payment methods": [
+          ~r"WechatPay.App",
+          ~r"WechatPay.JSAPI",
+          ~r"WechatPay.Native"
+        ],
+        Plug: [~r"WechatPay.Plug", WechatPay.Handler],
+        Utils: ~r"WechatPay.Utils",
+        Others: [WechatPay.JSON]
       ]
     ]
   end
