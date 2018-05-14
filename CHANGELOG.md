@@ -2,6 +2,9 @@
 
 ## master
 
+* Added new config option `:api_host`. Which make it possible to use oversea nodes such as *https://apihk.mch.weixin.qq.com/* and *https://apius.mch.weixin.qq.com/*. This also replace the `:env` config.
+* Added a flexible configuration system to fit more usage senarios.
+
 ## v0.5.0
 
 * Make JSON library an optional dependency,
