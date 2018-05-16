@@ -49,7 +49,7 @@ defmodule WechatPay.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.9"},
+      {:httpoison, "~> 0.9 or ~> 1.0"},
 
       # Optional
       {:poison, "~> 2.2 or ~> 3.0", optional: true},
