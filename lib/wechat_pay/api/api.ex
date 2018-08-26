@@ -117,15 +117,20 @@ defmodule WechatPay.API do
   @spec refund(map, Config.t()) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def refund(attrs, config) do
-    opts = [
-      ssl: [
-        cacerts: [config.ssl_cacert |> decode_public()],
-        cert: config.ssl_cert |> decode_public(),
-        key: config.ssl_key |> decode_private()
-      ]
-    ]
+    ssl =
+      case config.ssl_cacert do
+        nil ->
+          [cert: config.ssl_cert |> decode_public(), key: config.ssl_key |> decode_private()]
 
-    Client.post("secapi/pay/refund", attrs, opts, config)
+        _ ->
+          [
+            cacerts: [config.ssl_cacert |> decode_public()],
+            cert: config.ssl_cert |> decode_public(),
+            key: config.ssl_key |> decode_private()
+          ]
+      end
+
+    Client.post("secapi/pay/refund", attrs, [ssl: ssl], config)
   end
 
   @doc """
