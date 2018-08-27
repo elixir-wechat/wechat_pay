@@ -120,7 +120,10 @@ defmodule WechatPay.API do
     ssl =
       case config.ssl_cacert do
         nil ->
-          [cert: config.ssl_cert |> decode_public(), key: config.ssl_key |> decode_private()]
+          [
+            cert: config.ssl_cert |> decode_public(),
+            key: config.ssl_key |> decode_private()
+          ]
 
         _ ->
           [
