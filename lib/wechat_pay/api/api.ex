@@ -116,21 +116,8 @@ defmodule WechatPay.API do
   """
   @spec refund(map, Config.t()) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def refund(attrs, %Config{ssl_cacert: nil} = config) do
-    ssl = [
-      cert: config.ssl_cert |> decode_public(),
-      key: config.ssl_key |> decode_private()
-    ]
-
-    Client.post("secapi/pay/refund", attrs, [ssl: ssl], config)
-  end
-
   def refund(attrs, config) do
-    ssl = [
-      cacerts: config.ssl_cacert |> decode_public(),
-      cert: config.ssl_cert |> decode_public(),
-      key: config.ssl_key |> decode_private()
-    ]
+    ssl = config |> load_ssl() |> Enum.filter(fn {_key, value} -> not is_nil(value) end)
 
     Client.post("secapi/pay/refund", attrs, [ssl: ssl], config)
   end
@@ -164,6 +151,8 @@ defmodule WechatPay.API do
     Client.post("payitil/report", attrs, [], config)
   end
 
+  defp decode_public(nil), do: nil
+
   defp decode_public(pem) do
     [{:Certificate, der_bin, :not_encrypted}] = :public_key.pem_decode(pem)
     der_bin
@@ -172,5 +161,13 @@ defmodule WechatPay.API do
   defp decode_private(pem) do
     [{type, der_bin, :not_encrypted}] = :public_key.pem_decode(pem)
     {type, der_bin}
+  end
+
+  defp load_ssl(config) do
+    [
+      cacerts: config.ssl_cacert |> decode_public(),
+      cert: config.ssl_cert |> decode_public(),
+      key: config.ssl_key |> decode_private()
+    ]
   end
 end
