@@ -117,7 +117,7 @@ defmodule WechatPay.API do
   @spec refund(map, Config.t()) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def refund(attrs, config) do
-    ssl = config |> load_ssl() |> Enum.filter(&valua_not_nil/1)
+    ssl = config |> load_ssl() |> Enum.filter(&value_not_nil/1)
 
     Client.post("secapi/pay/refund", attrs, [ssl: ssl], config)
   end
@@ -171,5 +171,5 @@ defmodule WechatPay.API do
     ]
   end
 
-  defp valua_not_nil({_key, value}), do: not is_nil(value)
+  defp value_not_nil({_key, value}), do: not is_nil(value)
 end
