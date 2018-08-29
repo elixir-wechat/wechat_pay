@@ -52,17 +52,16 @@ defmodule WechatPay.Mixfile do
       {:httpoison, "~> 0.9 or ~> 1.0"},
 
       # Optional
-      {:poison, "~> 2.2 or ~> 3.0", optional: true},
-      {:jason, "~> 1.0", optional: true},
       {:plug, "~> 1.2", optional: true},
 
       # Dev
-      {:exvcr, "~> 0.7", only: :test},
+      {:poison, "~> 4.0", only: [:dev, :test, :docs], override: true},
+      {:jason, "~> 1.0", only: [:dev, :test]},
       {:credo, "~> 0.4", only: [:dev, :test]},
-      {:dialyxir, "~> 0.3", only: :dev},
+      {:exvcr, "~> 0.7", only: :test},
 
       # Docs
-      {:inch_ex, "~> 0.2", only: :docs},
+      {:inch_ex, "~> 1.0", only: :docs},
       {:ex_doc, "~> 0.14", only: [:dev, :docs]}
     ]
   end
