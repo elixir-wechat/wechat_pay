@@ -16,7 +16,7 @@ defmodule WechatPay.Config do
           appid: String.t(),
           mch_id: String.t(),
           apikey: String.t(),
-          ssl_cacert: String.t(),
+          ssl_cacert: String.t() | nil,
           ssl_cert: String.t(),
           ssl_key: String.t(),
           verify_sign: boolean
