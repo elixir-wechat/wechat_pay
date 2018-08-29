@@ -45,8 +45,7 @@ defmodule WechatPay.Utils.XMLParser do
     "/#{root}/child::*"
     |> String.to_charlist()
     |> :xmerl_xpath.string(doc)
-    |> Enum.map(&extract_element/1)
-    |> Enum.into(%{})
+    |> Enum.into(%{}, &extract_element/1)
   end
 
   defp extract_element(element) do
