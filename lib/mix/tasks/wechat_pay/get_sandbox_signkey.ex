@@ -4,8 +4,9 @@ defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
 
   ## Example
 
-  ```elixir
-  mix wechat_pay.get_sandbox_signkey -a wx8888888888888888 -m 1900000109
+  ```shell
+  $ mix wechat_pay.get_sandbox_signkey -a wx8888888888888888 -m 1900000109
+  af11b9e92929e3f6d3847d7a291d5f64
   ```
 
   ## Command line options
@@ -18,23 +19,38 @@ defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
 
   @shortdoc "Get WechatPay's Sandbox API Key"
 
-  @doc false
+  @impl Mix.Task
+  @spec run([binary()]) :: any()
   def run(args) do
     {:ok, _} = Application.ensure_all_started(:wechat_pay)
 
-    {opts, _, _} =
+    {opts, _} =
       args
-      |> OptionParser.parse(
+      |> OptionParser.parse!(
         aliases: [a: :apikey, m: :mch_id],
         strict: [apikey: :string, mch_id: :string]
       )
 
     case WechatPay.Helper.get_sandbox_signkey(
-           Keyword.get(opts, :apikey),
-           Keyword.get(opts, :mch_id)
+           get_value(opts, :apikey),
+           get_value(opts, :mch_id)
          ) do
-      {:ok, key} -> Mix.shell().info(key)
-      {:error, err} -> Mix.shell().error(inspect(err))
+      {:ok, key} ->
+        Mix.shell().info(key)
+
+      {:error, %WechatPay.Error{reason: reason}} ->
+        Mix.shell().error(reason)
+    end
+  end
+
+  defp get_value(opts, key) do
+    case Keyword.get(opts, key) do
+      nil ->
+        Mix.shell().error("Please specific the #{key} with `--#{key}`")
+        exit({:shutdown, 1})
+
+      v ->
+        v
     end
   end
 end

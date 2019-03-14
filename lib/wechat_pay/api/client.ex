@@ -155,6 +155,7 @@ defmodule WechatPay.API.Client do
     {:error, %Error{reason: body, type: :unknown_response}}
   end
 
+  # handle return
   defp process_return_field(%{return_code: "SUCCESS"} = data) do
     {:ok, data}
   end
@@ -163,6 +164,11 @@ defmodule WechatPay.API.Client do
     {:error, %Error{reason: reason, type: :failed_return}}
   end
 
+  defp process_return_field(%{retcode: _, retmsg: reason, return_code: "FAIL"}) do
+    {:error, %Error{reason: reason, type: :failed_return}}
+  end
+
+  # handle result
   defp process_result_field(%{result_code: "SUCCESS"} = data) do
     {:ok, data}
   end

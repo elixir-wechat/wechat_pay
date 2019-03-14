@@ -2,37 +2,39 @@
 
 ## master
 
+- Update `Mix.Tasks.WechatPay.GetSandboxSignkey` to print friendly error message.
+
 ## v0.7.0
 
-* Require Elixir >= 1.6
-* Make the config `ssl_cacert` an optional option. (#11)
+- Require Elixir >= 1.6
+- Make the config `ssl_cacert` an optional option. (#11)
 
 ## v0.6.0
 
 ⚠️ Breaking changes
 
-* Update dependency `:httpoison` to `~> 1.0`.
-* Added new config option `:api_host`. Which make it possible to use oversea nodes such as *https://apihk.mch.weixin.qq.com/* and *https://apius.mch.weixin.qq.com/*. This also replace the `:env` config.
-* Added a flexible configuration system to fit more usage senarios.
+- Update dependency `:httpoison` to `~> 1.0`.
+- Added new config option `:api_host`. Which make it possible to use oversea nodes such as _https://apihk.mch.weixin.qq.com/_ and _https://apius.mch.weixin.qq.com/_. This also replace the `:env` config.
+- Added a flexible configuration system to fit more usage senarios.
 
 ## v0.5.0
 
-* Make JSON library an optional dependency,
+- Make JSON library an optional dependency,
   [Jason](https://github.com/michalmuskala/jason) is recommended.
 
 ## v0.4.1
 
-* Fixes `:xmerl` is missing in the application list.
+- Fixes `:xmerl` is missing in the application list.
 
 ## v0.4.0
 
-* Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
-* Parse XML with `:xmerl`, drop dependency on `sweet_xml`.
+- Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
+- Parse XML with `:xmerl`, drop dependency on `sweet_xml`.
 
 ## v0.3.1
 
-* Added task `mix wechat_pay.get_sandbox_signkey` to get the Sandbox API Key.
-* Fixes wrong return value of `WechatPay.Helper.get_sandbox_signkey/2`.
+- Added task `mix wechat_pay.get_sandbox_signkey` to get the Sandbox API Key.
+- Fixes wrong return value of `WechatPay.Helper.get_sandbox_signkey/2`.
 
 ## V0.3.0
 
@@ -75,9 +77,9 @@ configuration.
 When `use` WechatPay in `MyPay` module, it will generate following
 payment method modules for you:
 
-* `MyPay.App`
-* `MyPay.JSAPI`
-* `MyPay.Native`
+- `MyPay.App`
+- `MyPay.JSAPI`
+- `MyPay.Native`
 
 Each refers to a pay scenario of WechatPay.
 
@@ -143,26 +145,26 @@ config :wechat_pay, MyPay,
 
 ### Other changes
 
-* Added `MyPay.App.generate_pay_request/1` to generate pay request for App.
+- Added `MyPay.App.generate_pay_request/1` to generate pay request for App.
 
 ## v0.2.0
 
 ⚠️ Breaking changes
 
-* Correctly handle malformed XML data.
-* Added `WechatPay.Error`.
-* Fixes warnings on Elixir 1.4.
-* Added `WechatPay.API.get_sandbox_signkey/0` to get sandbox signkey.
-* Rename `WechatPay.Plug.Notify` -> `WechatPay.Plug.Callback`, and rewrite the
+- Correctly handle malformed XML data.
+- Added `WechatPay.Error`.
+- Fixes warnings on Elixir 1.4.
+- Added `WechatPay.API.get_sandbox_signkey/0` to get sandbox signkey.
+- Rename `WechatPay.Plug.Notify` -> `WechatPay.Plug.Callback`, and rewrite the
   flow. Now it's easier to handle callbacks from Wehcat's Payment Gateway.
-* Drop support for loading config from `{:system, ENV}`. It seems not a good
+- Drop support for loading config from `{:system, ENV}`. It seems not a good
   idea to do this, consider https://github.com/bitwalker/conform.
 
 ## v0.1.1
 
-* Fixes hexdocs.pm does not recognize upcase in URL.
-* Improve docs.
+- Fixes hexdocs.pm does not recognize upcase in URL.
+- Improve docs.
 
 ## v0.1.0
 
-* Initial support Wechat Pay's JSAPI, Native and App.
+- Initial support Wechat Pay's JSAPI, Native and App.
