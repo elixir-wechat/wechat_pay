@@ -4,7 +4,7 @@ defmodule WechatPay.API.ReportTest do
 
   alias WechatPay.API
 
-  test "report", %{config: config} do
+  test "report", %{client: client} do
     use_cassette "report" do
       params = %{
         device_info: "013467007045764",
@@ -20,7 +20,7 @@ defmodule WechatPay.API.ReportTest do
         time: "20091227091010"
       }
 
-      {:ok, data} = API.report(params, config)
+      {:ok, data} = API.report(client, params)
 
       assert data.result_code == "SUCCESS"
     end

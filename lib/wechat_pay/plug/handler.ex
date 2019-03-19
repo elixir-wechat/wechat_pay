@@ -1,4 +1,4 @@
-defmodule WechatPay.Handler do
+defmodule WechatPay.Plug.Handler do
   @moduledoc """
   The Handler behaviour is to handle the result of notification from Wechat's
   Payment Gateway.
@@ -7,9 +7,9 @@ defmodule WechatPay.Handler do
 
   ```elixir
   defmodule MyApp.WechatHandler do
-    use WechatPay.Handler
+    use WechatPay.Plug.Handler
 
-    @impl WechatPay.Handler
+    @impl WechatPay.Plug.Handler
     def handle_data(conn, data) do
       data = %{
         appid: "wx2421b1c4370ec43b",
@@ -35,7 +35,7 @@ defmodule WechatPay.Handler do
     end
 
     # This is optional
-    @impl WechatPay.Handler
+    @impl WechatPay.Plug.Handler
     def handle_error(conn, error, data) do
       Logger.error(inspect(error))
     end
@@ -48,15 +48,15 @@ defmodule WechatPay.Handler do
   or `{:error, any}` to make the processing fail, so Wechat will retry seconds
   later.
 
-  Also, you can optional implement the `handle_error/3` if you want to track 
+  Also, you can optional implement the `handle_error/3` if you want to track
   the error.
   """
 
   defmacro __using__(_opts) do
     quote do
-      @behaviour WechatPay.Handler
+      @behaviour WechatPay.Plug.Handler
 
-      @impl WechatPay.Handler
+      @impl WechatPay.Plug.Handler
       def handle_error(conn, error, data) do
         :nothing
       end

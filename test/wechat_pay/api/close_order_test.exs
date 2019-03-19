@@ -4,9 +4,9 @@ defmodule WechatPay.API.CloseOrderTest do
 
   alias WechatPay.API
 
-  test "close an order", %{config: config} do
+  test "close an order", %{client: client} do
     use_cassette "close_order" do
-      {:ok, data} = API.close_order(%{out_trade_no: "xxx"}, config)
+      {:ok, data} = API.close_order(client, %{out_trade_no: "xxx"})
 
       assert data.return_msg == "OK"
     end

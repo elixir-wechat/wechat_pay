@@ -1,7 +1,7 @@
 defmodule TestCase do
   use ExUnit.CaseTemplate
 
-  alias WechatPay.Config
+  alias WechatPay.Client
 
   using do
     quote do
@@ -10,8 +10,8 @@ defmodule TestCase do
   end
 
   setup do
-    config = Application.get_env(:wechat_pay, MyPay)
+    config = Application.get_env(:wechat_pay, TestPay)
 
-    [config: Config.new(config)]
+    [client: Client.new(config)]
   end
 end

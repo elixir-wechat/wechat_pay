@@ -2,15 +2,13 @@ defmodule WechatPay.Plug.PaymentTest do
   use TestCase, async: false
   use Plug.Test
 
-  alias MyPay.Plug.Payment, as: PaymentPlug
-
   alias WechatPay.PlugTest.Handler
   alias WechatPay.PlugTest.HandlerThatOnlyHandleData
 
   defmodule Handler do
-    use WechatPay.Handler
+    use WechatPay.Plug.Handler
 
-    @impl WechatPay.Handler
+    @impl WechatPay.Plug.Handler
     def handle_data(_conn, data) do
       assert data.appid == "wx2421b1c4370ec43b"
       assert data.result_code == "SUCCESS"
@@ -18,7 +16,7 @@ defmodule WechatPay.Plug.PaymentTest do
       :ok
     end
 
-    @impl WechatPay.Handler
+    @impl WechatPay.Plug.Handler
     def handle_error(_conn, error, data) do
       assert error == %WechatPay.Error{reason: "签名失败", type: :failed_return}
       assert data.return_code == "FAIL"
@@ -26,11 +24,11 @@ defmodule WechatPay.Plug.PaymentTest do
   end
 
   defmodule HandlerThatOnlyHandleData do
-    use WechatPay.Handler
+    use WechatPay.Plug.Handler
 
-    @impl WechatPay.Handler
+    @impl WechatPay.Plug.Handler
     def handle_data(_conn, data) do
-      assert data.appid == "wx2421b1c4370ec43b"
+      assert data.app_id == "wx2421b1c4370ec43b"
       assert data.result_code == "SUCCESS"
 
       :ok
@@ -38,7 +36,7 @@ defmodule WechatPay.Plug.PaymentTest do
   end
 
   describe "receive notification from Wechat's Payment Gateway" do
-    test "handle data" do
+    test "handle data", %{client: client} do
       req = ~s"""
       <xml>
         <appid><![CDATA[wx2421b1c4370ec43b]]></appid>
@@ -63,12 +61,12 @@ defmodule WechatPay.Plug.PaymentTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = PaymentPlug.init([handler: Handler])
+      opts = WechatPay.Plug.Payment.init(handler: Handler, api_key: client.api_key)
 
-      PaymentPlug.call(conn, opts)
+      WechatPay.Plug.Payment.call(conn, opts)
     end
 
-    test "handle error" do
+    test "handle error", %{client: client} do
       req = ~s"""
       <xml>
         <return_code><![CDATA[FAIL]]></return_code>
@@ -78,11 +76,12 @@ defmodule WechatPay.Plug.PaymentTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = PaymentPlug.init([handler: Handler])
-      PaymentPlug.call(conn, opts)
+      opts = WechatPay.Plug.Payment.init(handler: Handler, api_key: client.api_key)
+
+      WechatPay.Plug.Payment.call(conn, opts)
     end
 
-    test "handler only handle data, not error" do
+    test "handler only handle data, not error", %{client: client} do
       req = ~s"""
       <xml>
         <return_code><![CDATA[FAIL]]></return_code>
@@ -92,8 +91,10 @@ defmodule WechatPay.Plug.PaymentTest do
 
       conn = conn(:post, "/foo", req)
 
-      opts = PaymentPlug.init([handler: HandlerThatOnlyHandleData])
-      PaymentPlug.call(conn, opts)
+      opts =
+        WechatPay.Plug.Payment.init(handler: HandlerThatOnlyHandleData, api_key: client.api_key)
+
+      WechatPay.Plug.Payment.call(conn, opts)
     end
 
     test "handle malformed request data" do
@@ -101,11 +102,11 @@ defmodule WechatPay.Plug.PaymentTest do
       <xml
       """
 
-      opts = PaymentPlug.init([handler: Handler])
+      opts = WechatPay.Plug.Payment.init(handler: Handler)
 
       conn =
         conn(:post, "/foo", req)
-        |> PaymentPlug.call(opts)
+        |> WechatPay.Plug.Payment.call(opts)
 
       assert conn.resp_body == "Malformed XML, requires root element: xml"
     end

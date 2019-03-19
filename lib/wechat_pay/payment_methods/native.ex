@@ -5,97 +5,86 @@ defmodule WechatPay.Native do
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
   """
 
-  alias WechatPay.API.Client
-  alias WechatPay.Config
+  alias WechatPay.API.HTTPClient
+  alias WechatPay.Client
   alias WechatPay.API
-
-  import WechatPay.Shared
-
-  defmacro __using__(mod) do
-    quote do
-      @behaviour WechatPay.Native.Behaviour
-
-      defdelegate config, to: unquote(mod)
-
-      define_shared_behaviour(WechatPay.Native.Behaviour)
-
-      @impl WechatPay.Native.Behaviour
-      def shorten_url(url), do: WechatPay.Native.shorten_url(url, config())
-    end
-  end
+  alias WechatPay.Utils.Signature
 
   @doc """
   Place an order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1)
   """
-  @spec place_order(map, Config.t()) ::
+  @spec place_order(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  defdelegate place_order(attrs, config), to: API
+  defdelegate place_order(client, attrs, options \\ []), to: API
 
   @doc """
   Query the order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_2)
   """
-  @spec query_order(map, Configt.t()) ::
+  @spec query_order(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  defdelegate query_order(attrs, config), to: API
+  defdelegate query_order(client, attrs, options \\ []), to: API
 
   @doc """
   Close the order
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_3)
   """
-  @spec close_order(map, Config.t()) ::
+  @spec close_order(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  defdelegate close_order(attrs, config), to: API
+  defdelegate close_order(client, attrs, options \\ []), to: API
 
   @doc """
   Request to refund
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_4)
   """
-  @spec refund(map, Config.t()) ::
+  @spec refund(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  defdelegate refund(attrs, config), to: API
+  defdelegate refund(client, attrs, options \\ []), to: API
 
   @doc """
   Query the refund
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_5)
   """
-  @spec query_refund(map, Config.t()) ::
+  @spec query_refund(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  defdelegate query_refund(attrs, config), to: API
+  defdelegate query_refund(client, attrs, options \\ []), to: API
 
   @doc """
   Download bill
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_6)
   """
-  @spec download_bill(map, Config.t()) :: {:ok, String.t()} | {:error, HTTPoison.Error.t()}
-  defdelegate download_bill(attrs, config), to: API
+  @spec download_bill(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate download_bill(client, attrs, options \\ []), to: API
 
   @doc """
   Report
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_8)
   """
-  @spec report(map, Config.t()) ::
+  @spec report(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  defdelegate report(attrs, config), to: API
+  defdelegate report(client, attrs, options \\ []), to: API
 
   @doc """
   Shorten the URL to reduce the QR image size
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_9)
   """
-  @spec shorten_url(
-          String.t(),
-          Config.t()
-        ) :: {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def shorten_url(url, config) do
-    Client.post("tools/shorturl", %{long_url: URI.encode(url)}, [], config)
+  @spec shorten_url(Client.t(), String.t(), keyword) ::
+          {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
+  def shorten_url(client, url, options \\ []) do
+    with {:ok, data} <-
+           HTTPClient.post(client, "tools/shorturl", %{long_url: URI.encode(url)}, options),
+         :ok <- Signature.verify(data, client.api_key) do
+      {:ok, data}
+    end
   end
 end

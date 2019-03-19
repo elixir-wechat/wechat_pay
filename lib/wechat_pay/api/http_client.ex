@@ -1,7 +1,7 @@
-defmodule WechatPay.API.Client do
+defmodule WechatPay.API.HTTPClient do
   @moduledoc false
 
-  alias WechatPay.Config
+  alias WechatPay.Client
   alias WechatPay.Utils.XMLBuilder
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.NonceStr
@@ -11,28 +11,11 @@ defmodule WechatPay.API.Client do
   @doc """
   Send a POST request to Wehchat's Server
   """
-  @spec post(String.t(), map, Keyword.t(), Config.t()) ::
+  @spec post(Client.t(), String.t(), map, Keyword.t()) ::
           {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
-  def post(path, attrs, options, config) do
-    case config.verify_sign do
-      true ->
-        do_post_with_verify_sign(path, attrs, options, config)
-
-      false ->
-        do_post_without_verify_sign(path, attrs, options, config)
-    end
-  end
-
-  defp do_post_with_verify_sign(path, attrs, options, config) do
-    with {:ok, data} <- do_post_without_verify_sign(path, attrs, options, config),
-         :ok <- Signature.verify(data, config.apikey) do
-      {:ok, data}
-    end
-  end
-
-  defp do_post_without_verify_sign(path, attrs, options, config) do
+  def post(client, path, attrs, options) do
     path =
-      config.api_host
+      client.api_host
       |> URI.merge(path)
       |> to_string()
 
@@ -43,9 +26,9 @@ defmodule WechatPay.API.Client do
 
     request_data =
       attrs
-      |> append_ids(config)
+      |> append_ids(client.app_id, client.mch_id)
       |> generate_nonce_str
-      |> sign(config.apikey)
+      |> sign(client.api_key)
       |> XMLBuilder.to_xml()
 
     with {:ok, response} <- HTTPoison.post(path, request_data, headers, options),
@@ -59,11 +42,11 @@ defmodule WechatPay.API.Client do
   @doc """
   Download text data
   """
-  @spec download_text(String.t(), map, Keyword.t(), Config.t()) ::
+  @spec download_text(Client.t(), String.t(), map, Keyword.t()) ::
           {:ok, String.t()} | {:error, HTTPoison.Error.t()}
-  def download_text(path, data, options, config) do
+  def download_text(client, path, data, options) do
     path =
-      config.api_host
+      client.api_host
       |> URI.merge(path)
       |> to_string()
 
@@ -74,9 +57,9 @@ defmodule WechatPay.API.Client do
 
     request_data =
       data
-      |> append_ids(config)
+      |> append_ids(client.app_id, client.mch_id)
       |> generate_nonce_str
-      |> sign(config.apikey)
+      |> sign(client.api_key)
       |> XMLBuilder.to_xml()
 
     with {:ok, response} <- HTTPoison.post(path, request_data, headers, options) do
@@ -84,55 +67,23 @@ defmodule WechatPay.API.Client do
     end
   end
 
-  @doc """
-  Get the Sandbox API key
-
-  where the `apikey` and `mch_id` is the **production** values.
-  """
-  @spec get_sandbox_signkey(String.t(), String.t()) ::
-          {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
-  def get_sandbox_signkey(apikey, mch_id) do
-    path =
-      "https://api.mch.weixin.qq.com/sandboxnew/"
-      |> URI.merge("pay/getsignkey")
-      |> to_string()
-
-    headers = [
-      {"Accept", "text/plain"},
-      {"Content-Type", "application/xml"}
-    ]
-
-    request_data =
-      %{mch_id: mch_id}
-      |> generate_nonce_str
-      |> sign(apikey)
-      |> XMLBuilder.to_xml()
-
-    with {:ok, response} <- HTTPoison.post(path, request_data, headers),
-         {:ok, response_data} <- process_response(response),
-         {:ok, data} <- process_return_field(response_data) do
-      {:ok, data}
-    end
+  defp append_ids(data, app_id, mch_id) when is_map(data) do
+    data
+    |> Map.merge(%{
+      app_id: app_id,
+      mch_id: mch_id
+    })
   end
 
-  defp append_ids(data, config) when is_map(data) do
-    ids = %{
-      appid: config.appid,
-      mch_id: config.mch_id
-    }
-
-    Map.merge(data, ids)
-  end
-
-  defp generate_nonce_str(data) when is_map(data) do
+  def generate_nonce_str(data) when is_map(data) do
     data
     |> Map.merge(%{nonce_str: NonceStr.generate()})
   end
 
-  defp sign(data, apikey) when is_map(data) do
+  def sign(data, api_key) when is_map(data) do
     sign =
       data
-      |> Signature.sign(apikey)
+      |> Signature.sign(api_key)
 
     data
     |> Map.merge(%{sign: sign})

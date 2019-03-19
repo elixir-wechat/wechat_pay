@@ -19,14 +19,14 @@ defmodule WechatPay.Utils.Signature do
   ```
   """
   @spec sign(map, String.t()) :: String.t()
-  def sign(data, apikey) when is_map(data) do
+  def sign(data, api_key) when is_map(data) do
     sign =
       data
       |> Map.delete(:__struct__)
       |> Enum.sort()
       |> Enum.map(&process_param/1)
       |> Enum.reject(&is_nil/1)
-      |> List.insert_at(-1, "key=#{apikey}")
+      |> List.insert_at(-1, "key=#{api_key}")
       |> Enum.join("&")
 
     :md5
@@ -45,11 +45,11 @@ defmodule WechatPay.Utils.Signature do
   ```
   """
   @spec verify(map, String.t()) :: :ok | {:error, Error.t()}
-  def verify(data, apikey) when is_map(data) do
+  def verify(data, api_key) when is_map(data) do
     calculated =
       data
       |> Map.delete(:sign)
-      |> sign(apikey)
+      |> sign(api_key)
 
     if data.sign == calculated do
       :ok

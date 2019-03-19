@@ -58,6 +58,7 @@ defmodule WechatPay.Mixfile do
       {:poison, "~> 4.0", only: [:dev, :test, :docs], override: true},
       {:jason, "~> 1.0", only: [:dev, :test]},
       {:credo, "~> 0.4", only: [:dev, :test]},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
       {:exvcr, "~> 0.7", only: :test},
 
       # Docs
@@ -87,8 +88,7 @@ defmodule WechatPay.Mixfile do
       main: "getting-started",
       extras: [
         "docs/Getting Started.md",
-        "docs/Phoenix.md",
-        "docs/Configuration.md"
+        "docs/Phoenix.md"
       ],
       groups_for_modules: [
         "Payment methods": [
@@ -96,7 +96,7 @@ defmodule WechatPay.Mixfile do
           ~r"WechatPay.JSAPI",
           ~r"WechatPay.Native"
         ],
-        Plug: [~r"WechatPay.Plug", WechatPay.Handler],
+        Plug: [~r"WechatPay.Plug"],
         Utils: ~r"WechatPay.Utils",
         Others: [WechatPay.JSON]
       ]

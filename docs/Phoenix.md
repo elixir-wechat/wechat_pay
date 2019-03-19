@@ -16,8 +16,8 @@ end
 
 The following modules are also generated for you:
 
-* `MyPay.Plug.Payment` - Implements `WechatPay.Plug.Payment`
-* `MyPay.Plug.Refund` - Implements `WechatPay.Plug.Refund`
+- `MyPay.Plug.Payment` - Implements `WechatPay.Plug.Payment`
+- `MyPay.Plug.Refund` - Implements `WechatPay.Plug.Refund`
 
 ## Usage
 
@@ -27,9 +27,9 @@ We use `MyPay.Plug.Payment` as an example:
 
 ```elixir
 defmodule MyApp.WechatHandler do
-  use WechatPay.Handler
+  use WechatPay.Plug.Handler
 
-  @impl WechatPay.Handler
+  @impl WechatPay.Plug.Handler
   def handle_data(conn, data) do
     # do something with the data.
     # the sign is already verified. if you want, you can verify again use `WechatPay.Utils.Signature.verify/2`.
@@ -38,7 +38,7 @@ defmodule MyApp.WechatHandler do
   end
 
   # This is optional
-  @impl WechatPay.Handler
+  @impl WechatPay.Plug.Handler
   def handle_error(conn, error, data) do
     # do something with the error or data
   end

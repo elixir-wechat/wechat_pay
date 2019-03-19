@@ -29,9 +29,9 @@ end
 
 the following modules will be generated for you:
 
-* `MyPay.App`
-* `MyPay.JSAPI`
-* `MyPay.Native`
+- `MyPay.App`
+- `MyPay.JSAPI`
+- `MyPay.Native`
 
 which are corresponding to different payment scenario.
 
@@ -41,9 +41,9 @@ In your `config/config.exs`:
 
 ```elixir
 config :my_app, MyPay,
-  appid: "the-appid",
+  app_id: "the-app-id",
   mch_id: "the-mch-id",
-  apikey: "the-apikey",
+  api_key: "the-api_key",
   ssl_cacert: File.read!("fixture/certs/rootca.pem"),
   ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
   ssl_key: File.read!("fixture/certs/apiclient_key.pem")

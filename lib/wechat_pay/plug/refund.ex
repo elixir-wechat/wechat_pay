@@ -4,42 +4,28 @@ defmodule WechatPay.Plug.Refund do
 
   Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_16&index=9
 
-  See `WechatPay.Handler` for how to implement a handler.
+  See `WechatPay.Plug.Handler` for how to implement a handler.
   """
-
-  @callback init(opts :: Plug.opts()) :: Plug.opts()
-  @callback call(conn :: Plug.Conn.t(), opts :: Plug.opts()) :: Plug.Conn.t()
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Error
 
   import Plug.Conn
 
-  defmacro __using__(mod) do
-    quote do
-      @behaviour WechatPay.Plug.Refund
+  @spec init(keyword()) :: [{:api_key, any()} | {:handler, any()}]
+  def init(opts) do
+    handler = Keyword.get(opts, :handler)
+    api_key = Keyword.get(opts, :api_key)
 
-      defdelegate config, to: unquote(mod)
-
-      @impl true
-      def init(opts) do
-        handler = Keyword.get(opts, :handler)
-
-        [handler: handler]
-      end
-
-      @impl true
-      def call(conn, handler: handler),
-        do: WechatPay.Plug.Refund.call(conn, [handler: handler], config())
-    end
+    [handler: handler, api_key: api_key]
   end
 
-  @doc false
-  def call(conn, [handler: handler_module], config) do
+  @spec call(Plug.Conn.t(), [{:api_key, any()} | {:handler, any()}]) :: Plug.Conn.t()
+  def call(conn, handler: handler_module, api_key: api_key) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with {:ok, data} <- XMLParser.parse(body),
-         :ok <- process_data(conn, data, handler_module, config) do
+         :ok <- process_data(conn, data, handler_module, api_key) do
       response_with_success_info(conn)
     else
       {:error, %Error{reason: reason}} ->
@@ -61,9 +47,9 @@ defmodule WechatPay.Plug.Refund do
     |> send_resp(:ok, body)
   end
 
-  defp process_data(conn, data, handler_module, config) do
+  defp process_data(conn, data, handler_module, api_key) do
     with {:ok, data} <- process_return_field(data),
-         {:ok, decrypted_data} <- decrypt_data(data, config),
+         {:ok, decrypted_data} <- decrypt_data(data, api_key),
          {:ok, map} <- XMLParser.parse(decrypted_data, "root"),
          :ok <- apply(handler_module, :handle_data, [conn, map]) do
       :ok
@@ -87,9 +73,7 @@ defmodule WechatPay.Plug.Refund do
     handler_module.handle_error(conn, error, data)
   end
 
-  defp decrypt_data(%{req_info: encrypted_data}, config) do
-    api_key = config.apikey
-
+  defp decrypt_data(%{req_info: encrypted_data}, api_key) do
     key =
       :md5
       |> :crypto.hash(api_key)
@@ -109,7 +93,7 @@ defmodule WechatPay.Plug.Refund do
     end
   end
 
-  defp decrypt_data(_, _config) do
+  defp decrypt_data(_, _api_key) do
     {:error,
      %Error{reason: "Missing the encrypted `req_info` in response data", type: :missing_req_info}}
   end

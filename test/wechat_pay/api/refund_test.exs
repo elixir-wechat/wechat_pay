@@ -4,7 +4,7 @@ defmodule WechatPay.API.RefundTest do
 
   alias WechatPay.API
 
-  test "refund", %{config: config} do
+  test "refund", %{client: client} do
     use_cassette "refund" do
       params = %{
         device_info: "013467007045764",
@@ -18,7 +18,7 @@ defmodule WechatPay.API.RefundTest do
         refund_account: "REFUND_SOURCE_RECHARGE_FUNDS"
       }
 
-      {:ok, data} = API.refund(params, config)
+      {:ok, data} = API.refund(client, params)
 
       assert data.return_msg == "OK"
     end

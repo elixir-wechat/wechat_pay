@@ -11,7 +11,7 @@ defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
 
   ## Command line options
 
-  - `-a`, `--apikey` - the production API key
+  - `-a`, `--api_key` - the production API key
   - `-m`, `--mch_id` - the merchant ID
   """
 
@@ -27,19 +27,19 @@ defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
     {opts, _} =
       args
       |> OptionParser.parse!(
-        aliases: [a: :apikey, m: :mch_id],
-        strict: [apikey: :string, mch_id: :string]
+        aliases: [a: :api_key, m: :mch_id],
+        strict: [api_key: :string, mch_id: :string]
       )
 
     case WechatPay.Helper.get_sandbox_signkey(
-           get_value(opts, :apikey),
+           get_value(opts, :api_key),
            get_value(opts, :mch_id)
          ) do
       {:ok, key} ->
-        Mix.shell().info(key)
+        Mix.shell().info(inspect(key))
 
-      {:error, %WechatPay.Error{reason: reason}} ->
-        Mix.shell().error(reason)
+      {:error, any} ->
+        Mix.shell().error(inspect(any))
     end
   end
 

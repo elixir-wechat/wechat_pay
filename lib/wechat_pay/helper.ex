@@ -1,12 +1,15 @@
 defmodule WechatPay.Helper do
   @moduledoc false
 
-  alias WechatPay.API.Client
+  alias WechatPay.API.HTTPClient
+  alias WechatPay.Utils.XMLParser
+  alias WechatPay.Utils.XMLBuilder
+  alias WechatPay.Error
 
   @doc """
-  Fetch the Sandbox API Key
+  Get the Sandbox API Key
 
-  where the `apikey` and `mch_id` is the **production** values.
+  where the `api_key` and `mch_id` is the **production** values.
 
   ## Example
 
@@ -15,17 +18,29 @@ defmodule WechatPay.Helper do
   ...> {:ok, "the-key"}
   ```
   """
-  @spec get_sandbox_signkey(
-          String.t(),
-          String.t()
-        ) :: {:ok, String.t()} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def get_sandbox_signkey(apikey, mch_id) do
-    case Client.get_sandbox_signkey(apikey, mch_id) do
-      {:ok, %{sandbox_signkey: signkey}} ->
-        {:ok, signkey}
+  @spec get_sandbox_signkey(String.t(), String.t()) ::
+          {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
+  def get_sandbox_signkey(api_key, mch_id) do
+    path =
+      "https://api.mch.weixin.qq.com/sandboxnew/"
+      |> URI.merge("pay/getsignkey")
+      |> to_string()
 
-      err ->
-        err
+    headers = [
+      {"Accept", "text/plain"},
+      {"Content-Type", "application/xml"}
+    ]
+
+    request_data =
+      %{mch_id: mch_id}
+      |> HTTPClient.generate_nonce_str()
+      |> HTTPClient.sign(api_key)
+      |> XMLBuilder.to_xml()
+
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           HTTPoison.post(path, request_data, headers),
+         {:ok, data} <- XMLParser.parse(body) do
+      {:ok, data}
     end
   end
 end
