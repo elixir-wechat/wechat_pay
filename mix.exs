@@ -1,7 +1,7 @@
 defmodule WechatPay.Mixfile do
   use Mix.Project
 
-  @version "0.7.0"
+  @version "0.7.1"
   @url "https://github.com/linjunpop/wechat_pay"
 
   def project do
