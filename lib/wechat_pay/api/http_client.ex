@@ -67,19 +67,13 @@ defmodule WechatPay.API.HTTPClient do
     end
   end
 
-  defp append_ids(data, app_id, mch_id) when is_map(data) do
-    data
-    |> Map.merge(%{
-      app_id: app_id,
-      mch_id: mch_id
-    })
-  end
-
+  @doc false
   def generate_nonce_str(data) when is_map(data) do
     data
     |> Map.merge(%{nonce_str: NonceStr.generate()})
   end
 
+  @doc false
   def sign(data, api_key) when is_map(data) do
     sign =
       data
@@ -87,6 +81,14 @@ defmodule WechatPay.API.HTTPClient do
 
     data
     |> Map.merge(%{sign: sign})
+  end
+
+  defp append_ids(data, app_id, mch_id) when is_map(data) do
+    data
+    |> Map.merge(%{
+      app_id: app_id,
+      mch_id: mch_id
+    })
   end
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}) do

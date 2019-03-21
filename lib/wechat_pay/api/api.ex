@@ -1,5 +1,7 @@
 defmodule WechatPay.API do
-  @moduledoc false
+  @moduledoc """
+  The Core API module
+  """
 
   alias WechatPay.API.HTTPClient
   alias WechatPay.Client

@@ -4,7 +4,30 @@ defmodule WechatPay.Plug.Payment do
 
   Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
 
+  ## Example
+
+  ### Define a handler
+
   See `WechatPay.Plug.Handler` for how to implement a handler.
+
+  ```elixir
+  defmodule MyApp.WechatHandler do
+    use WechatPay.Plug.Handler
+
+    @impl WechatPay.Plug.Handler
+    def handle_data(conn, data) do
+      :ok
+    end
+  end
+  ```
+
+  ### Plug in
+
+  In your app's `lib/my_app_web/router.ex`:
+
+  ```elixir
+  post "/wechat_pay/notification/payment", WechatPay.Plug.Payment, [handler: MyApp.WechatHandler, api_key: "my-api-key"]
+  ```
   """
 
   alias WechatPay.Utils.XMLParser

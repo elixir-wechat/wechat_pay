@@ -85,9 +85,7 @@ defmodule WechatPay.Mixfile do
 
   defp docs do
     [
-      main: "getting-started",
       extras: [
-        "docs/Getting Started.md",
         "docs/Phoenix.md"
       ],
       groups_for_modules: [

@@ -3,6 +3,38 @@ defmodule WechatPay.App do
   The **App** payment method.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_1)
+
+  ## Example
+
+  Set up a client:
+
+  ```elixir
+  client = WechatPay.Client.new(
+    app_id: "the-app_id",
+    mch_id: "the-mch-id",
+    api_key: "the-api_key",
+    ssl: [
+        ca_cert: File.read!("fixture/certs/rootca.pem"),
+        cert: File.read!("fixture/certs/apiclient_cert.pem"),
+        key: File.read!("fixture/certs/apiclient_key.pem")
+    ]
+  )
+  ```
+
+  Place an order:
+
+  ```elixir
+  WechatPay.App.place_order(client, %{
+    body: "Plan 1",
+    out_trade_no: "12345",
+    fee_type: "CNY",
+    total_fee: "600",
+    spbill_create_ip: Void.Utils.get_system_ip(),
+    notify_url: "http://example.com/",
+    trade_type: "APP",
+    product_id: "12345"
+  })
+  ```
   """
 
   alias WechatPay.Utils.NonceStr

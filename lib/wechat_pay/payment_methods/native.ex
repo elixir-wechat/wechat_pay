@@ -3,11 +3,43 @@ defmodule WechatPay.Native do
   The **Native** payment method.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_1)
+
+  ## Example
+
+  Set up a client:
+
+  ```elixir
+  client = WechatPay.Client.new(
+    app_id: "the-app_id",
+    mch_id: "the-mch-id",
+    api_key: "the-api_key",
+    ssl: [
+        ca_cert: File.read!("fixture/certs/rootca.pem"),
+        cert: File.read!("fixture/certs/apiclient_cert.pem"),
+        key: File.read!("fixture/certs/apiclient_key.pem")
+    ]
+  )
+  ```
+
+  Place an order:
+
+  ```elixir
+  WechatPay.Native.place_order(client, %{
+    body: "Plan 1",
+    out_trade_no: "12345",
+    fee_type: "CNY",
+    total_fee: "600",
+    spbill_create_ip: Void.Utils.get_system_ip(),
+    notify_url: "http://example.com/",
+    trade_type: "Native",
+    product_id: "12345"
+  })
+  ```
   """
 
-  alias WechatPay.API.HTTPClient
   alias WechatPay.Client
   alias WechatPay.API
+  alias WechatPay.API.HTTPClient
   alias WechatPay.Utils.Signature
 
   @doc """

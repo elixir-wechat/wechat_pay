@@ -1,4 +1,8 @@
 defmodule WechatPay.Client do
+  @moduledoc """
+  API client.
+  """
+
   alias WechatPay.Client
 
   @enforce_keys [:app_id, :mch_id, :api_key]

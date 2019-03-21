@@ -11,6 +11,7 @@ defmodule WechatPay.Plug.Handler do
 
     @impl WechatPay.Plug.Handler
     def handle_data(conn, data) do
+      # the sign is already verified by `WechatPay.Utils.Signature.verify/2`.
       data = %{
         appid: "wx2421b1c4370ec43b",
         attach: "支付测试",
@@ -31,6 +32,7 @@ defmodule WechatPay.Plug.Handler do
         transaction_id: "1004400740201409030005092168"
       }
 
+      # return `:ok` to tell wechat server that you have successfully handled this notification.
       :ok
     end
 
