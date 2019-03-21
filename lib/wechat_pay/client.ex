@@ -13,12 +13,11 @@ defmodule WechatPay.Client do
           app_id: String.t(),
           mch_id: String.t(),
           api_key: String.t(),
-          ssl:
-            keyword() :: [
-              {:ca_cert, String.t() | nil},
-              {:cert, String.t()},
-              {:key, String.t()}
-            ]
+          ssl: [
+            {:ca_cert, String.t() | nil},
+            {:cert, String.t()},
+            {:key, String.t()}
+          ]
         }
 
   @doc """
