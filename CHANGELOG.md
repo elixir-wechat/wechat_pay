@@ -2,6 +2,11 @@
 
 ## master
 
+⚠️ Breaking changes
+
+- No magic macros
+- Simplified functional interface
+
 ## v0.7.1
 
 - Update `Mix.Tasks.WechatPay.GetSandboxSignkey` to print friendly error message.
