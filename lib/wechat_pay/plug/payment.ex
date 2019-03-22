@@ -4,11 +4,31 @@ defmodule WechatPay.Plug.Payment do
 
   Official document: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
 
-  See `WechatPay.Handler` for how to implement a handler.
-  """
+  ## Example
 
-  @callback init(opts :: Plug.opts()) :: Plug.opts()
-  @callback call(conn :: Plug.Conn.t(), opts :: Plug.opts()) :: Plug.Conn.t()
+  ### Define a handler
+
+  See `WechatPay.Plug.Handler` for how to implement a handler.
+
+  ```elixir
+  defmodule MyApp.WechatHandler do
+    use WechatPay.Plug.Handler
+
+    @impl WechatPay.Plug.Handler
+    def handle_data(conn, data) do
+      :ok
+    end
+  end
+  ```
+
+  ### Plug in
+
+  In your app's `lib/my_app_web/router.ex`:
+
+  ```elixir
+  post "/wechat_pay/notification/payment", WechatPay.Plug.Payment, [handler: MyApp.WechatHandler, api_key: "my-api-key"]
+  ```
+  """
 
   alias WechatPay.Utils.XMLParser
   alias WechatPay.Utils.Signature
@@ -16,31 +36,20 @@ defmodule WechatPay.Plug.Payment do
 
   import Plug.Conn
 
-  defmacro __using__(mod) do
-    quote do
-      @behaviour WechatPay.Plug.Payment
+  @spec init(keyword()) :: [{:api_key, binary()} | {:handler, binary()}]
+  def init(opts) do
+    handler = Keyword.get(opts, :handler)
+    api_key = Keyword.get(opts, :api_key)
 
-      defdelegate config, to: unquote(mod)
-
-      @impl true
-      def init(opts) do
-        handler = Keyword.get(opts, :handler)
-
-        [handler: handler]
-      end
-
-      @impl true
-      def call(conn, handler: handler),
-        do: WechatPay.Plug.Payment.call(conn, [handler: handler], config())
-    end
+    [handler: handler, api_key: api_key]
   end
 
-  @doc false
-  def call(conn, [handler: handler_module], config) do
+  @spec call(Plug.Conn.t(), [{:api_key, any()} | {:handler, any()}]) :: Plug.Conn.t()
+  def call(conn, handler: handler_module, api_key: api_key) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with {:ok, data} <- XMLParser.parse(body),
-         :ok <- process_data(conn, data, handler_module, config) do
+         :ok <- process_data(conn, data, handler_module, api_key) do
       response_with_success_info(conn)
     else
       {:error, %Error{reason: reason}} ->
@@ -62,14 +71,14 @@ defmodule WechatPay.Plug.Payment do
     |> send_resp(:ok, body)
   end
 
-  defp process_data(conn, data, handler_module, config) do
+  defp process_data(conn, data, handler_module, api_key) do
     with {:ok, data} <- process_return_field(data),
-         :ok <- Signature.verify(data, config.apikey),
+         :ok <- Signature.verify(data, api_key),
          :ok <- apply(handler_module, :handle_data, [conn, data]) do
       :ok
     else
       {:error, %Error{} = error} ->
-        maybe_handle_error(handler_module, conn, error, data)
+        handle_error(handler_module, conn, error, data)
 
         {:error, error}
     end
@@ -83,7 +92,7 @@ defmodule WechatPay.Plug.Payment do
     {:error, %Error{reason: reason, type: :failed_return}}
   end
 
-  defp maybe_handle_error(handler_module, conn, error, data) do
+  defp handle_error(handler_module, conn, error, data) do
     handler_module.handle_error(conn, error, data)
   end
 end

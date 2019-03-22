@@ -1,8 +1,12 @@
 defmodule WechatPay.API do
-  @moduledoc false
+  @moduledoc """
+  The Core API module
+  """
 
-  alias WechatPay.API.Client
-  alias WechatPay.Config
+  alias WechatPay.API.HTTPClient
+  alias WechatPay.Client
+  alias WechatPay.Utils.Signature
+  alias WechatPay.Error
 
   @doc """
   Request to close the order
@@ -12,10 +16,13 @@ defmodule WechatPay.API do
       iex> WechatPay.API.close_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec close_order(map, Config.t()) ::
-          {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def close_order(attrs, config) do
-    Client.post("pay/closeorder", attrs, [], config)
+  @spec close_order(Client.t(), map, keyword) ::
+          {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
+  def close_order(client, attrs, options \\ []) do
+    with {:ok, data} <- HTTPClient.post(client, "pay/closeorder", attrs, options),
+         :ok <- Signature.verify(data, client.api_key) do
+      {:ok, data}
+    end
   end
 
   @doc """
@@ -39,10 +46,13 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec place_order(map, Config.t()) ::
+  @spec place_order(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def place_order(attrs, config) do
-    Client.post("pay/unifiedorder", attrs, [], config)
+  def place_order(client, attrs, options \\ []) do
+    with {:ok, data} <- HTTPClient.post(client, "pay/unifiedorder", attrs, options),
+         :ok <- Signature.verify(data, client.api_key) do
+      {:ok, data}
+    end
   end
 
   @doc """
@@ -53,10 +63,13 @@ defmodule WechatPay.API do
       iex> WechatPay.API.query_order(%{out_trade_no: "1415757673"})
       ...> {:ok, data}
   """
-  @spec query_order(map, Config.t()) ::
+  @spec query_order(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def query_order(attrs, config) do
-    Client.post("pay/orderquery", attrs, [], config)
+  def query_order(client, attrs, options \\ []) do
+    with {:ok, data} <- HTTPClient.post(client, "pay/orderquery", attrs, options),
+         :ok <- Signature.verify(data, client.api_key) do
+      {:ok, data}
+    end
   end
 
   @doc """
@@ -71,9 +84,10 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec download_bill(map, Config.t()) :: {:ok, String.t()} | {:error, HTTPoison.Error.t()}
-  def download_bill(attrs, config) do
-    Client.download_text("pay/downloadbill", attrs, [], config)
+  @spec download_bill(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  def download_bill(client, attrs, options \\ []) do
+    HTTPClient.download_text(client, "pay/downloadbill", attrs, options)
   end
 
   @doc """
@@ -87,10 +101,13 @@ defmodule WechatPay.API do
       })
       ...> {:ok, data}
   """
-  @spec query_refund(map, Config.t()) ::
+  @spec query_refund(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def query_refund(attrs, config) do
-    Client.post("pay/refundquery", attrs, [], config)
+  def query_refund(client, attrs, options \\ []) do
+    with {:ok, data} <- HTTPClient.post(client, "pay/refundquery", attrs, options),
+         :ok <- Signature.verify(data, client.api_key) do
+      {:ok, data}
+    end
   end
 
   @doc """
@@ -114,12 +131,21 @@ defmodule WechatPay.API do
       ...> WechatPay.API.refund(attrs, opts)
       ...> {:ok, data}
   """
-  @spec refund(map, Config.t()) ::
+  @spec refund(Client.t(), map(), keyword()) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def refund(attrs, config) do
-    ssl = config |> load_ssl() |> Enum.filter(&value_not_nil/1)
+  def refund(client, attrs, options \\ []) do
+    ssl = client |> load_ssl() |> Enum.reject(fn {_k, v} -> v == nil end)
 
-    Client.post("secapi/pay/refund", attrs, [ssl: ssl], config)
+    with {:ok, data} <-
+           HTTPClient.post(
+             client,
+             "secapi/pay/refund",
+             attrs,
+             Keyword.merge([ssl: ssl], options)
+           ),
+         :ok <- Signature.verify(data, client.api_key) do
+      {:ok, data}
+    end
   end
 
   @doc """
@@ -143,12 +169,10 @@ defmodule WechatPay.API do
       ...> WechatPay.API.report(params)
       ...> {:ok, data}
   """
-  @spec report(map, Config.t()) ::
+  @spec report(Client.t(), map, keyword) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
-  def report(attrs, config) do
-    config = %{config | verify_sign: false}
-
-    Client.post("payitil/report", attrs, [], config)
+  def report(client, attrs, options \\ []) do
+    HTTPClient.post(client, "payitil/report", attrs, options)
   end
 
   defp decode_public(nil), do: nil
@@ -163,13 +187,17 @@ defmodule WechatPay.API do
     {type, der_bin}
   end
 
-  defp load_ssl(config) do
-    [
-      cacerts: config.ssl_cacert |> decode_public(),
-      cert: config.ssl_cert |> decode_public(),
-      key: config.ssl_key |> decode_private()
-    ]
+  defp load_ssl(%Client{ssl: nil}) do
+    []
   end
 
-  defp value_not_nil({_key, value}), do: not is_nil(value)
+  defp load_ssl(%Client{ssl: ssl}) do
+    ssl = Enum.into(ssl, %{})
+
+    [
+      cacerts: ssl.ca_cert |> decode_public(),
+      cert: ssl.cert |> decode_public(),
+      key: ssl.key |> decode_private()
+    ]
+  end
 end

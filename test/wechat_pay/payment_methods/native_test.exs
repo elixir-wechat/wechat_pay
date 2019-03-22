@@ -2,10 +2,11 @@ defmodule WechatPay.NativeTest do
   use TestCase, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  test "shorten an url" do
+  test "shorten an url", %{client: client} do
     use_cassette "shorten_url" do
       {:ok, data} =
-        MyPay.Native.shorten_url(
+        WechatPay.Native.shorten_url(
+          client,
           "weixin://wxpay/bizpayurl?sign=XXXXX&appid=XXXXX&mch_id=XXXXX&product_id=XXXXXX&time_stamp=XXXXXX&nonce_str=XXXXX"
         )
 

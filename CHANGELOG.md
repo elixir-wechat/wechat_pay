@@ -2,6 +2,11 @@
 
 ## master
 
+⚠️ Breaking changes
+
+- No magic macros
+- Simplified functional interface
+
 ## v0.7.1
 
 - Update `Mix.Tasks.WechatPay.GetSandboxSignkey` to print friendly error message.
@@ -65,7 +70,7 @@ config :my_app, MyPay,
   env: :production,
   appid: "wx8888888888888888",
   mch_id: "1900000109",
-  apikey: "192006250b4c09247ec02edce69f6a2d",
+  api_key: "192006250b4c09247ec02edce69f6a2d",
   ssl_cacert: File.read!("fixture/certs/rootca.pem"),
   ssl_cert: File.read!("fixture/certs/apiclient_cert.pem"),
   ssl_key: File.read!("fixture/certs/apiclient_key.pem")
@@ -121,7 +126,7 @@ end
 
 As the Sandbox API Key is requried to be fetched before configuring,
 so the `WechatPay.API.get_sandbox_signkey/0` is moved to
-`WechatPay.Helper.get_sandbox_signkey/2`, which accept `apikey` and `mch_id`
+`WechatPay.Helper.get_sandbox_signkey/2`, which accept `api_key` and `mch_id`
 to generate the Sandbox API Key.
 
 ```elixir
