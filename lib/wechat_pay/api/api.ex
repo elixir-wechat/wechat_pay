@@ -221,10 +221,11 @@ defmodule WechatPay.API do
     ssl = Enum.into(ssl, %{})
 
     [
-      cacerts: ssl.ca_cert |> decode_public(),
+      cacerts: ssl.ca_cert |> decode_public() |> List.wrap(),
       cert: ssl.cert |> decode_public(),
       key: ssl.key |> decode_private()
     ]
+    |> IO.inspect()
     |> Enum.reject(fn {_k, v} -> v == nil end)
   end
 end
