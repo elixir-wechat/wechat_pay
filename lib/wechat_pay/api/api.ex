@@ -225,7 +225,6 @@ defmodule WechatPay.API do
       cert: ssl.cert |> decode_public(),
       key: ssl.key |> decode_private()
     ]
-    |> IO.inspect()
     |> Enum.reject(fn {_k, v} -> v == nil end)
   end
 end
