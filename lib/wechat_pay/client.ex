@@ -10,6 +10,7 @@ defmodule WechatPay.Client do
             app_id: nil,
             mch_id: nil,
             api_key: nil,
+            sign_type: :md5,
             ssl: nil
 
   @type t :: %Client{
@@ -17,6 +18,7 @@ defmodule WechatPay.Client do
           app_id: String.t(),
           mch_id: String.t(),
           api_key: String.t(),
+          sign_type: :md5 | :sha256,
           ssl: [
             {:ca_cert, String.t() | nil},
             {:cert, String.t()},

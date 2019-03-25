@@ -34,7 +34,7 @@ defmodule WechatPay.Helper do
     request_data =
       %{mch_id: mch_id}
       |> HTTPClient.generate_nonce_str()
-      |> HTTPClient.sign(api_key)
+      |> HTTPClient.sign(%{api_key: api_key, sign_type: :md5})
       |> XMLBuilder.to_xml()
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-

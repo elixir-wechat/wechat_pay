@@ -27,8 +27,9 @@ defmodule WechatPay.API.HTTPClient do
     request_data =
       attrs
       |> append_ids(client.app_id, client.mch_id)
-      |> generate_nonce_str
-      |> sign(client.api_key)
+      |> append_sign_type(client.sign_type)
+      |> generate_nonce_str()
+      |> sign(client)
       |> XMLBuilder.to_xml()
 
     with {:ok, response} <- HTTPoison.post(path, request_data, headers, options),
@@ -59,7 +60,7 @@ defmodule WechatPay.API.HTTPClient do
       data
       |> append_ids(client.app_id, client.mch_id)
       |> generate_nonce_str
-      |> sign(client.api_key)
+      |> sign(client)
       |> XMLBuilder.to_xml()
 
     with {:ok, response} <- HTTPoison.post(path, request_data, headers, options) do
@@ -74,10 +75,10 @@ defmodule WechatPay.API.HTTPClient do
   end
 
   @doc false
-  def sign(data, api_key) when is_map(data) do
+  def sign(data, client) when is_map(data) do
     sign =
       data
-      |> Signature.sign(api_key)
+      |> Signature.sign(client.api_key, client.sign_type)
 
     data
     |> Map.merge(%{sign: sign})
@@ -89,6 +90,20 @@ defmodule WechatPay.API.HTTPClient do
       app_id: app_id,
       mch_id: mch_id
     })
+  end
+
+  defp append_sign_type(data, :md5) do
+    data
+    |> Map.merge(%{sign_type: "MD5"})
+  end
+
+  defp append_sign_type(data, :sha256) do
+    data
+    |> Map.merge(%{sign_type: "HMAC-SHA256"})
+  end
+
+  defp append_sign_type(data, _) do
+    data
   end
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}) do

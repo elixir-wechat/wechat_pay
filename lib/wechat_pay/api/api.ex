@@ -20,7 +20,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
   def close_order(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/closeorder", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -50,7 +50,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def place_order(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/unifiedorder", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -67,7 +67,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def query_order(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/orderquery", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -131,7 +131,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def query_refund(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/refundquery", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -169,7 +169,7 @@ defmodule WechatPay.API do
              attrs,
              Keyword.merge([ssl: ssl], options)
            ),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -225,7 +225,6 @@ defmodule WechatPay.API do
       cert: ssl.cert |> decode_public(),
       key: ssl.key |> decode_private()
     ]
-    |> IO.inspect()
     |> Enum.reject(fn {_k, v} -> v == nil end)
   end
 end

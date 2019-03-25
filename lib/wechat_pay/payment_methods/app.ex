@@ -121,7 +121,7 @@ defmodule WechatPay.App do
   """
   @spec generate_pay_request(Client.t(), String.t()) :: map
   def generate_pay_request(client, prepay_id) do
-    %{
+    data = %{
       "appid" => client.app_id,
       "partnerid" => client.mch_id,
       "prepayid" => prepay_id,
@@ -129,11 +129,8 @@ defmodule WechatPay.App do
       "noncestr" => NonceStr.generate(),
       "timestamp" => Integer.to_string(:os.system_time())
     }
-    |> sign(client.api_key)
-  end
 
-  defp sign(data, api_key) do
     data
-    |> Map.merge(%{"sign" => Signature.sign(data, api_key)})
+    |> Map.merge(%{"sign" => Signature.sign(data, client.api_key, client.sign_type)})
   end
 end

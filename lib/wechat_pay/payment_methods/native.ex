@@ -124,7 +124,7 @@ defmodule WechatPay.Native do
   def shorten_url(client, url, options \\ []) do
     with {:ok, data} <-
            HTTPClient.post(client, "tools/shorturl", %{long_url: URI.encode(url)}, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
