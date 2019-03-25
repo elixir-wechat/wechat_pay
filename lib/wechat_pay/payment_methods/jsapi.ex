@@ -97,6 +97,15 @@ defmodule WechatPay.JSAPI do
   defdelegate download_bill(client, attrs, options \\ []), to: API
 
   @doc """
+  Download fund flow
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_18&index=7)
+  """
+  @spec download_fund_flow(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate download_fund_flow(client, attrs, options \\ []), to: API
+
+  @doc """
   Report
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_8)

@@ -91,6 +91,32 @@ defmodule WechatPay.API do
   end
 
   @doc """
+  Download the fund flow
+
+  ⚠️ This requires the ssl config is set
+
+  ## Examples
+
+      iex> WechatPay.API.download_fund_flow(%{
+        account_type: "Basic",
+        bill_date: "20140603"
+      })
+      ...> {:ok, data}
+  """
+  @spec download_fund_flow(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  def download_fund_flow(client, attrs, options \\ []) do
+    ssl = client |> load_ssl()
+
+    HTTPClient.download_text(
+      client,
+      "pay/downloadfundflow",
+      attrs,
+      Keyword.merge([ssl: ssl], options)
+    )
+  end
+
+  @doc """
   Query the refund status
 
   ## Examples
@@ -134,7 +160,7 @@ defmodule WechatPay.API do
   @spec refund(Client.t(), map(), keyword()) ::
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def refund(client, attrs, options \\ []) do
-    ssl = client |> load_ssl() |> Enum.reject(fn {_k, v} -> v == nil end)
+    ssl = client |> load_ssl()
 
     with {:ok, data} <-
            HTTPClient.post(
@@ -199,5 +225,6 @@ defmodule WechatPay.API do
       cert: ssl.cert |> decode_public(),
       key: ssl.key |> decode_private()
     ]
+    |> Enum.reject(fn {_k, v} -> v == nil end)
   end
 end

@@ -6,6 +6,7 @@
 
 - No magic macros
 - Simplified functional interface
+- Added `WechatPay.API.download_fund_flow/3`.
 
 ## v0.7.1
 

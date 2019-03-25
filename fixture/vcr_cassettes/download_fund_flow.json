@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "<xml><appid><![CDATA[wx8888888888888888]]></appid><bill_date><![CDATA[20140603]]></bill_date><account_type><![CDATA[Basic]]></account_type><mch_id><![CDATA[1900000109]]></mch_id><nonce_str><![CDATA[diAiq2zuoQF1B8oVku1KliYDR-7JqZJ]]></nonce_str><sign><![CDATA[7FF528F0ADD4D8E0B458A61AA0F49D0C]]></sign></xml>",
+      "headers": {
+        "Accept": "application/xml",
+        "Content-Type": "application/xml"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.mch.weixin.qq.com/sandboxnew/pay/downloadfundflow"
+    },
+    "response": {
+      "body": "记账时间,微信支付业务单号,资金流水单号,业务名称,业务类型,收支类型,收支金额（元）,账户结余（元）,资金变更提交申请人,备注,业务凭证号\r\n `2018-02-01 04:21:23,`50000305742018020103387128253,`1900009231201802015884652186,`退款,`退款,`支出,`0.02,`0.17,`system,`缺货,`REF4200000068201801293084726067\r\n 资金流水总笔数,收入笔数,收入金额,支出笔数,支出金额\r\n `20.0,`17.0,`0.35,`3.0,`0.18",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Mon, 17 Oct 2016 05:39:00 GMT",
+        "Content-Type": "text/plain;charset=utf-8",
+        "Content-Length": "295645",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=8",
+        "from": "sandbox"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
