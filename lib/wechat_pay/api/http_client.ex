@@ -87,7 +87,7 @@ defmodule WechatPay.API.HTTPClient do
   defp append_ids(data, app_id, mch_id) when is_map(data) do
     data
     |> Map.merge(%{
-      app_id: app_id,
+      appid: app_id,
       mch_id: mch_id
     })
   end
