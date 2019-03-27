@@ -11,7 +11,7 @@ defmodule WechatPay.Plug.Handler do
 
     @impl WechatPay.Plug.Handler
     def handle_data(conn, data) do
-      # the sign is already verified by `WechatPay.Utils.Signature.verify/2`.
+      # the sign is already verified by `WechatPay.Utils.Signature.verify/3`.
       data = %{
         appid: "wx2421b1c4370ec43b",
         attach: "支付测试",

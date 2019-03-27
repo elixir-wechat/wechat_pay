@@ -115,24 +115,30 @@ defmodule WechatPay.JSAPI do
   defdelegate report(client, attrs, options \\ []), to: API
 
   @doc """
+  Query comments in a batch
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_17&index=12)
+  """
+  @spec batch_query_comments(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate batch_query_comments(client, attrs, options \\ []), to: API
+
+  @doc """
   Generate pay request info, which is required for the JavaScript API
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6)
   """
   @spec generate_pay_request(Client.t(), String.t()) :: map
   def generate_pay_request(client, prepay_id) do
-    %{
+    data = %{
       "appId" => client.app_id,
       "timeStamp" => Integer.to_string(:os.system_time()),
       "nonceStr" => NonceStr.generate(),
       "package" => "prepay_id=#{prepay_id}",
-      "signType" => "MD5"
+      "signType" => client.sign_type
     }
-    |> sign(client.api_key)
-  end
 
-  defp sign(data, api_key) do
     data
-    |> Map.merge(%{"paySign" => Signature.sign(data, api_key)})
+    |> Map.merge(%{"paySign" => Signature.sign(data, client.api_key, client.sign_type)})
   end
 end

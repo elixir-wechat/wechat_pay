@@ -26,7 +26,7 @@ defmodule WechatPay.Plug.Payment do
   In your app's `lib/my_app_web/router.ex`:
 
   ```elixir
-  post "/wechat_pay/notification/payment", WechatPay.Plug.Payment, [handler: MyApp.WechatHandler, api_key: "my-api-key"]
+  post "/wechat_pay/notification/payment", WechatPay.Plug.Payment, [handler: MyApp.WechatHandler, api_key: "my-api-key", sign_type: :md5]
   ```
   """
 
@@ -36,20 +36,27 @@ defmodule WechatPay.Plug.Payment do
 
   import Plug.Conn
 
-  @spec init(keyword()) :: [{:api_key, binary()} | {:handler, binary()}]
+  @spec init(keyword()) :: [
+          {:api_key, binary()} | {:handler, binary()} | {:sign_type, :md5 | :sha256}
+        ]
   def init(opts) do
     handler = Keyword.get(opts, :handler)
     api_key = Keyword.get(opts, :api_key)
+    sign_type = Keyword.get(opts, :sign_type)
 
-    [handler: handler, api_key: api_key]
+    [sign_type: :md5]
+    |> Keyword.merge(handler: handler, api_key: api_key, sign_type: sign_type)
   end
 
-  @spec call(Plug.Conn.t(), [{:api_key, any()} | {:handler, any()}]) :: Plug.Conn.t()
-  def call(conn, handler: handler_module, api_key: api_key) do
+  @spec call(Plug.Conn.t(), [
+          {:api_key, binary()} | {:handler, binary()} | {:sign_type, :md5 | :sha256}
+        ]) ::
+          Plug.Conn.t()
+  def call(conn, handler: handler_module, api_key: api_key, sign_type: sign_type) do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
     with {:ok, data} <- XMLParser.parse(body),
-         :ok <- process_data(conn, data, handler_module, api_key) do
+         :ok <- process_data(conn, data, handler_module, api_key, sign_type) do
       response_with_success_info(conn)
     else
       {:error, %Error{reason: reason}} ->
@@ -71,9 +78,9 @@ defmodule WechatPay.Plug.Payment do
     |> send_resp(:ok, body)
   end
 
-  defp process_data(conn, data, handler_module, api_key) do
+  defp process_data(conn, data, handler_module, api_key, sign_type) do
     with {:ok, data} <- process_return_field(data),
-         :ok <- Signature.verify(data, api_key),
+         :ok <- Signature.verify(data, api_key, sign_type),
          :ok <- apply(handler_module, :handle_data, [conn, data]) do
       :ok
     else

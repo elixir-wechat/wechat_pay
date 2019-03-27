@@ -20,7 +20,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}
   def close_order(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/closeorder", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -50,7 +50,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def place_order(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/unifiedorder", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -67,7 +67,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def query_order(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/orderquery", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -131,7 +131,7 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def query_refund(client, attrs, options \\ []) do
     with {:ok, data} <- HTTPClient.post(client, "pay/refundquery", attrs, options),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -169,7 +169,7 @@ defmodule WechatPay.API do
              attrs,
              Keyword.merge([ssl: ssl], options)
            ),
-         :ok <- Signature.verify(data, client.api_key) do
+         :ok <- Signature.verify(data, client.api_key, client.sign_type) do
       {:ok, data}
     end
   end
@@ -199,6 +199,36 @@ defmodule WechatPay.API do
           {:ok, map} | {:error, WechatPay.Error.t() | HTTPoison.Error.t()}
   def report(client, attrs, options \\ []) do
     HTTPClient.post(client, "payitil/report", attrs, options)
+  end
+
+  @doc """
+  Query comments in a batch
+
+  ⚠️ This requires the ssl config is set
+
+  ## Examples
+
+      iex> WechatPay.API.batch_query_comments(%{
+        begin_time: "20190222000000",
+        end_time: "20190224000000",
+        offset: 0
+      })
+      ...> {:ok, data}
+  """
+  @spec batch_query_comments(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  def batch_query_comments(client, attrs, options \\ []) do
+    # This API only supports signing with `HMAC-SHA256`
+    client = %{client | sign_type: :sha256}
+
+    ssl = client |> load_ssl()
+
+    HTTPClient.download_text(
+      client,
+      "billcommentsp/batchquerycomment",
+      attrs,
+      Keyword.merge([ssl: ssl], options)
+    )
   end
 
   defp decode_public(nil), do: nil

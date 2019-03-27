@@ -18,20 +18,26 @@ defmodule WechatPay.Utils.Signature do
   ...> "02696FC7E3E19F852A0335F2F007DD3E"
   ```
   """
-  @spec sign(map, String.t()) :: String.t()
-  def sign(data, api_key) when is_map(data) do
-    sign =
-      data
-      |> Map.delete(:__struct__)
-      |> Enum.sort()
-      |> Enum.map(&process_param/1)
-      |> Enum.reject(&is_nil/1)
-      |> List.insert_at(-1, "key=#{api_key}")
-      |> Enum.join("&")
+  @spec sign(map, String.t(), :md5 | :sha256) :: String.t()
+  def sign(data, api_key, :md5) when is_map(data) do
+    sign_string = generate_sign_string(data, api_key)
 
     :md5
-    |> :crypto.hash(sign)
+    |> :crypto.hash(sign_string)
     |> Base.encode16()
+  end
+
+  def sign(data, api_key, :sha256) when is_map(data) do
+    sign_string = generate_sign_string(data, api_key)
+
+    # :crypto.sign(:rsa, :sha256, sign_string, api_key)
+    :sha256
+    |> :crypto.hmac(api_key, sign_string)
+    |> Base.encode16()
+  end
+
+  def sign(data, api_key, _other) when is_map(data) do
+    sign(data, api_key, :md5)
   end
 
   @doc """
@@ -40,16 +46,16 @@ defmodule WechatPay.Utils.Signature do
   ## Example
 
   ```elixir
-  iex > WechatPay.Utils.Signature.verify(%{sign: "foobar"}, "wx9999")
+  iex > WechatPay.Utils.Signature.verify(%{sign: "foobar"}, "a45a313dfbf0494288c3e56bcacf30daa")
   ... > :ok
   ```
   """
-  @spec verify(map, String.t()) :: :ok | {:error, Error.t()}
-  def verify(data, api_key) when is_map(data) do
+  @spec verify(map, String.t(), String.t()) :: :ok | {:error, Error.t()}
+  def verify(data, api_key, sign_type) when is_map(data) do
     calculated =
       data
       |> Map.delete(:sign)
-      |> sign(api_key)
+      |> sign(api_key, sign_type)
 
     if data.sign == calculated do
       :ok
@@ -72,5 +78,15 @@ defmodule WechatPay.Utils.Signature do
 
   defp process_param({k, v}) do
     "#{k}=#{v}"
+  end
+
+  defp generate_sign_string(data, api_key) do
+    data
+    |> Map.delete(:__struct__)
+    |> Enum.sort()
+    |> Enum.map(&process_param/1)
+    |> Enum.reject(&is_nil/1)
+    |> List.insert_at(-1, "key=#{api_key}")
+    |> Enum.join("&")
   end
 end

@@ -7,6 +7,8 @@
 - No magic macros
 - Simplified functional interface
 - Added `WechatPay.API.download_fund_flow/3`.
+- Added `WechatPay.API.batch_query_comments/3`.
+- Added support for two sign types: `:md5` and `:sha256`.
 
 ## v0.7.1
 
