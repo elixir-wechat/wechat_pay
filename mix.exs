@@ -2,7 +2,7 @@ defmodule WechatPay.Mixfile do
   use Mix.Project
 
   @version "0.7.1"
-  @url "https://github.com/linjunpop/wechat_pay"
+  @url "https://github.com/elixir-wechat/wechat_pay"
 
   def project do
     [
@@ -74,7 +74,7 @@ defmodule WechatPay.Mixfile do
       maintainers: ["Jun Lin"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/linjunpop/wechat_pay"
+        "GitHub" => "https://github.com/elixir-wechat/wechat_pay"
       }
     ]
   end
