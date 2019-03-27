@@ -201,6 +201,36 @@ defmodule WechatPay.API do
     HTTPClient.post(client, "payitil/report", attrs, options)
   end
 
+  @doc """
+  Query comments in a batch
+
+  ⚠️ This requires the ssl config is set
+
+  ## Examples
+
+      iex> WechatPay.API.batch_query_comments(%{
+        begin_time: "20190222000000",
+        end_time: "20190224000000",
+        offset: 0
+      })
+      ...> {:ok, data}
+  """
+  @spec batch_query_comments(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  def batch_query_comments(client, attrs, options \\ []) do
+    # This API only supports signing with `HMAC-SHA256`
+    client = %{client | sign_type: :sha256}
+
+    ssl = client |> load_ssl()
+
+    HTTPClient.download_text(
+      client,
+      "billcommentsp/batchquerycomment",
+      attrs,
+      Keyword.merge([ssl: ssl], options)
+    )
+  end
+
   defp decode_public(nil), do: nil
 
   defp decode_public(pem) do

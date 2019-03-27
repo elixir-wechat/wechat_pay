@@ -115,6 +115,15 @@ defmodule WechatPay.App do
   defdelegate report(client, attrs, options \\ []), to: API
 
   @doc """
+  Query comments in a batch
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_99&index=12)
+  """
+  @spec batch_query_comments(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate batch_query_comments(client, attrs, options \\ []), to: API
+
+  @doc """
   Generate pay request info, which is required for the App SDK
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2)

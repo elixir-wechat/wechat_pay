@@ -115,6 +115,15 @@ defmodule WechatPay.Native do
   defdelegate report(client, attrs, options \\ []), to: API
 
   @doc """
+  Query comments in a batch
+
+  [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_17&index=11)
+  """
+  @spec batch_query_comments(Client.t(), map, keyword) ::
+          {:ok, String.t()} | {:error, HTTPoison.Error.t()}
+  defdelegate batch_query_comments(client, attrs, options \\ []), to: API
+
+  @doc """
   Shorten the URL to reduce the QR image size
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_9)
