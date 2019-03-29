@@ -12,6 +12,8 @@ defmodule TestCase do
   setup do
     config = Application.get_env(:wechat_pay, TestPay)
 
-    [client: Client.new(config)]
+    {:ok, client} = Client.new(config)
+
+    [client: client]
   end
 end

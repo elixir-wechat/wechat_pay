@@ -50,7 +50,7 @@ defmodule WechatPay.Utils.Signature do
   ... > :ok
   ```
   """
-  @spec verify(map, String.t(), String.t()) :: :ok | {:error, Error.t()}
+  @spec verify(map, String.t(), :md5 | :sha256) :: :ok | {:error, Error.t()}
   def verify(data, api_key, sign_type) when is_map(data) do
     calculated =
       data

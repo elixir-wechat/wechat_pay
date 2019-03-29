@@ -9,7 +9,7 @@ defmodule WechatPay.Native do
   Set up a client:
 
   ```elixir
-  client = WechatPay.Client.new(
+  {:ok, client} = WechatPay.Client.new(
     app_id: "the-app_id",
     mch_id: "the-mch-id",
     api_key: "the-api_key",
