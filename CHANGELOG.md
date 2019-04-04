@@ -2,6 +2,8 @@
 
 ## master
 
+## v0.8.0
+
 ⚠️ Breaking changes
 
 - No magic macros
