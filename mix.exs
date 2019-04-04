@@ -63,7 +63,7 @@ defmodule WechatPay.Mixfile do
 
       # Docs
       {:inch_ex, "~> 1.0", only: :docs},
-      {:ex_doc, "~> 0.19", only: [:dev, :docs]}
+      {:ex_doc, "~> 0.20", only: [:dev, :docs]}
     ]
   end
 
