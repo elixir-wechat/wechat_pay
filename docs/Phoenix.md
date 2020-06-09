@@ -46,7 +46,7 @@ post "/pay/cb/payment", WechatPay.Plug.Payment, [handler: MyApp.WechatHandler, a
 
 ### Placing order
 
-When you are placing an order, you should set the `noficy_url` as this endpoint.
+When you are placing an order, you should set the `notify_url` as this endpoint.
 
 ```elixir
 case MyPay.Native.place_order(%{
