@@ -2,9 +2,10 @@
 
 WechatPay in Elixir.
 
-[![Travis](https://img.shields.io/travis/elixir-wechat/wechat_pay.svg)](https://travis-ci.org/elixir-wechat/wechat_pay)
+[![CI](https://github.com/elixir-wechat/wechat_pay/workflows/CI/badge.svg?branch=master)](https://github.com/elixir-wechat/wechat_pay/actions?query=workflow%3ACI)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e7bfcfe7d58c4f4bacb97229ba532673)](https://www.codacy.com/gh/elixir-wechat/wechat_pay?utm_source=github.com&utm_medium=referral&utm_content=elixir-wechat/wechat_pay&utm_campaign=Badge_Grade)
 [![Hex.pm](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
-[![codebeat badge](https://codebeat.co/badges/042b37ba-d334-4a6f-be3a-f9728713d72d)](https://codebeat.co/projects/github-com-elixir-wechat-wechat_pay-master-1b99c3bd-a82c-489b-aa20-75de880a0770)
+![Hex.pm](https://img.shields.io/hexpm/dt/wechat_pay.svg)
 
 ## Installation
 
