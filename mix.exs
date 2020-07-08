@@ -1,7 +1,7 @@
 defmodule WechatPay.Mixfile do
   use Mix.Project
 
-  @version "0.8.0"
+  @version "0.9.0"
   @url "https://github.com/elixir-wechat/wechat_pay"
 
   def project do

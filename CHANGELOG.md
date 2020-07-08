@@ -2,6 +2,10 @@
 
 ## master
 
+## v0.9.0
+
+- Require Elixir >= 1.7
+
 ## v0.8.0
 
 ⚠️ Breaking changes
