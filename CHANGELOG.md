@@ -2,6 +2,9 @@
 
 ## master
 
+- Using new `:crypto` API: `:crypto.crypto_one_time/4` (https://erlang.org/doc/apps/crypto/new_api.html) in the `WechatPay.Plug.Refund` module.
+- Require Elixir >= 1.10
+
 ## v0.9.0
 
 - Require Elixir >= 1.7
