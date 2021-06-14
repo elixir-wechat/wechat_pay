@@ -107,7 +107,7 @@ defmodule WechatPay.Plug.Refund do
       |> Base.decode64()
 
     try do
-      xml_string = :crypto.block_decrypt(:aes_ecb, key, data)
+      xml_string = :crypto.crypto_one_time(:aes_256_ecb, key, data, false)
 
       {:ok, xml_string}
     rescue
