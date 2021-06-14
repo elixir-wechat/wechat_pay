@@ -8,6 +8,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: OTP ${{ matrix.otp }} - Elixir ${{ matrix.elixir }}
     env:
       MIX_ENV: "test"
       ELIXIR_VERSION: ${{ matrix.elixir }}
@@ -15,42 +16,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pair:
-          - erlang: 23.1
-            elixir: 1.11.2
-          - erlang: 23.1
-            elixir: 1.10.4
-          - erlang: 22.3
-            elixir: 1.10.4
-          - erlang: 21.3
-            elixir: 1.10.4
-          - erlang: 22.3
-            elixir: 1.9.4
-          - erlang: 21.3
-            elixir: 1.9.4
-          - erlang: 20.3
-            elixir: 1.9.4
-          - erlang: 22.3
-            elixir: 1.8.1
-          - erlang: 21.3
-            elixir: 1.8.1
-          - erlang: 20.3
-            elixir: 1.8.1
-          - erlang: 22.3
-            elixir: 1.7.3
-          - erlang: 21.3
-            elixir: 1.7.3
-          - erlang: 20.3
-            elixir: 1.7.3
-          - erlang: 19.3
-            elixir: 1.7.3
+        otp: ['23.3', '22.3']
+        elixir: ['1.12.1', '1.11.4', '1.10.4']
+        include:
+          - otp: '24.0'
+            elixir: '1.12.1'
+          - otp: '24.0'
+            elixir: '1.11.4'
+          - otp: '21.3'
+            elixir: '1.11.4'
+          - otp: '21.3'
+            elixir: '1.10.4'
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout source code
+        uses: actions/checkout@v2
       - name: Setup elixir
-        uses: actions/setup-elixir@v1
+        uses: erlef/setup-elixir@v1
         with:
-          otp-version: ${{matrix.pair.erlang}}
-          elixir-version: ${{matrix.pair.elixir}}
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
       - name: Install Dependencies
         run: mix deps.get --only test
       - name: Run Tests

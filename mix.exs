@@ -8,7 +8,7 @@ defmodule WechatPay.Mixfile do
     [
       app: :wechat_pay,
       version: @version,
-      elixir: "~> 1.7",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -55,14 +55,14 @@ defmodule WechatPay.Mixfile do
       {:plug, "~> 1.2", optional: true},
 
       # Dev
-      {:poison, "~> 4.0", only: [:dev, :test, :docs], override: true},
-      {:jason, "~> 1.0", only: [:dev, :test]},
+      {:poison, "~> 4.0", only: [:dev, :test, :docs]},
+      {:jason, "~> 1.0", only: [:dev, :test, :docs]},
       {:credo, "~> 1.0", only: [:dev, :test]},
       {:dialyxir, "~> 1.1.0", only: [:dev], runtime: false},
       {:exvcr, "~> 0.7", only: :test},
 
       # Docs
-      {:inch_ex, "~> 1.0", only: :docs},
+      {:inch_ex, "~> 2.0", only: :docs},
       {:ex_doc, "~> 0.20", only: [:dev, :docs]}
     ]
   end
