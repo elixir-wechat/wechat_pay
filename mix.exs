@@ -55,7 +55,7 @@ defmodule WechatPay.Mixfile do
       {:plug, "~> 1.2", optional: true},
 
       # Dev
-      {:poison, "~> 4.0", only: [:dev, :test, :docs]},
+      {:poison, "~> 5.0", only: [:dev, :test, :docs]},
       {:jason, "~> 1.0", only: [:dev, :test, :docs]},
       {:credo, "~> 1.0", only: [:dev, :test]},
       {:dialyxir, "~> 1.1.0", only: [:dev], runtime: false},
