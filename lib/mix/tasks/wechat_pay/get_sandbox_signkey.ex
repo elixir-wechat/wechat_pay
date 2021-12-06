@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.WechatPay.GetSandboxSignkey do
   @moduledoc """
-  Get WechatPay's Sandbox API Key
+  Get WechatPay's Sandbox API Key.
 
   ## Example
 

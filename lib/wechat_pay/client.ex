@@ -29,7 +29,7 @@ defmodule WechatPay.Client do
   @sign_types [:md5, :sha256]
 
   @doc """
-  Build a new client from options
+  Build a new client from options.
 
   ## Example
 
@@ -71,7 +71,7 @@ defmodule WechatPay.Client do
 
   defp validate_sign_type(%{sign_type: sign_type}) do
     {:error,
-     "`#{sign_type}` is invalid for `sign_type`, avaliable options: `:md5` and `:sha256`."}
+     "`#{sign_type}` is invalid for `sign_type`, available options: `:md5` and `:sha256`."}
   end
 
   defp validate_sign_type(_) do

@@ -7,46 +7,32 @@ defmodule WechatPay.Mixfile do
   def project do
     [
       app: :wechat_pay,
+      name: "WechatPay",
       version: @version,
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      docs: docs(),
+      package: package(),
       preferred_cli_env: [
+        docs: :docs,
         vcr: :test,
         "vcr.delete": :test,
         "vcr.check": :test,
         "vcr.show": :test
       ],
-      name: "WechatPay",
-      description: "WechatPay API wrapper in Elixir",
-      source_url: @url,
-      homepage_url: @url,
-      package: package(),
-      docs: docs(),
       dialyzer: [
         plt_add_apps: [:mix, :plug, :xmerl, :poison]
       ]
     ]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   def application do
     [extra_applications: [:logger, :xmerl]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [
       {:httpoison, "~> 0.9 or ~> 1.0"},
@@ -63,18 +49,20 @@ defmodule WechatPay.Mixfile do
 
       # Docs
       {:inch_ex, "~> 2.0", only: :docs},
-      {:ex_doc, "~> 0.20", only: [:dev, :docs]}
+      {:ex_doc, ">= 0.0.0", only: [:dev, :docs]}
     ]
   end
 
   defp package do
     [
       name: :wechat_pay,
-      files: ["lib", "mix.exs", "README*", "LICENSE"],
+      description: "WechatPay API wrapper in Elixir",
+      files: ["lib", "mix.exs", "README*", "LICENSE.md", "CHANGELOG.md"],
       maintainers: ["Jun Lin"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/elixir-wechat/wechat_pay"
+        "Changelog" => "https://hexdocs.pm/wechat_pay/changelog.html",
+        "GitHub" => @url
       }
     ]
   end
@@ -86,8 +74,16 @@ defmodule WechatPay.Mixfile do
   defp docs do
     [
       extras: [
-        "docs/Phoenix.md"
+        "CHANGELOG.md": [],
+        "LICENSE.md": [title: "License"],
+        "README.md": [title: "Overview"],
+        "guides/using_with_phoenix.md": []
       ],
+      main: "readme",
+      homepage_url: @url,
+      source_url: @url,
+      source_ref: "master",
+      formatters: ["html"],
       groups_for_modules: [
         "Payment methods": [
           ~r"WechatPay.App",

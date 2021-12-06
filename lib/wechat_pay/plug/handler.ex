@@ -3,7 +3,7 @@ defmodule WechatPay.Plug.Handler do
   The Handler behaviour is to handle the result of notification from Wechat's
   Payment Gateway.
 
-  `use` this moudule will help you implementing your own handler:
+  `use` this module will help you implementing your own handler:
 
   ```elixir
   defmodule MyApp.WechatHandler do
