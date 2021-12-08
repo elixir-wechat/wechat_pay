@@ -26,7 +26,7 @@ defmodule WechatPay.Utils.XMLParser do
       {doc, _} =
         xml_string
         |> :binary.bin_to_list()
-        |> :xmerl_scan.string()
+        |> :xmerl_scan.string(quiet: true)
 
       parsed_xml = extract_doc(doc, root_element)
 
