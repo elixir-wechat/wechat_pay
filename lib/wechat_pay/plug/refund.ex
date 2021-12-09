@@ -107,7 +107,7 @@ defmodule WechatPay.Plug.Refund do
       |> Base.decode64()
 
     try do
-      xml_string = crypto_block_decrypt(:aes_256_ecb, key, data)
+      xml_string = crypto_block_decrypt(:aes_ecb, key, data)
       {:ok, xml_string}
     rescue
       ArgumentError ->
@@ -122,14 +122,14 @@ defmodule WechatPay.Plug.Refund do
 
   # https://erlang.org/doc/apps/crypto/new_api.html#the-new-api
   if Code.ensure_loaded?(:crypto) && function_exported?(:crypto, :crypto_one_time, 4) do
-    defp crypto_block_decrypt(algorithm, key, data) do
-      :crypto.crypto_one_time(algorithm, key, data, false)
-    end
-  else
-    defp map_algorithm(:aes_256_ecb), do: :aes_ecb
+    defp map_algorithm(:aes_ecb), do: :aes_256_ecb
 
     defp crypto_block_decrypt(algorithm, key, data) do
-      :crypto.block_decrypt(map_algorithm(algorithm), key, data)
+      :crypto.crypto_one_time(map_algorithm(algorithm), key, data, false)
+    end
+  else
+    defp crypto_block_decrypt(algorithm, key, data) do
+      :crypto.block_decrypt(algorithm, key, data)
     end
   end
 end
