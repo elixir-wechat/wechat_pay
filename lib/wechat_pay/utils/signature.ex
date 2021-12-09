@@ -41,7 +41,7 @@ defmodule WechatPay.Utils.Signature do
   end
 
   # https://erlang.org/doc/apps/crypto/new_api.html#the-new-api
-  if System.otp_release() |> String.to_integer() >= 23 do
+  if Code.ensure_loaded?(:crypto) && function_exported?(:crypto, :mac, 4) do
     defp crypto_hmac(type, key, data) do
       :crypto.mac(:hmac, type, key, data)
     end

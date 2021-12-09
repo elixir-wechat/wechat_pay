@@ -121,7 +121,7 @@ defmodule WechatPay.Plug.Refund do
   end
 
   # https://erlang.org/doc/apps/crypto/new_api.html#the-new-api
-  if System.otp_release() |> String.to_integer() >= 23 do
+  if Code.ensure_loaded?(:crypto) && function_exported?(:crypto, :crypto_one_time, 4) do
     defp crypto_block_decrypt(algorithm, key, data) do
       :crypto.crypto_one_time(algorithm, key, data, false)
     end
