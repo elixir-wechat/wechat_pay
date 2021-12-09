@@ -32,12 +32,23 @@ defmodule WechatPay.Utils.Signature do
 
     # :crypto.sign(:rsa, :sha256, sign_string, api_key)
     :sha256
-    |> :crypto.hmac(api_key, sign_string)
+    |> crypto_hmac(api_key, sign_string)
     |> Base.encode16()
   end
 
   def sign(data, api_key, _other) when is_map(data) do
     sign(data, api_key, :md5)
+  end
+
+  # https://erlang.org/doc/apps/crypto/new_api.html#the-new-api
+  if Code.ensure_loaded?(:crypto) && function_exported?(:crypto, :mac, 4) do
+    defp crypto_hmac(type, key, data) do
+      :crypto.mac(:hmac, type, key, data)
+    end
+  else
+    defp crypto_hmac(type, key, data) do
+      :crypto.hmac(type, key, data)
+    end
   end
 
   @doc """
