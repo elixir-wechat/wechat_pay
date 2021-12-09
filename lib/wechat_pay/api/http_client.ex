@@ -9,7 +9,7 @@ defmodule WechatPay.API.HTTPClient do
   alias WechatPay.Error
 
   @doc """
-  Send a POST request to Wehchat's Server
+  Send a POST request to Wechat's Server.
   """
   @spec post(Client.t(), String.t(), map, Keyword.t()) ::
           {:ok, map} | {:error, Error.t() | HTTPoison.Error.t()}

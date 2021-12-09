@@ -1,6 +1,6 @@
 defmodule WechatPay.API do
   @moduledoc """
-  The Core API module
+  The Core API module.
   """
 
   alias WechatPay.API.HTTPClient
@@ -9,7 +9,7 @@ defmodule WechatPay.API do
   alias WechatPay.Error
 
   @doc """
-  Request to close the order
+  Request to close the order.
 
   ## Examples
 
@@ -26,7 +26,7 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Place an unified order
+  Place an unified order.
 
   ## Examples
 
@@ -56,7 +56,7 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Query an order
+  Query an order.
 
   ## Examples
 
@@ -73,7 +73,7 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Download the bill
+  Download the bill.
 
   ## Examples
 
@@ -91,9 +91,9 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Download the fund flow
+  Download the fund flow.
 
-  ⚠️ This requires the ssl config is set
+  ⚠️ This requires the ssl config is set.
 
   ## Examples
 
@@ -117,7 +117,7 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Query the refund status
+  Query the refund status.
 
   ## Examples
 
@@ -137,9 +137,9 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Request to Refund an order
+  Request to Refund an order.
 
-  ⚠️ This requires the ssl config is set
+  ⚠️ This requires the ssl config is set.
 
   ## Examples
 
@@ -175,7 +175,7 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Call the payitil/report API
+  Call the payitil/report API.
 
   ## Examples
 
@@ -202,9 +202,9 @@ defmodule WechatPay.API do
   end
 
   @doc """
-  Query comments in a batch
+  Query comments in a batch.
 
-  ⚠️ This requires the ssl config is set
+  ⚠️ This requires the ssl config is set.
 
   ## Examples
 

@@ -43,7 +43,7 @@ defmodule WechatPay.Native do
   alias WechatPay.Utils.Signature
 
   @doc """
-  Place an order
+  Place an order.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1)
   """
@@ -52,7 +52,7 @@ defmodule WechatPay.Native do
   defdelegate place_order(client, attrs, options \\ []), to: API
 
   @doc """
-  Query the order
+  Query the order.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_2)
   """
@@ -61,7 +61,7 @@ defmodule WechatPay.Native do
   defdelegate query_order(client, attrs, options \\ []), to: API
 
   @doc """
-  Close the order
+  Close the order.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_3)
   """
@@ -70,7 +70,7 @@ defmodule WechatPay.Native do
   defdelegate close_order(client, attrs, options \\ []), to: API
 
   @doc """
-  Request to refund
+  Request to refund.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_4)
   """
@@ -79,7 +79,7 @@ defmodule WechatPay.Native do
   defdelegate refund(client, attrs, options \\ []), to: API
 
   @doc """
-  Query the refund
+  Query the refund.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_5)
   """
@@ -88,7 +88,7 @@ defmodule WechatPay.Native do
   defdelegate query_refund(client, attrs, options \\ []), to: API
 
   @doc """
-  Download bill
+  Download bill.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_6)
   """
@@ -97,7 +97,7 @@ defmodule WechatPay.Native do
   defdelegate download_bill(client, attrs, options \\ []), to: API
 
   @doc """
-  Download fund flow
+  Download fund flow.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_18&index=7)
   """
@@ -106,7 +106,7 @@ defmodule WechatPay.Native do
   defdelegate download_fund_flow(client, attrs, options \\ []), to: API
 
   @doc """
-  Report
+  Report.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_8)
   """
@@ -115,7 +115,7 @@ defmodule WechatPay.Native do
   defdelegate report(client, attrs, options \\ []), to: API
 
   @doc """
-  Query comments in a batch
+  Query comments in a batch.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_17&index=11)
   """
@@ -124,7 +124,7 @@ defmodule WechatPay.Native do
   defdelegate batch_query_comments(client, attrs, options \\ []), to: API
 
   @doc """
-  Shorten the URL to reduce the QR image size
+  Shorten the URL to reduce the QR image size.
 
   [Official document](https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_9)
   """

@@ -1,15 +1,21 @@
-# CHANGELOG
+# Changelog
 
-## master
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+
+## [Unreleased]
 
 - Using new `:crypto` API: `:crypto.crypto_one_time/4` (https://erlang.org/doc/apps/crypto/new_api.html) in the `WechatPay.Plug.Refund` module.
 - Require Elixir >= 1.10
 
-## v0.9.0
+## v0.9.0 (2020-07-08)
 
 - Require Elixir >= 1.7
 
-## v0.8.0
+## v0.8.0 (2019-04-04)
 
 ⚠️ Breaking changes
 
@@ -19,43 +25,43 @@
 - Added `WechatPay.API.batch_query_comments/3`.
 - Added support for two sign types: `:md5` and `:sha256`.
 
-## v0.7.1
+## v0.7.1 (2019-03-19)
 
 - Update `Mix.Tasks.WechatPay.GetSandboxSignkey` to print friendly error message.
 
-## v0.7.0
+## v0.7.0 (2018-08-30)
 
 - Require Elixir >= 1.6
 - Make the config `ssl_cacert` an optional option. (#11)
 
-## v0.6.0
+## v0.6.0 (2018-05-16)
 
 ⚠️ Breaking changes
 
 - Update dependency `:httpoison` to `~> 1.0`.
 - Added new config option `:api_host`. Which make it possible to use oversea nodes such as _https://apihk.mch.weixin.qq.com/_ and _https://apius.mch.weixin.qq.com/_. This also replace the `:env` config.
-- Added a flexible configuration system to fit more usage senarios.
+- Added a flexible configuration system to fit more usage scenarios.
 
-## v0.5.0
+## v0.5.0 (2018-03-26)
 
 - Make JSON library an optional dependency,
   [Jason](https://github.com/michalmuskala/jason) is recommended.
 
-## v0.4.1
+## v0.4.1 (2018-03-07)
 
 - Fixes `:xmerl` is missing in the application list.
 
-## v0.4.0
+## v0.4.0 (2018-01-23)
 
 - Added `WechatPay.Plug.Refund` to handle refund notification from Wechat's Payment Gateway
 - Parse XML with `:xmerl`, drop dependency on `sweet_xml`.
 
-## v0.3.1
+## v0.3.1 (2017-08-04)
 
 - Added task `mix wechat_pay.get_sandbox_signkey` to get the Sandbox API Key.
 - Fixes wrong return value of `WechatPay.Helper.get_sandbox_signkey/2`.
 
-## V0.3.0
+## v0.3.0 (2017-08-04)
 
 ⚠️ Breaking changes
 
@@ -136,7 +142,7 @@ end
 
 ### Sandbox API Key
 
-As the Sandbox API Key is requried to be fetched before configuring,
+As the Sandbox API Key is required to be fetched before configuring,
 so the `WechatPay.API.get_sandbox_signkey/0` is moved to
 `WechatPay.Helper.get_sandbox_signkey/2`, which accept `api_key` and `mch_id`
 to generate the Sandbox API Key.
@@ -166,7 +172,7 @@ config :wechat_pay, MyPay,
 
 - Added `MyPay.App.generate_pay_request/1` to generate pay request for App.
 
-## v0.2.0
+## v0.2.0 (2017-06-17)
 
 ⚠️ Breaking changes
 
@@ -179,11 +185,11 @@ config :wechat_pay, MyPay,
 - Drop support for loading config from `{:system, ENV}`. It seems not a good
   idea to do this, consider https://github.com/bitwalker/conform.
 
-## v0.1.1
+## v0.1.1 (2016-10-23)
 
 - Fixes hexdocs.pm does not recognize upcase in URL.
 - Improve docs.
 
-## v0.1.0
+## v0.1.0 (2016-10-19)
 
 - Initial support Wechat Pay's JSAPI, Native and App.

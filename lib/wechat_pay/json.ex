@@ -1,6 +1,6 @@
 defmodule WechatPay.JSON do
   @moduledoc """
-  The module act as an adapter to JSON library
+  The module act as an adapter to JSON library.
 
   By default, it use `Jason` to encode JSON, if you want to use `Poison`,
   you can configure `:wechat_pay` application with:
