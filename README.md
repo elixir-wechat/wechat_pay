@@ -28,7 +28,5 @@ Please view the [Online documentation](https://hexdocs.pm/wechat_pay).
 
 ## Copyright and License
 
-Copyright (c) 2016 Jun Lin
-
 This work is free. You can redistribute it and/or modify it under the
 terms of the MIT License. See the [LICENSE.md](./LICENSE.md) file for more details.
