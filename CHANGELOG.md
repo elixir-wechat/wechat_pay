@@ -5,8 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## [Unreleased]
+
+## v0.10.0 (2021-12-10)
 
 - Using new `:crypto` API: `:crypto.crypto_one_time/4` (https://erlang.org/doc/apps/crypto/new_api.html) in the `WechatPay.Plug.Refund` module.
 - Require Elixir >= 1.10
