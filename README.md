@@ -1,6 +1,6 @@
 # WechatPay
 
-[![CI](https://github.com/elixir-wechat/wechat_pay/workflows/CI/badge.svg?branch=master)](https://github.com/elixir-wechat/wechat_pay/actions?query=workflow%3ACI)
+[![CI](https://github.com/elixir-wechat/wechat_pay/actions/workflows/ci.yml/badge.svg)](https://github.com/elixir-wechat/wechat_pay/actions/workflows/ci.yml)
 [![Module Version](https://img.shields.io/hexpm/v/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wechat_pay/)
 [![Total Download](https://img.shields.io/hexpm/dt/wechat_pay.svg)](https://hex.pm/packages/wechat_pay)
